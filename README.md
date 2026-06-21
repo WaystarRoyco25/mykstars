@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyKStars
 
-## Getting Started
+> The world's photo-first K-Culture newspaper + magazine. A fast, English-first, mobile-first destination for the freshest organized, **credited** photos of Korean celebrities — plus credible analysis.
 
-First, run the development server:
+The wedge: *"Naver's photo layer, for the world."* Organized, attributed, swipeable HD galleries filterable by artist / event / date — the thing every incumbent (Soompi, allkpop, Koreaboo, Kpopmap) leaves on the table — delivered with a sophisticated **editorial-noir** identity rather than the usual pastel clickbait.
+
+## Stack
+
+- **Next.js 16** (App Router, SSG/ISR) + **React 19** + **TypeScript**
+- **Tailwind CSS v4** with editorial-noir design tokens (`#0e0e0e` ink · `#f0f4f5` bone · `#cc001e` crimson, 60-30-10)
+- **Playfair Display** (display serif) + **Inter** (body) via `next/font`
+- Image config set for **AVIF → WebP** negotiation (`next.config.ts`)
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build (static-generates all routes)
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `src/lib/types.ts` — domain model (Artist, Gallery, MediaItem, Article, Source).
+- `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions; today they're backed by `src/lib/seed.ts`. Swap in a headless CMS (Sanity/Payload) later by re-implementing this module against the same signatures — no page changes.
+- `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), `CategoryFilter`, etc.
+- `src/app/` — home, `photos/` (+ `[gallerySlug]`), `artists/` (+ `[artistSlug]`), `news/` (+ `[slug]`), `legal/dmca`, `about/editorial-standards`, `api/takedown`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Defensible aggregation (content/legal model)
 
-## Learn More
+Aggregation is engineered to **survive**, not just to repost:
 
-To learn more about Next.js, take a look at the following resources:
+- **Embed-first** — official IG/X/TikTok/YouTube embeds so photos stay on the source.
+- **Attribution as infrastructure** — every `MediaItem` *requires* a credit; we link back and never strip credit lines.
+- **DMCA/takedown in v1** — `/legal/dmca` + `/api/takedown`.
+- **Licensed-spine on-ramp** — wire/agency/stock feeds (Getty *imazins*, Yonhap, News1, Newsen…) drop in behind the same data layer when ad revenue justifies it.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## SEO / Discover
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`max-image-preview:large` site-wide, NewsArticle/ImageGallery JSON-LD, crawlable SSG HTML, image + Google-News-ready sitemaps, and per-route Open Graph cards.
 
-## Deploy on Vercel
+## Status
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Phase 0 (design system) and most of Phase 1 (photo layer, artist hubs, news + flags, DMCA, SEO infra) are built. Media is currently rendered as branded placeholders with baked credits; real licensed/embedded media, a live CMS, faceted search, alerts and monetization are the next phases. Content in `seed.ts` is sample data (neutral captions + analysis/explainers — no unverified claims about real people).

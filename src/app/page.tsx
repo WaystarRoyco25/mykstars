@@ -1,65 +1,94 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getArticles, getFeaturedGallery, getGalleries } from "@/lib/data";
+import { CATEGORY_LABELS } from "@/lib/types";
+import { relativeTime } from "@/lib/format";
+import PhotoMedia from "@/components/PhotoMedia";
+import AttributionBadge from "@/components/AttributionBadge";
+import CategoryFilter from "@/components/CategoryFilter";
+import GalleryGrid from "@/components/GalleryGrid";
+import ArticleListItem from "@/components/ArticleListItem";
+import JsonLd from "@/components/JsonLd";
 
-export default function Home() {
+export default async function HomePage() {
+  const [featured, galleries, articles] = await Promise.all([
+    getFeaturedGallery(),
+    getGalleries(),
+    getArticles(),
+  ]);
+  const rest = galleries.filter((g) => g.slug !== featured.slug);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "MyKStars",
+          url: "https://mykstars.com",
+          description:
+            "Photo-first K-Culture newspaper and magazine: the freshest, organized, credited photos of Korean celebrities.",
+        }}
+      />
+
+      <h1 className="sr-only">
+        MyKStars — the freshest organized, credited photos of Korean celebrities
+      </h1>
+
+      {/* Hero — featured gallery */}
+      <section className="mx-auto max-w-6xl px-5 pt-6">
+        <Link href={`/photos/${featured.slug}`} className="group block">
+          <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden border border-line">
+            <PhotoMedia item={featured.cover} sizes="100vw" priority />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
+              <p className="kicker">{CATEGORY_LABELS[featured.category]} · Featured</p>
+              <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
+                {featured.title}
+              </h2>
+              <div className="mt-4 flex items-center gap-3 text-sm text-bone">
+                <span className="label text-bone">{featured.media.length} photos</span>
+                <span className="text-muted">·</span>
+                <span className="label text-muted">{relativeTime(featured.date)}</span>
+                <span className="text-muted">·</span>
+                <AttributionBadge source={featured.source} asLink={false} className="text-muted" />
+              </div>
+            </div>
+          </div>
+        </Link>
+      </section>
+
+      {/* Filter */}
+      <div className="mx-auto max-w-6xl px-5 mt-8">
+        <CategoryFilter />
+      </div>
+
+      {/* Latest photos */}
+      <section className="mx-auto max-w-6xl px-5 mt-8">
+        <div className="flex items-end justify-between mb-6">
+          <h2 className="kicker">Latest photos</h2>
+          <Link href="/photos" className="label hover:text-bone transition-colors">
+            All photos →
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <GalleryGrid galleries={rest} priorityCount={3} />
+      </section>
+
+      {/* Analysis — light editorial band */}
+      <section className="bg-bone text-ink mt-16">
+        <div className="mx-auto max-w-6xl px-5 py-14">
+          <div className="flex items-end justify-between mb-8">
+            <h2 className="kicker">Analysis</h2>
+            <Link href="/news" className="label text-muted-2 hover:text-ink transition-colors">
+              All analysis →
+            </Link>
+          </div>
+          <div className="flex flex-col gap-6">
+            {articles.slice(0, 4).map((a) => (
+              <ArticleListItem key={a.slug} article={a} on="light" />
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }
