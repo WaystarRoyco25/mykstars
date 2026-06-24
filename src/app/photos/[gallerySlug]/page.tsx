@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allGallerySlugs, getArtist, getGallery } from "@/lib/data";
-import { CATEGORY_LABELS } from "@/lib/types";
+import { PILLAR_LABELS, TAG_LABELS, pillarSlug } from "@/lib/types";
 import { absoluteDate, relativeTime } from "@/lib/format";
 import GalleryViewer from "@/components/GalleryViewer";
 import AttributionBadge from "@/components/AttributionBadge";
@@ -56,14 +56,21 @@ export default async function GalleryPage({
       <nav className="label text-muted mb-6">
         <Link href="/photos" className="hover:text-bone">Photos</Link>
         <span className="mx-2">/</span>
-        <Link href={`/photos?category=${gallery.category}`} className="hover:text-bone">
-          {CATEGORY_LABELS[gallery.category]}
+        <Link href={`/${pillarSlug(gallery.pillar)}`} className="hover:text-bone">
+          {PILLAR_LABELS[gallery.pillar]}
+        </Link>
+        <span className="mx-2">/</span>
+        <Link
+          href={`/${pillarSlug(gallery.pillar)}?tag=${gallery.category}`}
+          className="hover:text-bone"
+        >
+          {TAG_LABELS[gallery.category]}
         </Link>
       </nav>
 
       <header className="mb-7">
         <p className="kicker">
-          {CATEGORY_LABELS[gallery.category]}
+          {TAG_LABELS[gallery.category]}
           {gallery.event ? ` · ${gallery.event}` : ""}
         </p>
         <h1 className="font-serif text-3xl sm:text-4xl leading-tight mt-3">{gallery.title}</h1>

@@ -10,6 +10,7 @@ import {
 import GalleryGrid from "@/components/GalleryGrid";
 import ArticleListItem from "@/components/ArticleListItem";
 import JsonLd from "@/components/JsonLd";
+import { roleLabel } from "@/lib/people";
 
 export function generateStaticParams() {
   return allArtistSlugs().map((artistSlug) => ({ artistSlug }));
@@ -56,7 +57,7 @@ export default async function ArtistPage({
       />
 
       <nav className="label text-muted mb-6">
-        <Link href="/artists" className="hover:text-bone">Artists</Link>
+        <Link href="/artists" className="hover:text-bone">People</Link>
         <span className="mx-2">/</span>
         <span>{artist.name}</span>
       </nav>
@@ -69,7 +70,7 @@ export default async function ArtistPage({
           )}
         </div>
         <p className="label mt-4 text-muted">
-          {artist.type === "group" ? "Group" : "Soloist"}
+          {roleLabel(artist)}
           {artist.agency ? ` · ${artist.agency}` : ""}
           {artist.debutYear ? ` · Debuted ${artist.debutYear}` : ""}
         </p>

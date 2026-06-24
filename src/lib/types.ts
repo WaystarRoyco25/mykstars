@@ -3,36 +3,110 @@
 // Today the data layer is backed by local seed data; swapping in a headless CMS
 // (Sanity/Payload) later means re-implementing data.ts against these same types.
 
-export type Category =
+// ---------------------------------------------------------------------------
+// Pillars — the primary content axis (the site's top-level navigation).
+// Coverage weight: K-Pop > K-Drama > Fashion/Beauty > K-Movie.
+// ---------------------------------------------------------------------------
+export type Pillar = "k-pop" | "k-drama" | "k-movie" | "fashion-beauty";
+
+export const PILLAR_LABELS: Record<Pillar, string> = {
+  "k-pop": "K-Pop",
+  "k-drama": "K-Drama",
+  "k-movie": "K-Movie",
+  "fashion-beauty": "Fashion & Beauty",
+};
+
+// Display / nav order — coverage-weighted (flip the last two to keep K-Movie third).
+export const PILLAR_ORDER: Pillar[] = ["k-pop", "k-drama", "fashion-beauty", "k-movie"];
+
+// URL slug per pillar. "fashion-beauty" surfaces as the cleaner /fashion.
+export const PILLAR_SLUGS: Record<Pillar, string> = {
+  "k-pop": "k-pop",
+  "k-drama": "k-drama",
+  "k-movie": "k-movie",
+  "fashion-beauty": "fashion",
+};
+
+const SLUG_TO_PILLAR: Record<string, Pillar> = Object.fromEntries(
+  (Object.entries(PILLAR_SLUGS) as [Pillar, string][]).map(([p, s]) => [s, p]),
+);
+
+export function pillarSlug(p: Pillar): string {
+  return PILLAR_SLUGS[p];
+}
+
+export function pillarFromSlug(slug: string): Pillar | undefined {
+  return SLUG_TO_PILLAR[slug];
+}
+
+// ---------------------------------------------------------------------------
+// Tags — the secondary axis (occasion / topic within a pillar).
+// One flat union keeps the data layer simple; PILLAR_TAGS scopes which tags a
+// given pillar offers. A few tags (pictorial, review) are intentionally shared.
+// ---------------------------------------------------------------------------
+export type CategoryTag =
+  // K-Pop (the original occasion categories)
   | "airport"
   | "red-carpet"
   | "comeback"
   | "event"
-  | "pictorial";
+  | "pictorial"
+  // K-Drama
+  | "stills"
+  | "casting"
+  | "press"
+  | "review"
+  | "ost"
+  | "calendar"
+  // K-Movie ("review" shared with K-Drama)
+  | "festival"
+  | "director"
+  | "crossover"
+  // Fashion & Beauty ("pictorial" shared with K-Pop)
+  | "campaign"
+  | "beauty"
+  | "fashion-week";
 
-export const CATEGORY_LABELS: Record<Category, string> = {
+export const TAG_LABELS: Record<CategoryTag, string> = {
   airport: "Airport",
   "red-carpet": "Red carpet",
   comeback: "Comeback",
   event: "Event",
   pictorial: "Pictorial",
+  stills: "Stills",
+  casting: "Casting",
+  press: "Press",
+  review: "Reviews",
+  ost: "OST",
+  calendar: "Calendar",
+  festival: "Festival",
+  director: "Directors",
+  crossover: "Crossover",
+  campaign: "Campaign",
+  beauty: "Beauty",
+  "fashion-week": "Fashion week",
 };
 
-export const CATEGORY_ORDER: Category[] = [
-  "airport",
-  "red-carpet",
-  "comeback",
-  "event",
-  "pictorial",
-];
+// Which tags each pillar offers in its filter row.
+export const PILLAR_TAGS: Record<Pillar, CategoryTag[]> = {
+  "k-pop": ["airport", "red-carpet", "comeback", "event", "pictorial"],
+  "k-drama": ["stills", "casting", "press", "review", "ost", "calendar"],
+  "k-movie": ["festival", "director", "review", "crossover"],
+  "fashion-beauty": ["pictorial", "campaign", "beauty", "fashion-week"],
+};
 
+export const ALL_TAGS = Object.keys(TAG_LABELS) as CategoryTag[];
+
+// ---------------------------------------------------------------------------
+// Media
+// ---------------------------------------------------------------------------
 // How a piece of media reaches us. This encodes the "defensible aggregation"
 // model from the plan: prefer embeds (photo stays on source) and licensed
 // imagery; never silently rehost. Every item carries a credit.
 export type SourceKind =
   | "press" // Korean photo desk (OSEN, Newsen, Star News...)
   | "wire" // wire service (Yonhap, News1, AP, Reuters)
-  | "official" // agency / label press kit
+  | "official" // agency / label / studio press kit
   | "licensed" // paid stock (Getty incl. imazins, etc.)
   | "embed" // official social embed (IG / X / TikTok / YouTube)
   | "magazine"; // publisher pictorial
@@ -46,6 +120,11 @@ export interface Source {
 export type MediaKind = "placeholder" | "image" | "embed";
 export type EmbedPlatform = "instagram" | "x" | "tiktok" | "youtube";
 
+// Orientation drives the vertical-leaning masonry. Portrait dominates the grid;
+// landscape breaks out wide; nothing is force-cropped. For real images this is
+// derived from width/height at ingest; placeholders set it explicitly.
+export type Orientation = "portrait" | "landscape" | "square";
+
 export interface MediaItem {
   id: string;
   kind: MediaKind;
@@ -54,25 +133,41 @@ export interface MediaItem {
   src?: string; // when kind === "image"
   width?: number;
   height?: number;
+  orientation?: Orientation; // explicit; falls back to width/height, then portrait
   embedUrl?: string; // when kind === "embed"
   platform?: EmbedPlatform; // when kind === "embed"
   tone?: number; // 0..3, decorative variety for placeholders
 }
 
+// ---------------------------------------------------------------------------
+// People — generalized beyond K-pop idols to actors, directors and models.
+// Cross-pillar people (an idol who acts) carry multiple pillars/disciplines.
+// ---------------------------------------------------------------------------
+export type Discipline = "idol" | "actor" | "director" | "model";
+
 export interface Artist {
   slug: string;
   name: string;
   koreanName?: string;
-  type: "group" | "soloist";
-  agency?: string;
+  type: "group" | "soloist" | "individual"; // "individual" = actor/director/model
+  disciplines?: Discipline[]; // e.g. ["idol","actor"] for a cross-pillar idol
+  pillars?: Pillar[]; // pillar membership; defaults to ["k-pop"] when absent
+  agency?: string; // agency / management / studio
   debutYear?: number;
+  knownFor?: string[]; // neutral, factual descriptors (reserved for CMS)
   bio: string;
 }
 
+// ---------------------------------------------------------------------------
+// Galleries — a gallery has one home pillar + one tag, plus optional extra tags
+// used for cross-pillar surfacing (the Fashion/Beauty lens).
+// ---------------------------------------------------------------------------
 export interface Gallery {
   slug: string;
   title: string;
-  category: Category;
+  pillar: Pillar;
+  category: CategoryTag; // the primary tag within the pillar
+  tags?: CategoryTag[]; // extra tags for lens surfacing
   artistSlugs: string[];
   event?: string;
   date: string; // ISO date
@@ -89,6 +184,7 @@ export interface Article {
   title: string;
   dek: string; // standfirst / summary
   status: ArticleStatus;
+  pillar?: Pillar; // optional — site-wide standards pieces have none
   author: string;
   date: string; // ISO date
   body: string[]; // paragraphs
@@ -97,4 +193,100 @@ export interface Article {
     artistSlugs?: string[];
     gallerySlugs?: string[];
   };
+}
+
+// ---------------------------------------------------------------------------
+// Rankings — scannable K-Culture chart tables (idol brand reputation, drama
+// viewership) interleaved between photo bands to break up the endless feed.
+// Like every gallery, a table carries a Source; until a real feed is wired the
+// figures are illustrative samples (sample: true), flagged in the UI — the same
+// honesty model as the placeholder photos.
+// ---------------------------------------------------------------------------
+export interface RankingRow {
+  rank: number;
+  name: string; // person / group, or a programme / film title
+  detail?: string; // agency, broadcast network, lead actor, etc.
+  value: string; // pre-formatted metric, e.g. "8,742,153" or "11.4%"
+  change?: number; // rank delta vs the previous period (+ up, − down, 0 flat)
+  isNew?: boolean; // new entry this period (no prior rank)
+  artistSlug?: string; // links the row to /artists/{slug} when we cover them
+}
+
+export interface Ranking {
+  slug: string;
+  title: string;
+  pillar: Pillar;
+  metricLabel: string; // value-column header, e.g. "Brand index" / "Rating"
+  period: string; // human label, e.g. "June 2026"
+  asOf: string; // ISO date
+  source: Source;
+  sample?: boolean; // figures are illustrative placeholders, not yet sourced
+  blurb?: string; // one-line description under the title
+  rows: RankingRow[];
+}
+
+// ---------------------------------------------------------------------------
+// Events — a forward-looking D-Day schedule of officially-announced concerts and
+// fan meetings. The audience is international, so each event carries a coarse
+// region (the filter axis) and the page surfaces outside-Korea dates first.
+// Unlike the sample rankings, these dates are real and every event is credited
+// via a Source. Named StarEvent to avoid colliding with the DOM `Event` global.
+// ---------------------------------------------------------------------------
+export type EventType = "concert" | "fan-meeting";
+
+export type EventRegion =
+  | "north-america"
+  | "europe"
+  | "asia"
+  | "latin-america"
+  | "oceania"
+  | "korea";
+
+// Singular labels (used in per-event badges); the filter pluralizes with "s".
+export const EVENT_TYPE_LABELS: Record<EventType, string> = {
+  concert: "Concert",
+  "fan-meeting": "Fan meeting",
+};
+
+export const EVENT_TYPE_ORDER: EventType[] = ["concert", "fan-meeting"];
+
+export const REGION_LABELS: Record<EventRegion, string> = {
+  "north-america": "North America",
+  europe: "Europe",
+  asia: "Asia",
+  "latin-america": "Latin America",
+  oceania: "Oceania",
+  korea: "Korea",
+};
+
+// Region filter order. The page leads with an "International" pseudo-view (every
+// region except Korea); these are the concrete regions a visitor can narrow to,
+// Korea last — the international audience comes first.
+export const REGION_ORDER: EventRegion[] = [
+  "north-america",
+  "europe",
+  "asia",
+  "latin-america",
+  "oceania",
+  "korea",
+];
+
+export type EventStatus = "on-sale" | "sold-out" | "announced" | "postponed";
+
+export interface StarEvent {
+  slug: string;
+  headliner: string; // display name (group / soloist); always shown
+  artistSlugs?: string[]; // links to /artists/{slug} when we cover the act
+  type: EventType;
+  tour?: string; // tour / fan-meet title (omitted when unconfirmed)
+  date: string; // venue-LOCAL calendar date, date-only ISO ("2026-08-15")
+  endDate?: string; // last date of a multi-night run, date-only ISO
+  venue?: string;
+  city: string;
+  country: string;
+  region: EventRegion; // drives the region filter
+  status?: EventStatus;
+  ticketUrl?: string; // official ticketing / tour link
+  source: Source; // attribution — every event links back to its source
+  note?: string; // optional one-line neutral context
 }

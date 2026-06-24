@@ -1,21 +1,40 @@
+import { Fragment } from "react";
 import Link from "next/link";
-import { getArticles, getFeaturedGallery, getGalleries } from "@/lib/data";
-import { CATEGORY_LABELS } from "@/lib/types";
+import { getArticles, getFeaturedGallery, getGalleriesForPillar, getRankings } from "@/lib/data";
+import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
+import type { Pillar } from "@/lib/types";
 import { relativeTime } from "@/lib/format";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
-import CategoryFilter from "@/components/CategoryFilter";
 import GalleryGrid from "@/components/GalleryGrid";
+import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import JsonLd from "@/components/JsonLd";
 
+// Tiles per pillar band, weighted to coverage (K-Pop > K-Drama > Fashion > K-Movie).
+const BAND_COUNT: Record<Pillar, number> = {
+  "k-pop": 6,
+  "k-drama": 5,
+  "fashion-beauty": 3,
+  "k-movie": 2,
+};
+
 export default async function HomePage() {
-  const [featured, galleries, articles] = await Promise.all([
-    getFeaturedGallery(),
-    getGalleries(),
+  const featured = await getFeaturedGallery();
+  const [bands, articles, rankings] = await Promise.all([
+    Promise.all(
+      PILLAR_ORDER.map(async (pillar) => ({
+        pillar,
+        galleries: (await getGalleriesForPillar(pillar))
+          .filter((g) => g.slug !== featured.slug)
+          .slice(0, BAND_COUNT[pillar]),
+      })),
+    ),
     getArticles(),
+    getRankings(),
   ]);
-  const rest = galleries.filter((g) => g.slug !== featured.slug);
+  // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
+  const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
 
   return (
     <>
@@ -26,7 +45,7 @@ export default async function HomePage() {
           name: "MyKStars",
           url: "https://mykstars.com",
           description:
-            "Photo-first K-Culture newspaper and magazine: the freshest, organized, credited photos of Korean celebrities.",
+            "Photo-first K-Culture newspaper and magazine: the freshest, organized, credited photos of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion.",
         }}
       />
 
@@ -34,14 +53,16 @@ export default async function HomePage() {
         MyKStars — the freshest organized, credited photos of Korean celebrities
       </h1>
 
-      {/* Hero — featured gallery */}
+      {/* Hero — global featured gallery */}
       <section className="mx-auto max-w-6xl px-5 pt-6">
         <Link href={`/photos/${featured.slug}`} className="group block">
           <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden border border-line">
             <PhotoMedia item={featured.cover} sizes="100vw" priority />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
-              <p className="kicker">{CATEGORY_LABELS[featured.category]} · Featured</p>
+              <p className="kicker">
+                {PILLAR_LABELS[featured.pillar]} · {TAG_LABELS[featured.category]} · Featured
+              </p>
               <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
                 {featured.title}
               </h2>
@@ -57,21 +78,27 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* Filter */}
-      <div className="mx-auto max-w-6xl px-5 mt-8">
-        <CategoryFilter />
-      </div>
-
-      {/* Latest photos */}
-      <section className="mx-auto max-w-6xl px-5 mt-8">
-        <div className="flex items-end justify-between mb-6">
-          <h2 className="kicker">Latest photos</h2>
-          <Link href="/photos" className="label hover:text-bone transition-colors">
-            All photos →
-          </Link>
-        </div>
-        <GalleryGrid galleries={rest} priorityCount={3} />
-      </section>
+      {/* One band per pillar, with its ranking table interleaved right after it */}
+      {bands
+        .filter((b) => b.galleries.length > 0)
+        .map((b) => {
+          const ranking = rankingByPillar.get(b.pillar);
+          return (
+            <Fragment key={b.pillar}>
+              <section className="mx-auto max-w-6xl px-5 mt-12">
+                <div className="mb-6">
+                  <Link href={`/${pillarSlug(b.pillar)}`} className="group inline-block">
+                    <h2 className="kicker group-hover:text-bone transition-colors">
+                      {PILLAR_LABELS[b.pillar]}
+                    </h2>
+                  </Link>
+                </div>
+                <GalleryGrid galleries={b.galleries} priorityCount={b.pillar === "k-pop" ? 3 : 0} />
+              </section>
+              {ranking && <RankingTable ranking={ranking} />}
+            </Fragment>
+          );
+        })}
 
       {/* Analysis — light editorial band */}
       <section className="bg-bone text-ink mt-16">

@@ -15,11 +15,16 @@ export default function PhotoMedia({
   sizes = "(max-width: 768px) 100vw, 33vw",
   priority = false,
   showCredit = false,
+  fit = "cover",
+  position,
 }: {
   item: MediaItem;
   sizes?: string;
   priority?: boolean;
   showCredit?: boolean;
+  fit?: "cover" | "contain";
+  // object-position override (e.g. "50% 30%" to keep portrait faces in frame)
+  position?: string;
 }) {
   if (item.kind === "embed") {
     return <EmbedFacade item={item} className="absolute inset-0" />;
@@ -33,7 +38,8 @@ export default function PhotoMedia({
         fill
         sizes={sizes}
         priority={priority}
-        className="object-cover"
+        className={fit === "contain" ? "object-contain" : "object-cover"}
+        style={position ? { objectPosition: position } : undefined}
       />
     );
   }

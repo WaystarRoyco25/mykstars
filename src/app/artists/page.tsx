@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getArtists, getGalleriesByArtist } from "@/lib/data";
+import { roleLabel } from "@/lib/people";
 
 export const metadata: Metadata = {
-  title: "Artists",
+  title: "People",
   description:
-    "Per-artist hubs: a photo timeline, profile and the latest credited galleries for each Korean celebrity.",
+    "Per-person hubs: a photo timeline, profile and the latest credited galleries for each idol, actor and director across K-culture.",
 };
 
 export default async function ArtistsPage() {
@@ -17,11 +18,11 @@ export default async function ArtistsPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-10">
       <header className="mb-10">
-        <p className="kicker">Artists</p>
+        <p className="kicker">People</p>
         <h1 className="font-serif text-4xl sm:text-5xl mt-2">Hubs</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-          A photo timeline and profile for each artist — the Naver artist page,
-          in English.
+          A photo timeline and profile for each person — idols, actors and
+          directors — the Naver profile page, in English.
         </p>
       </header>
 
@@ -39,7 +40,7 @@ export default async function ArtistsPage() {
               {a.koreanName && <span className="text-muted text-sm">{a.koreanName}</span>}
             </div>
             <p className="label mt-3 text-muted">
-              {a.type === "group" ? "Group" : "Soloist"}
+              {roleLabel(a)}
               {a.agency ? ` · ${a.agency}` : ""}
             </p>
             <p className="label mt-1 text-muted">{counts[i]} photo sets</p>

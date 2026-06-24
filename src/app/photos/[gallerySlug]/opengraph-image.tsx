@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getGallery } from "@/lib/data";
-import { CATEGORY_LABELS } from "@/lib/types";
+import { TAG_LABELS } from "@/lib/types";
 
 export const alt = "MyKStars gallery";
 export const size = { width: 1200, height: 630 };
@@ -15,7 +15,7 @@ export default async function GalleryOg({
   const gallery = await getGallery(gallerySlug);
   const title = gallery?.title ?? "MyKStars";
   const kicker = gallery
-    ? `${CATEGORY_LABELS[gallery.category].toUpperCase()} · VIA ${gallery.source.name.toUpperCase()}`
+    ? `${TAG_LABELS[gallery.category].toUpperCase()} · VIA ${gallery.source.name.toUpperCase()}`
     : "MYKSTARS";
 
   return new ImageResponse(

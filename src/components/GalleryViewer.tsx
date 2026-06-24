@@ -32,7 +32,7 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
   return (
     <section aria-roledescription="carousel" aria-label="Photo gallery">
       <div
-        className="relative aspect-[3/2] border border-line overflow-hidden bg-ink-2 select-none"
+        className="relative h-[58vh] max-h-[680px] min-h-[320px] border border-line overflow-hidden bg-ink-2 select-none"
         onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
         onTouchEnd={(e) => {
           if (touchX.current === null) return;
@@ -41,7 +41,7 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
           touchX.current = null;
         }}
       >
-        <PhotoMedia item={current} sizes="(max-width: 1024px) 100vw, 960px" priority showCredit />
+        <PhotoMedia item={current} sizes="(max-width: 1024px) 100vw, 960px" priority showCredit fit="contain" />
 
         <button
           type="button"
