@@ -88,7 +88,12 @@ export default async function PredictionDetailPage({
           <span className="kicker">
             {PILLAR_LABELS[prediction.pillar]} · {PREDICTION_CATEGORY_LABELS[prediction.category]}
           </span>
-          <PredictionStatusBadge prediction={prediction} status={status} />
+          <PredictionStatusBadge
+            closesAt={prediction.closesAt}
+            isResolved={status === "resolved"}
+            resolvedAt={prediction.resolution?.resolvedAt}
+            initialStatus={status}
+          />
         </div>
         <h1 className="font-serif text-3xl sm:text-4xl leading-tight">{prediction.question}</h1>
         <p className="text-muted mt-3 leading-relaxed">{prediction.framing}</p>

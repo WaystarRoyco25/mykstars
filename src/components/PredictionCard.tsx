@@ -43,7 +43,12 @@ export default async function PredictionCard({ prediction }: { prediction: Predi
         <span className="kicker">
           {PILLAR_LABELS[prediction.pillar]} · {PREDICTION_CATEGORY_LABELS[prediction.category]}
         </span>
-        <PredictionStatusBadge prediction={prediction} status={status} />
+        <PredictionStatusBadge
+          closesAt={prediction.closesAt}
+          isResolved={status === "resolved"}
+          resolvedAt={prediction.resolution?.resolvedAt}
+          initialStatus={status}
+        />
       </div>
 
       <Link href={`/predictions/${prediction.slug}`} className="group">

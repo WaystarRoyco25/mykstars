@@ -1,4 +1,4 @@
-import { NOW, articles, artists, events, galleries, predictions, rankings } from "./seed";
+import { articles, artists, events, galleries, predictions, rankings } from "./seed";
 import { getSupabase } from "./supabase";
 import type {
   Article,
@@ -166,11 +166,15 @@ export function allArticleSlugs(): string[] {
 // the seed.
 // ---------------------------------------------------------------------------
 
-// open → closed → resolved. The open→closed cut is time-derived from closesAt
-// (anchored to NOW for deterministic SSR, like the rest of the site), so closing
-// a question needs no scheduler. A stored "resolved" status (or a resolution
-// record) always wins.
-export function effectiveStatus(p: Prediction, nowIso: string = NOW): PredictionStatus {
+// open → closed → resolved. The open→closed cut is a REAL-CLOCK decision — a
+// question stays open until the wall clock passes closesAt — so voting actually
+// closes on time, no scheduler needed. Defaults to the live clock; callers that
+// need a deterministic snapshot pass nowIso explicitly. A stored "resolved" status
+// (or a resolution record) is time-independent and always wins.
+export function effectiveStatus(
+  p: Prediction,
+  nowIso: string = new Date().toISOString(),
+): PredictionStatus {
   if (p.status === "resolved" || p.resolution) return "resolved";
   return Date.parse(p.closesAt) <= Date.parse(nowIso) ? "closed" : "open";
 }
@@ -215,9 +219,10 @@ function buildTally(p: Prediction, counts: Map<string, number>): PredictionTally
 export async function getPredictions(opts?: { pillar?: Pillar }): Promise<Prediction[]> {
   let list = [...predictions];
   if (opts?.pillar) list = list.filter((p) => p.pillar === opts.pillar);
+  const now = new Date().toISOString();
   return list.sort((a, b) => {
-    const sa = PREDICTION_STATUS_ORDER[effectiveStatus(a)];
-    const sb = PREDICTION_STATUS_ORDER[effectiveStatus(b)];
+    const sa = PREDICTION_STATUS_ORDER[effectiveStatus(a, now)];
+    const sb = PREDICTION_STATUS_ORDER[effectiveStatus(b, now)];
     if (sa !== sb) return sa - sb;
     if (sa === PREDICTION_STATUS_ORDER.resolved) {
       return (
@@ -230,7 +235,8 @@ export async function getPredictions(opts?: { pillar?: Pillar }): Promise<Predic
 }
 
 export async function getOpenPredictions(opts?: { pillar?: Pillar }): Promise<Prediction[]> {
-  return (await getPredictions(opts)).filter((p) => effectiveStatus(p) === "open");
+  const now = new Date().toISOString();
+  return (await getPredictions(opts)).filter((p) => effectiveStatus(p, now) === "open");
 }
 
 export async function getPrediction(slug: string): Promise<Prediction | undefined> {

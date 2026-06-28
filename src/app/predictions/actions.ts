@@ -21,7 +21,9 @@ export async function castVote(slug: string, optionId: string): Promise<VoteResu
   if (!prediction.options.some((o) => o.id === optionId)) {
     return { ok: false, error: "That option doesn't exist." };
   }
-  if (effectiveStatus(prediction) !== "open") {
+  // The integrity gate: check the REAL clock (not the frozen display NOW) so a
+  // vote is never accepted past closesAt, regardless of what a cached page shows.
+  if (effectiveStatus(prediction, new Date().toISOString()) !== "open") {
     return { ok: false, error: "Voting has closed on this question." };
   }
 
