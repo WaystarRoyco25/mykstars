@@ -328,7 +328,6 @@ export interface PredictionOption {
   id: string; // stable within its prediction; the vote/resolution key
   label: string; // "Yes" / "No", or a nominee name
   artistSlug?: string; // links the option to /artists/{slug} where we cover them
-  sampleVotes?: number; // illustrative tally until real voting lands (sample: true)
 }
 
 export interface Resolution {
@@ -352,12 +351,11 @@ export interface Prediction {
   resolutionSource: Source; // the dated, objective source that will settle it
   resolution?: Resolution; // present iff resolved
   tallyVisibleThreshold: number; // hide exact counts below this many votes (cold-start)
-  sample?: boolean; // tallies are illustrative placeholders, not real votes yet
   asOf: string; // ISO — honesty "as of" date, mirrors Ranking.asOf
 }
 
-// Read-model returned by the data layer (never raw vote rows). In PR0 it is
-// derived from seed sampleVotes; once a DB is wired the shape is unchanged.
+// Read-model returned by the data layer (never raw vote rows). Derived from live
+// vote counts in Supabase (the `prediction_tallies` view).
 export interface PredictionTallyOption {
   optionId: string;
   votes: number;

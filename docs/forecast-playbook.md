@@ -1,0 +1,87 @@
+# Fan Forecast — question playbook ("The Engagement Engine")
+
+This is the standing brief for **any session that updates the Fan Forecast questions**. The
+questions live in the `predictions` array in [`src/lib/seed.ts`](../src/lib/seed.ts); the schema is
+`Prediction` in [`src/lib/types.ts`](../src/lib/types.ts). Read this before writing or refreshing
+any question.
+
+**Cadence:** roughly **monthly**, owner-initiated (not fixed — may also be triggered reactively when
+big news breaks). Each refresh should bump the site clock `NOW` and every `asOf` to that day, which
+also re-syncs question open/closed states to real time.
+
+## The goal
+
+Maximize fan attention and engagement — votes cast, return visits, shares — by making every
+question feel **personal, urgent, and worth defending**. We want the room electric. We get there
+through **stakes, identity, timing, and rivalry**, never through gossip. Gossip loses the fandom
+(and invites legal risk); pride keeps them coming back.
+
+## The ten rules
+
+1. **One desperate hope per question.** Anchor to an outcome a fandom aches for — a Daesang, a
+   #1, a record, a sold-out stadium, a long-awaited return. A *Yes* must feel like a win worth
+   defending.
+2. **Make it tribal.** Phrase so fans vote *as* their fandom (STAY, MY, BLINK, ARMY, ONCE,
+   Bunnies, Uaena…). Identity drives turnout.
+3. **Strike while it's hot.** Tie to something within weeks; let the D-Day countdown
+   (`closesAt`) manufacture urgency. Rotate questions on the news cycle — stale questions kill
+   repeat visits.
+4. **Binary by default, drama in multi-way.** Yes/No for one-tap participation; reserve 3–5-option
+   races for "who wins" awards, where rivalry energy peaks.
+5. **Rivalry through official contests only.** Channel competition into real, resolvable races
+   (MAMA Daesang, Billboard #1, box-office crown). **Never** "which group/member is
+   better/prettier" — that starts fan wars, not engagement.
+6. **Always resolvable, always dated.** Every question settles on one objective public source +
+   a real `closesAt`. The resolution moment is its own engagement spike — fans return to see if
+   they were right.
+7. **Hope-frame, never odds.** The `framing` standfirst captures *what fans believe and hope*,
+   not a betting line. We host sentiment, not a sportsbook.
+8. **Sensitivity is non-negotiable.** Professional outcomes only. **Never** private life, dating,
+   appearance, weight, military criticism, lawsuits, or member rankings. If an artist is in a
+   painful moment (legal fight, hiatus, scandal, active service), switch to a *solidarity /
+   anticipation* frame — or skip them this cycle. A question that hurts the fandom loses the
+   fandom.
+9. **Voice: hype within editorial-noir.** Big stakes, strong verbs ("sweep," "shatter," "reign,"
+   "crown"), fandom vernacular — but keep the restrained, credible tone the site is built on. No
+   clickbait lies, no manufactured outrage. Excitement, not tabloid.
+10. **Curate the rhythm.** Always keep several **open** questions across all four pillars, at least
+    one **closing soon** (urgency), and one **freshly resolved** (proof we call it honestly).
+    Spread the love across the roster — don't let one fandom dominate.
+
+## Settle-source cheat sheet
+
+| Outcome type        | Resolve against                                              |
+|---------------------|-------------------------------------------------------------|
+| Awards / Daesang    | Official winners list (MAMA, Blue Dragon, Baeksang, MMA…)    |
+| Sales / streams     | Circle, Hanteo, Billboard, Netflix global Top 10            |
+| Film admissions     | KOBIS · Korean Film Council                                  |
+| Brand / campaign    | Official house announcement; Vogue Korea / WWD              |
+| New project / tour  | Agency / network / studio announcement; Weverse             |
+
+Add a `Source` const in `seed.ts` if none fits; keep `kind` honest (`official`/`wire`/`press`/
+`magazine`).
+
+## Red flags → reframe or skip
+
+`lawsuit` · `hiatus` · `scandal` · `military service` · `dating` · `body/appearance` ·
+`member-vs-member ranking` · anything unconfirmed stated as fact.
+→ Use anticipation/solidarity framing, or leave the artist out until there's celebratory news.
+
+## Mechanics reminders (match the existing schema)
+
+- `slug` kebab-case and unique; if you rename a slug, the old Supabase vote rows orphan — wipe
+  the `votes` table when renaming (see below).
+- `tallyVisibleThreshold: 25` — keeps a cold-start "be the first" state (FOMO) until real votes
+  arrive.
+- Lifecycle is **time-derived** from `closesAt` vs `NOW` (`effectiveStatus` in `data.ts`); a stored
+  `status: "resolved"` or a `resolution` record always wins. Keep at least one closed-awaiting and
+  one resolved entry so all three UI states stay on display.
+- Set every question's `asOf` and the site clock `NOW` (top of `seed.ts`) to the day you refresh.
+  `NOW` is the **whole site's** clock — after bumping it, spot-check the Events and Schedule pages.
+
+## Resetting test votes
+
+Votes live in the Supabase `votes` table (deduped by the `myk_voter` cookie); tallies are computed
+live via the `prediction_tallies` view. To clear test/sample votes, run in **Supabase → SQL
+Editor**: `truncate table votes;`. No code or schema change — the table is managed in Supabase, not
+in a repo migration.

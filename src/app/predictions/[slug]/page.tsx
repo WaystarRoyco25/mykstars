@@ -114,12 +114,6 @@ export default async function PredictionDetailPage({
 
       {/* Honesty line — mirrors RankingTable's "as of · source". */}
       <div className="mt-8 flex items-center gap-2 flex-wrap label">
-        {prediction.sample && <span className="text-crimson">Sample data</span>}
-        {prediction.sample && (
-          <span className="text-muted-2" aria-hidden>
-            ·
-          </span>
-        )}
         <span className="text-muted">As of {absoluteDate(prediction.asOf)}</span>
         <span className="text-muted-2" aria-hidden>
           ·

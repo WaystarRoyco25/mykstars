@@ -163,7 +163,7 @@ export function allArticleSlugs(): string[] {
 // professional outcomes. The data layer derives a ready-to-render tally so pages
 // stay declarative. Live vote counts come from Supabase (table `votes`, read via
 // the `prediction_tallies` aggregate view); question metadata still comes from
-// the seed. The legacy per-option `sampleVotes` are no longer read.
+// the seed.
 // ---------------------------------------------------------------------------
 
 // open → closed → resolved. The open→closed cut is time-derived from closesAt
