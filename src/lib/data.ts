@@ -1,4 +1,5 @@
-import { articles, artists, events, galleries, rankings } from "./seed";
+import { NOW, articles, artists, events, galleries, predictions, rankings } from "./seed";
+import { getSupabase } from "./supabase";
 import type {
   Article,
   Artist,
@@ -7,6 +8,9 @@ import type {
   EventType,
   Gallery,
   Pillar,
+  Prediction,
+  PredictionStatus,
+  PredictionTally,
   Ranking,
   StarEvent,
 } from "./types";
@@ -152,4 +156,116 @@ export function allArtistSlugs(): string[] {
 }
 export function allArticleSlugs(): string[] {
   return articles.map((a) => a.slug);
+}
+
+// ---------------------------------------------------------------------------
+// Predictions — the Fan Forecast. Curated, vote-only sentiment questions on
+// professional outcomes. The data layer derives a ready-to-render tally so pages
+// stay declarative. Live vote counts come from Supabase (table `votes`, read via
+// the `prediction_tallies` aggregate view); question metadata still comes from
+// the seed. The legacy per-option `sampleVotes` are no longer read.
+// ---------------------------------------------------------------------------
+
+// open → closed → resolved. The open→closed cut is time-derived from closesAt
+// (anchored to NOW for deterministic SSR, like the rest of the site), so closing
+// a question needs no scheduler. A stored "resolved" status (or a resolution
+// record) always wins.
+export function effectiveStatus(p: Prediction, nowIso: string = NOW): PredictionStatus {
+  if (p.status === "resolved" || p.resolution) return "resolved";
+  return Date.parse(p.closesAt) <= Date.parse(nowIso) ? "closed" : "open";
+}
+
+const PREDICTION_STATUS_ORDER: Record<PredictionStatus, number> = {
+  open: 0,
+  closed: 1,
+  resolved: 2,
+};
+
+// Live counts per option from the `prediction_tallies` view. Degrades to an
+// empty map (→ "no votes yet") when Supabase is unconfigured or errors, so a
+// tally read never throws and the page still renders.
+async function fetchVoteCounts(slug: string): Promise<Map<string, number>> {
+  const supabase = getSupabase();
+  if (!supabase) return new Map();
+  const { data, error } = await supabase
+    .from("prediction_tallies")
+    .select("option_id, votes")
+    .eq("prediction_slug", slug);
+  if (error || !data) return new Map();
+  return new Map(data.map((r) => [r.option_id as string, Number(r.votes)]));
+}
+
+function buildTally(p: Prediction, counts: Map<string, number>): PredictionTally {
+  const perOption = p.options.map((o) => ({ optionId: o.id, votes: counts.get(o.id) ?? 0 }));
+  const totalVotes = perOption.reduce((sum, o) => sum + o.votes, 0);
+  return {
+    predictionSlug: p.slug,
+    totalVotes,
+    perOption: perOption.map((o) => ({
+      ...o,
+      pct: totalVotes > 0 ? Math.round((o.votes / totalVotes) * 100) : 0,
+    })),
+    revealed: totalVotes >= p.tallyVisibleThreshold,
+    asOf: p.asOf,
+  };
+}
+
+// Open questions first (soonest cutoff leads, for urgency), then closed-awaiting,
+// then resolved (most recently resolved first).
+export async function getPredictions(opts?: { pillar?: Pillar }): Promise<Prediction[]> {
+  let list = [...predictions];
+  if (opts?.pillar) list = list.filter((p) => p.pillar === opts.pillar);
+  return list.sort((a, b) => {
+    const sa = PREDICTION_STATUS_ORDER[effectiveStatus(a)];
+    const sb = PREDICTION_STATUS_ORDER[effectiveStatus(b)];
+    if (sa !== sb) return sa - sb;
+    if (sa === PREDICTION_STATUS_ORDER.resolved) {
+      return (
+        Date.parse(b.resolution?.resolvedAt ?? b.closesAt) -
+        Date.parse(a.resolution?.resolvedAt ?? a.closesAt)
+      );
+    }
+    return Date.parse(a.closesAt) - Date.parse(b.closesAt);
+  });
+}
+
+export async function getOpenPredictions(opts?: { pillar?: Pillar }): Promise<Prediction[]> {
+  return (await getPredictions(opts)).filter((p) => effectiveStatus(p) === "open");
+}
+
+export async function getPrediction(slug: string): Promise<Prediction | undefined> {
+  return predictions.find((p) => p.slug === slug);
+}
+
+export async function getPredictionTally(slug: string): Promise<PredictionTally | undefined> {
+  const p = predictions.find((x) => x.slug === slug);
+  if (!p) return undefined;
+  return buildTally(p, await fetchVoteCounts(slug));
+}
+
+// Cookie carrying the anonymous voter id (set by the castVote action). Exported
+// so the detail page and the action agree on the name — and a "use server" file
+// can't export plain constants, only async functions, so it lives here.
+export const VOTER_COOKIE = "myk_voter";
+
+// The current visitor's pick for a question (by anonymous voter id), or null if
+// they haven't voted. Drives the "Your pick" highlight on the detail page.
+export async function getVotedOptionId(
+  slug: string,
+  voterId: string | undefined,
+): Promise<string | null> {
+  if (!voterId) return null;
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("votes")
+    .select("option_id")
+    .eq("prediction_slug", slug)
+    .eq("voter_id", voterId)
+    .maybeSingle();
+  return (data?.option_id as string | undefined) ?? null;
+}
+
+export function allPredictionSlugs(): string[] {
+  return predictions.map((p) => p.slug);
 }

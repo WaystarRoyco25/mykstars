@@ -4,6 +4,7 @@ import type {
   Gallery,
   MediaItem,
   Orientation,
+  Prediction,
   Ranking,
   Source,
   StarEvent,
@@ -938,5 +939,166 @@ export const events: StarEvent[] = [
     region: "korea",
     source: STRAY_KIDS_TOUR,
     ticketUrl: "https://straykidstour.org",
+  },
+];
+
+// ---------------------------------------------------------------------------
+// PREDICTIONS — the "Fan Forecast".
+// ---------------------------------------------------------------------------
+// A curated handful of vote-only questions on PROFESSIONAL outcomes (awards,
+// charts, comebacks, box office, tours, campaigns) — never private lives. Each
+// resolves against an objective, public, dated source. Vote tallies are now LIVE
+// from Supabase (see data.ts); the per-option `sampleVotes` below are legacy and
+// no longer read — real counts start at zero. The set is anchored to NOW
+// (2026-06-21) so it spans every lifecycle state: open questions, one fresh, one
+// closed-awaiting-result, and one already resolved.
+const MAMA_AWARDS: Source = { name: "MAMA Awards", url: "https://www.mnetplus.world", kind: "official" };
+const CIRCLE_CHART: Source = { name: "Circle Chart", url: "https://circlechart.kr", kind: "official" };
+const HANTEO: Source = { name: "Hanteo Chart", url: "https://www.hanteochart.com", kind: "official" };
+const KOBIS: Source = { name: "KOBIS · Korean Film Council", url: "https://www.kobis.or.kr", kind: "official" };
+const YONHAP: Source = { name: "Yonhap News", url: "https://en.yna.co.kr", kind: "wire" };
+const WEVERSE: Source = { name: "Weverse (official)", url: "https://weverse.io", kind: "official" };
+
+export const predictions: Prediction[] = [
+  // ===================== K-POP =====================
+  {
+    slug: "aespa-daesang-mama-2026",
+    pillar: "k-pop",
+    category: "award",
+    question: "Will aespa win a Daesang (Grand Prize) at the 2026 MAMA Awards?",
+    framing: "Where fan confidence sits as awards season approaches — hope, not a forecast.",
+    opensAt: "2026-06-01T00:00:00+09:00",
+    closesAt: "2026-11-25T00:00:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes — at least one Daesang", artistSlug: "aespa", sampleVotes: 612 },
+      { id: "no", label: "No Daesang this year", sampleVotes: 388 },
+    ],
+    resolutionSourceLabel: "Resolves on the official 2026 MAMA Awards winners announcement.",
+    resolutionSource: MAMA_AWARDS,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
+  },
+  {
+    slug: "newjeans-next-single-circle-no1",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will NewJeans' next single debut at #1 on the Circle Digital Chart?",
+    framing: "The fandom's read on comeback momentum, expressed as a pick.",
+    opensAt: "2026-06-10T00:00:00+09:00",
+    closesAt: "2026-08-31T00:00:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes — #1 debut", artistSlug: "newjeans", sampleVotes: 845 },
+      { id: "no", label: "No — outside #1", sampleVotes: 402 },
+    ],
+    resolutionSourceLabel: "Resolves on the weekly Circle Digital Chart covering the release week.",
+    resolutionSource: CIRCLE_CHART,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
+  },
+  {
+    slug: "bts-arirang-2027-legs",
+    pillar: "k-pop",
+    category: "tour",
+    question: "Will BTS announce additional 2027 ARIRANG World Tour dates before year-end?",
+    framing: "A fresh question — be the first to call it.",
+    opensAt: "2026-06-20T00:00:00+09:00",
+    closesAt: "2026-12-31T00:00:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes — new 2027 legs", sampleVotes: 0 },
+      { id: "no", label: "No new dates this year", sampleVotes: 0 },
+    ],
+    resolutionSourceLabel: "Resolves on official tour announcements via Weverse / BIGHIT MUSIC.",
+    resolutionSource: WEVERSE,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
+  },
+  {
+    slug: "seventeen-summer-comeback-first-week",
+    pillar: "k-pop",
+    category: "comeback",
+    question: "Will SEVENTEEN's summer comeback top 2 million first-week sales?",
+    framing: "Voting has closed — the official count will settle it.",
+    opensAt: "2026-05-20T00:00:00+09:00",
+    closesAt: "2026-06-20T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes — 2M+ in week one", sampleVotes: 1043 },
+      { id: "no", label: "No — under 2M", sampleVotes: 506 },
+    ],
+    resolutionSourceLabel: "Resolves on Hanteo Chart first-week (initial) sales for the release.",
+    resolutionSource: HANTEO,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
+  },
+
+  // ===================== K-DRAMA =====================
+  {
+    slug: "blue-dragon-series-daesang-2026",
+    pillar: "k-drama",
+    category: "award",
+    question: "Who will take the Daesang at the 2026 Blue Dragon Series Awards?",
+    framing: "Fan favourites going into the ceremony — sentiment, not prediction.",
+    opensAt: "2026-06-15T00:00:00+09:00",
+    closesAt: "2026-11-21T00:00:00+09:00",
+    status: "open",
+    options: [
+      { id: "kim-tae-ri", label: "Kim Tae-ri", artistSlug: "kim-tae-ri", sampleVotes: 421 },
+      { id: "park-eun-bin", label: "Park Eun-bin", artistSlug: "park-eun-bin", sampleVotes: 388 },
+      { id: "lee-min-ho", label: "Lee Min-ho", artistSlug: "lee-min-ho", sampleVotes: 244 },
+      { id: "other", label: "Someone else", sampleVotes: 197 },
+    ],
+    resolutionSourceLabel: "Resolves on the official 2026 Blue Dragon Series Awards results.",
+    resolutionSource: YONHAP,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
+  },
+
+  // ===================== K-MOVIE =====================
+  {
+    slug: "park-chan-wook-opening-3m",
+    pillar: "k-movie",
+    category: "box-office",
+    question: "Did Park Chan-wook's new film cross 3 million admissions in its first 10 days?",
+    framing: "Resolved — here's how the fan call landed against the box office.",
+    opensAt: "2026-05-15T00:00:00+09:00",
+    closesAt: "2026-06-05T00:00:00+09:00",
+    status: "resolved",
+    options: [
+      { id: "yes", label: "Yes — 3M+ in 10 days", artistSlug: "park-chan-wook", sampleVotes: 734 },
+      { id: "no", label: "No — under 3M", sampleVotes: 415 },
+    ],
+    resolutionSourceLabel: "Resolved on KOBIS cumulative admissions (first 10 days).",
+    resolutionSource: KOBIS,
+    resolution: {
+      winningOptionId: "yes",
+      resolvedAt: "2026-06-15T00:00:00+09:00",
+      source: KOBIS,
+      note: "Crossed 3 million admissions on day 9 per KOBIS daily tallies.",
+    },
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
+  },
+
+  // ===================== FASHION & BEAUTY =====================
+  {
+    slug: "jung-hoyeon-luxury-ambassador-2026",
+    pillar: "fashion-beauty",
+    category: "campaign",
+    question: "Will Jung Ho-yeon be named a global house ambassador for a Fall 2026 campaign?",
+    framing: "Front-row buzz, turned into a pick.",
+    opensAt: "2026-06-12T00:00:00+09:00",
+    closesAt: "2026-12-15T00:00:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes — a global ambassadorship", artistSlug: "jung-hoyeon", sampleVotes: 559 },
+      { id: "no", label: "Not this season", sampleVotes: 318 },
+    ],
+    resolutionSourceLabel: "Resolves on an official house announcement (reported via Vogue Korea).",
+    resolutionSource: VOGUE_KOREA,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-06-21T00:00:00+09:00",
   },
 ];

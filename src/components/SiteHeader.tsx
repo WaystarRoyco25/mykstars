@@ -14,6 +14,7 @@ const UTILITY_NAV = [
   { label: "People", href: "/artists" },
   { label: "News", href: "/news" },
   { label: "Schedule", href: "/schedule" },
+  { label: "Forecast", href: "/predictions" },
 ];
 
 export default function SiteHeader() {

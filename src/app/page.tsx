@@ -1,6 +1,12 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { getArticles, getFeaturedGallery, getGalleriesForPillar, getRankings } from "@/lib/data";
+import {
+  getArticles,
+  getFeaturedGallery,
+  getGalleriesForPillar,
+  getOpenPredictions,
+  getRankings,
+} from "@/lib/data";
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
 import type { Pillar } from "@/lib/types";
 import { relativeTime } from "@/lib/format";
@@ -9,6 +15,7 @@ import AttributionBadge from "@/components/AttributionBadge";
 import GalleryGrid from "@/components/GalleryGrid";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
+import PredictionCard from "@/components/PredictionCard";
 import JsonLd from "@/components/JsonLd";
 
 // Tiles per pillar band, weighted to coverage (K-Pop > K-Drama > Fashion > K-Movie).
@@ -21,7 +28,7 @@ const BAND_COUNT: Record<Pillar, number> = {
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
-  const [bands, articles, rankings] = await Promise.all([
+  const [bands, articles, rankings, forecasts] = await Promise.all([
     Promise.all(
       PILLAR_ORDER.map(async (pillar) => ({
         pillar,
@@ -32,9 +39,12 @@ export default async function HomePage() {
     ),
     getArticles(),
     getRankings(),
+    getOpenPredictions(),
   ]);
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
+  // A small teaser of open questions drives the return-visit loop from the home page.
+  const topForecasts = forecasts.slice(0, 3);
 
   return (
     <>
@@ -99,6 +109,25 @@ export default async function HomePage() {
             </Fragment>
           );
         })}
+
+      {/* Fan Forecast — predictions teaser, the return-visit hook */}
+      {topForecasts.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 mt-16">
+          <div className="flex items-end justify-between mb-6">
+            <Link href="/predictions" className="group inline-block">
+              <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
+            </Link>
+            <Link href="/predictions" className="label hover:text-bone transition-colors">
+              All forecasts →
+            </Link>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-3">
+            {topForecasts.map((p) => (
+              <PredictionCard key={p.slug} prediction={p} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Analysis — light editorial band */}
       <section className="bg-bone text-ink mt-16">

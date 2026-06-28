@@ -290,3 +290,84 @@ export interface StarEvent {
   source: Source; // attribution — every event links back to its source
   note?: string; // optional one-line neutral context
 }
+
+// ---------------------------------------------------------------------------
+// Predictions — the "Fan Forecast". A curated, vote-only fan-sentiment meter on
+// professional K-culture outcomes: awards, charts, comebacks, box office, tours.
+// Framed honestly as what fans believe & hope, NOT a neutral oracle. Two hard
+// rules: (1) professional outcomes only — never private lives, relationships,
+// health or misfortune; (2) every question resolves against an objective, public,
+// dated source. Until real voting is wired, tallies are illustrative samples
+// (sample: true), flagged in the UI — the same honesty model as the rankings.
+// ---------------------------------------------------------------------------
+export type PredictionCategory =
+  | "award"
+  | "chart"
+  | "comeback"
+  | "box-office"
+  | "tour"
+  | "debut"
+  | "campaign";
+
+export const PREDICTION_CATEGORY_LABELS: Record<PredictionCategory, string> = {
+  award: "Awards",
+  chart: "Charts",
+  comeback: "Comeback",
+  "box-office": "Box office",
+  tour: "Tour",
+  debut: "Debut",
+  campaign: "Campaign",
+};
+
+// open → closed (voting cutoff) → resolved. `status` is the stored value; the
+// open→closed transition is time-derived from closesAt (see effectiveStatus in
+// data.ts), so no scheduler is needed to close voting.
+export type PredictionStatus = "open" | "closed" | "resolved";
+
+export interface PredictionOption {
+  id: string; // stable within its prediction; the vote/resolution key
+  label: string; // "Yes" / "No", or a nominee name
+  artistSlug?: string; // links the option to /artists/{slug} where we cover them
+  sampleVotes?: number; // illustrative tally until real voting lands (sample: true)
+}
+
+export interface Resolution {
+  winningOptionId: string;
+  resolvedAt: string; // ISO date the outcome became official
+  source: Source; // the objective, public source proving it
+  note?: string; // one-line neutral context
+}
+
+export interface Prediction {
+  slug: string;
+  pillar: Pillar; // reuses the pillar axis → enables per-pillar surfacing/leaderboards
+  category: PredictionCategory;
+  question: string; // "Will aespa win a Daesang at the 2026 MAMA Awards?"
+  framing: string; // hype/sentiment standfirst — "what fans believe & hope"
+  opensAt: string; // ISO datetime
+  closesAt: string; // ISO datetime — voting cutoff; drives the D-Day countdown
+  status: PredictionStatus; // stored status; effectiveStatus() derives close-by-time
+  options: PredictionOption[];
+  resolutionSourceLabel: string; // human label shown while open ("Resolves: official MAMA winners list")
+  resolutionSource: Source; // the dated, objective source that will settle it
+  resolution?: Resolution; // present iff resolved
+  tallyVisibleThreshold: number; // hide exact counts below this many votes (cold-start)
+  sample?: boolean; // tallies are illustrative placeholders, not real votes yet
+  asOf: string; // ISO — honesty "as of" date, mirrors Ranking.asOf
+}
+
+// Read-model returned by the data layer (never raw vote rows). In PR0 it is
+// derived from seed sampleVotes; once a DB is wired the shape is unchanged.
+export interface PredictionTallyOption {
+  optionId: string;
+  votes: number;
+  pct: number; // 0..100, rounded; 0 when there are no votes
+}
+
+export interface PredictionTally {
+  predictionSlug: string;
+  totalVotes: number;
+  perOption: PredictionTallyOption[];
+  revealed: boolean; // false while totalVotes < tallyVisibleThreshold
+  asOf: string;
+}
