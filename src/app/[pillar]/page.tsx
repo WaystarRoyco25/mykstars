@@ -25,6 +25,7 @@ import GalleryGrid from "@/components/GalleryGrid";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import JsonLd from "@/components/JsonLd";
+import { renderEmphasis } from "@/lib/text";
 
 // Only the four pillar slugs are valid; anything else 404s (no catch-all surprise).
 export const dynamicParams = false;
@@ -34,8 +35,8 @@ export function generateStaticParams() {
 }
 
 const PILLAR_BLURBS: Record<string, string> = {
-  "k-pop": "Comebacks, stages, airport fashion and pictorials — organized and credited.",
-  "k-drama": "Stills, casting, press lines and where to watch — the K-drama desk.",
+  "k-pop": "Comebacks, stages, airport fashion and pictorials, organized and credited.",
+  "k-drama": "Stills, casting, press lines and where to watch: the K-drama desk.",
   "k-movie": "Festivals, directors and the films travelling the international circuit.",
   "fashion-beauty": "Pictorials, house campaigns and front-row fashion across K-culture.",
 };
@@ -53,7 +54,7 @@ export async function generateMetadata({
   return {
     title: label,
     description,
-    openGraph: { title: `${label} — MyKStars`, description, type: "website" },
+    openGraph: { title: `${label} · MyKStars`, description, type: "website" },
   };
 }
 
@@ -89,7 +90,7 @@ export default async function PillarPage({
     <>
       <p className="kicker">{PILLAR_LABELS[pillar]} · Featured</p>
       <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
-        {featured.title}
+        {renderEmphasis(featured.title)}
       </h2>
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-bone">
         <span className="label text-bone">{featured.media.length} photos</span>
@@ -107,7 +108,7 @@ export default async function PillarPage({
         data={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: `${PILLAR_LABELS[pillar]} — MyKStars`,
+          name: `${PILLAR_LABELS[pillar]} · MyKStars`,
           description: PILLAR_BLURBS[pillar],
         }}
       />

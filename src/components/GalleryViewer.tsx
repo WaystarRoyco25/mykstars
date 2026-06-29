@@ -5,6 +5,7 @@ import type { MediaItem } from "@/lib/types";
 import PhotoMedia from "./PhotoMedia";
 import AttributionBadge from "./AttributionBadge";
 import { IconChevronLeft, IconChevronRight } from "./icons";
+import { renderEmphasis } from "@/lib/text";
 
 // Swipeable, keyboard-navigable gallery stage + filmstrip. Each frame shows its
 // own credit, reinforcing per-image attribution.
@@ -66,7 +67,7 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-4">
-        <p className="text-sm text-muted">{current.alt}</p>
+        <p className="text-sm text-muted">{renderEmphasis(current.alt)}</p>
         <AttributionBadge source={current.credit} />
       </div>
 

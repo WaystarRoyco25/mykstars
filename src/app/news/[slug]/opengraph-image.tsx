@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getArticle } from "@/lib/data";
+import { stripEmphasis } from "@/lib/text";
 
 export const alt = "MyKStars analysis";
 export const size = { width: 1200, height: 630 };
@@ -18,7 +19,7 @@ export default async function ArticleOg({
 }) {
   const { slug } = await params;
   const article = await getArticle(slug);
-  const title = article?.title ?? "MyKStars";
+  const title = stripEmphasis(article?.title ?? "MyKStars");
   const status = article ? STATUS_LABEL[article.status] : "NEWS";
 
   return new ImageResponse(

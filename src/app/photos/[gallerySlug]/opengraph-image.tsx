@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getGallery } from "@/lib/data";
+import { stripEmphasis } from "@/lib/text";
 import { TAG_LABELS } from "@/lib/types";
 
 export const alt = "MyKStars gallery";
@@ -13,7 +14,7 @@ export default async function GalleryOg({
 }) {
   const { gallerySlug } = await params;
   const gallery = await getGallery(gallerySlug);
-  const title = gallery?.title ?? "MyKStars";
+  const title = stripEmphasis(gallery?.title ?? "MyKStars");
   const kicker = gallery
     ? `${TAG_LABELS[gallery.category].toUpperCase()} · VIA ${gallery.source.name.toUpperCase()}`
     : "MYKSTARS";

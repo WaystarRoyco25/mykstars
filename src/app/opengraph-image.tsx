@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "MyKStars — K-stars, in focus";
+export const alt = "MyKStars: K-stars, in focus";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -30,7 +30,7 @@ export default function OpengraphImage() {
           <span style={{ color: "#cc001e" }}>Stars</span>
         </div>
         <div style={{ fontSize: 30, color: "#b3b3b3", maxWidth: 900 }}>
-          The freshest, credited photos of Korean celebrities — plus credible analysis.
+          The freshest, credited photos of Korean celebrities, plus credible analysis.
         </div>
       </div>
     ),

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { MediaItem } from "@/lib/types";
 import EmbedFacade from "./EmbedFacade";
+import { stripEmphasis } from "@/lib/text";
 import { IconCamera } from "./icons";
 
 const TONES = ["#141414", "#171717", "#1b1b1b", "#191617"];
@@ -34,7 +35,7 @@ export default function PhotoMedia({
     return (
       <Image
         src={item.src}
-        alt={item.alt}
+        alt={stripEmphasis(item.alt)}
         fill
         sizes={sizes}
         priority={priority}
@@ -48,7 +49,7 @@ export default function PhotoMedia({
   return (
     <div
       role="img"
-      aria-label={item.alt}
+      aria-label={stripEmphasis(item.alt)}
       className="absolute inset-0 flex items-center justify-center"
       style={{ background: bg }}
     >

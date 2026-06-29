@@ -11,6 +11,7 @@ import GalleryGrid from "@/components/GalleryGrid";
 import ArticleListItem from "@/components/ArticleListItem";
 import JsonLd from "@/components/JsonLd";
 import { roleLabel } from "@/lib/people";
+import { renderEmphasis, stripEmphasis } from "@/lib/text";
 
 export function generateStaticParams() {
   return allArtistSlugs().map((artistSlug) => ({ artistSlug }));
@@ -26,7 +27,7 @@ export async function generateMetadata({
   if (!artist) return { title: "Artist not found" };
   return {
     title: artist.name,
-    description: `${artist.name} — photo timeline, profile and the latest credited galleries on MyKStars.`,
+    description: `${artist.name}: photo timeline, profile and the latest credited galleries on MyKStars.`,
   };
 }
 
@@ -52,7 +53,7 @@ export default async function ArtistPage({
           "@type": artist.type === "group" ? "MusicGroup" : "Person",
           name: artist.name,
           alternateName: artist.koreanName,
-          description: artist.bio,
+          description: stripEmphasis(artist.bio),
         }}
       />
 
@@ -74,7 +75,7 @@ export default async function ArtistPage({
           {artist.agency ? ` · ${artist.agency}` : ""}
           {artist.debutYear ? ` · Debuted ${artist.debutYear}` : ""}
         </p>
-        <p className="text-muted mt-4 max-w-2xl leading-relaxed">{artist.bio}</p>
+        <p className="text-muted mt-4 max-w-2xl leading-relaxed">{renderEmphasis(artist.bio)}</p>
       </header>
 
       <section className="mb-16">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Ranking, RankingRow } from "@/lib/types";
 import { absoluteDate } from "@/lib/format";
+import { renderEmphasis } from "@/lib/text";
 
 // A scannable K-Culture chart table, interleaved between photo bands to break up
 // the feed. Server component (no client JS), styled to the editorial-noir system:
@@ -33,9 +34,11 @@ function RowName({ row }: { row: RankingRow }) {
   const inner = (
     <span className="inline-flex flex-col">
       <span className="font-serif text-base sm:text-lg leading-tight group-hover:text-crimson transition-colors">
-        {row.name}
+        {renderEmphasis(row.name)}
       </span>
-      {row.detail && <span className="label text-muted mt-0.5">{row.detail}</span>}
+      {row.detail && (
+        <span className="label text-muted mt-0.5">{renderEmphasis(row.detail)}</span>
+      )}
     </span>
   );
   return row.artistSlug ? (
@@ -61,9 +64,11 @@ export default function RankingTable({
     <section className={className}>
       <div className="flex items-end justify-between gap-4 mb-5">
         <div>
-          <h2 className="kicker">{ranking.title}</h2>
+          <h2 className="kicker">{renderEmphasis(ranking.title)}</h2>
           {ranking.blurb && (
-            <p className="text-muted text-sm mt-1.5 max-w-xl leading-relaxed">{ranking.blurb}</p>
+            <p className="text-muted text-sm mt-1.5 max-w-xl leading-relaxed">
+              {renderEmphasis(ranking.blurb)}
+            </p>
           )}
         </div>
         <span className="label whitespace-nowrap">{ranking.period}</span>

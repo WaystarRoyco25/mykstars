@@ -6,6 +6,7 @@ import { absoluteDate } from "@/lib/format";
 import StatusFlag from "@/components/StatusFlag";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
+import { renderEmphasis, stripEmphasis } from "@/lib/text";
 
 export function generateStaticParams() {
   return allArticleSlugs().map((slug) => ({ slug }));
@@ -19,10 +20,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = await getArticle(slug);
   if (!article) return { title: "Article not found" };
+  const title = stripEmphasis(article.title);
+  const description = stripEmphasis(article.dek);
   return {
-    title: article.title,
-    description: article.dek,
-    openGraph: { title: article.title, description: article.dek, type: "article" },
+    title,
+    description,
+    openGraph: { title, description, type: "article" },
   };
 }
 
@@ -48,8 +51,8 @@ export default async function ArticlePage({
         data={{
           "@context": "https://schema.org",
           "@type": "NewsArticle",
-          headline: article.title,
-          description: article.dek,
+          headline: stripEmphasis(article.title),
+          description: stripEmphasis(article.dek),
           datePublished: article.date,
           author: { "@type": "Person", name: article.author },
           publisher: { "@type": "Organization", name: "MyKStars" },
@@ -62,8 +65,10 @@ export default async function ArticlePage({
 
       <header className="mb-8">
         <StatusFlag status={article.status} />
-        <h1 className="font-serif text-3xl sm:text-4xl leading-tight mt-4">{article.title}</h1>
-        <p className="text-lg text-muted mt-4 leading-relaxed">{article.dek}</p>
+        <h1 className="font-serif text-3xl sm:text-4xl leading-tight mt-4">
+          {renderEmphasis(article.title)}
+        </h1>
+        <p className="text-lg text-muted mt-4 leading-relaxed">{renderEmphasis(article.dek)}</p>
         <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-muted border-t border-line pt-5">
           <span>{article.author}</span>
           <span>·</span>
@@ -79,7 +84,7 @@ export default async function ArticlePage({
 
       <div className="flex flex-col gap-5 text-[1.0625rem] leading-[1.75] text-bone/90">
         {article.body.map((p, i) => (
-          <p key={i}>{p}</p>
+          <p key={i}>{renderEmphasis(p)}</p>
         ))}
       </div>
 

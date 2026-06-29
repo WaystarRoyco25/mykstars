@@ -61,7 +61,7 @@ export function eventDate(dateIso: string): string {
   }).format(new Date(`${dateIso.slice(0, 10)}T00:00:00Z`));
 }
 
-// "Aug 15–16, 2026" for a multi-night run; falls back to a single date.
+// "Aug 15-16, 2026" for a multi-night run; falls back to a single date.
 export function eventDateRange(startIso: string, endIso?: string): string {
   if (!endIso) return eventDate(startIso);
   const sameMonth = startIso.slice(0, 7) === endIso.slice(0, 7);
@@ -76,9 +76,9 @@ export function eventDateRange(startIso: string, endIso?: string): string {
       year: "numeric",
       timeZone: "UTC",
     }).format(new Date(`${endIso.slice(0, 10)}T00:00:00Z`));
-    return `${startDay}–${endDay}`;
+    return `${startDay}-${endDay}`;
   }
-  return `${eventDate(startIso)} – ${eventDate(endIso)}`;
+  return `${eventDate(startIso)} to ${eventDate(endIso)}`;
 }
 
 // "August 2026" — the month-group heading on the schedule page.

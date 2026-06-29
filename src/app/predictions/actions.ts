@@ -51,7 +51,7 @@ export async function castVote(slug: string, optionId: string): Promise<VoteResu
       { prediction_slug: slug, option_id: optionId, voter_id: voterId },
       { onConflict: "prediction_slug,voter_id" },
     );
-  if (error) return { ok: false, error: "Couldn't record your vote — please try again." };
+  if (error) return { ok: false, error: "Couldn't record your vote. Please try again." };
 
   // Refresh the live tallies everywhere this question surfaces.
   revalidatePath(`/predictions/${slug}`);

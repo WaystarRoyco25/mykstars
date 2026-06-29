@@ -72,7 +72,7 @@ export default function TakedownForm() {
       </label>
 
       {state === "error" && (
-        <p className="text-crimson text-sm">Something went wrong — please email dmca@mykstars.com.</p>
+        <p className="text-crimson text-sm">Something went wrong. Please email dmca@mykstars.com.</p>
       )}
 
       <button

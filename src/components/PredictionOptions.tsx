@@ -1,5 +1,6 @@
 import TallyBar from "./TallyBar";
 import type { Prediction, PredictionStatus, PredictionTally } from "@/lib/types";
+import { renderEmphasis } from "@/lib/text";
 
 // Renders a prediction's options. Once the vote total clears the reveal threshold
 // (or the question is resolved) it shows the sentiment bars; below the threshold
@@ -33,7 +34,7 @@ export default function PredictionOptions({
             key={o.id}
             className="border-b border-line py-3 font-serif text-base sm:text-lg text-bone"
           >
-            {o.label}
+            {renderEmphasis(o.label)}
           </div>
         ) : (
           <div key={o.id} className="border-b border-line">
@@ -54,7 +55,7 @@ export default function PredictionOptions({
             ? "Be the first to call it."
             : `${tally.totalVotes.toLocaleString("en-US")} ${
                 tally.totalVotes === 1 ? "fan has" : "fans have"
-              } weighed in — the breakdown reveals at ${prediction.tallyVisibleThreshold} votes.`}
+              } weighed in. The breakdown reveals at ${prediction.tallyVisibleThreshold} votes.`}
         </p>
       )}
     </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { renderEmphasis } from "@/lib/text";
 
 // One option's share of the vote, as a labeled bar. Editorial-noir: crimson fill
 // for the leading / winning option, muted for the rest, on an ink-2 track. The
@@ -20,10 +21,10 @@ export default function TallyBar({
   const isWinner = highlight === "winner";
   const name = artistSlug ? (
     <Link href={`/artists/${artistSlug}`} className="hover:text-crimson transition-colors">
-      {label}
+      {renderEmphasis(label)}
     </Link>
   ) : (
-    label
+    renderEmphasis(label)
   );
   const fill = isWinner ? "bg-crimson" : highlight === "leading" ? "bg-crimson/60" : "bg-muted-2";
 

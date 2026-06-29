@@ -3,6 +3,7 @@ import type { Gallery } from "@/lib/types";
 import { TAG_LABELS } from "@/lib/types";
 import { aspectClass, orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
+import { renderEmphasis } from "@/lib/text";
 import PhotoMedia from "./PhotoMedia";
 import AttributionBadge from "./AttributionBadge";
 
@@ -45,7 +46,7 @@ export default function PhotoCard({
         <span className="label text-muted">{gallery.media.length} photos</span>
       </div>
       <h3 className="font-serif text-lg leading-snug mt-1.5 group-hover:text-crimson transition-colors">
-        {gallery.title}
+        {renderEmphasis(gallery.title)}
       </h3>
       <div className="mt-2 flex items-center gap-2 text-xs text-muted">
         <span>{relativeTime(gallery.date)}</span>

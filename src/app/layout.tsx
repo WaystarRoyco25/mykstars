@@ -20,16 +20,16 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mykstars.com"),
   title: {
-    default: "MyKStars — K-stars, in focus",
-    template: "%s — MyKStars",
+    default: "MyKStars: K-stars, in focus",
+    template: "%s · MyKStars",
   },
   description:
-    "The world's photo-first K-Culture newspaper and magazine: the freshest organized, credited photos of Korean celebrities — airport, red carpet, comeback, event and pictorial — plus credible analysis.",
+    "The world's photo-first K-Culture newspaper and magazine: the freshest organized, credited photos of Korean celebrities (airport, red carpet, comeback, event and pictorial), plus credible analysis.",
   applicationName: "MyKStars",
   openGraph: {
     siteName: "MyKStars",
     type: "website",
-    title: "MyKStars — K-stars, in focus",
+    title: "MyKStars: K-stars, in focus",
     description:
       "The freshest organized, credited photos of Korean celebrities, plus credible analysis.",
   },

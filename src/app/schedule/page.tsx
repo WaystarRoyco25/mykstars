@@ -10,11 +10,12 @@ import DDayBadge from "@/components/DDayBadge";
 import ScheduleFilter from "@/components/ScheduleFilter";
 import JsonLd from "@/components/JsonLd";
 import { IconArrowUpRight } from "@/components/icons";
+import { renderEmphasis, stripEmphasis } from "@/lib/text";
 
 export const metadata: Metadata = {
   title: "Schedule",
   description:
-    "A D-Day countdown to officially-announced K-pop concerts and fan meetings worldwide — international stops first, filterable by region and type.",
+    "A D-Day countdown to officially-announced K-pop concerts and fan meetings worldwide. International stops first, filterable by region and type.",
 };
 
 const VALID_REGIONS = new Set<string>(REGION_ORDER);
@@ -46,13 +47,15 @@ function EventRow({ event }: { event: StarEvent }) {
             )}
             <span className="label text-muted-2">{EVENT_TYPE_LABELS[event.type]}</span>
           </div>
-          {event.tour && <p className="text-muted text-sm mt-1">{event.tour}</p>}
+          {event.tour && <p className="text-muted text-sm mt-1">{renderEmphasis(event.tour)}</p>}
           <p className="text-sm text-muted mt-2">
             {event.city}, {event.country}
             {event.venue ? ` · ${event.venue}` : ""}
           </p>
           {event.note && (
-            <p className="text-xs text-muted-2 mt-1.5 max-w-prose leading-relaxed">{event.note}</p>
+            <p className="text-xs text-muted-2 mt-1.5 max-w-prose leading-relaxed">
+              {renderEmphasis(event.note)}
+            </p>
           )}
         </div>
 
@@ -107,13 +110,13 @@ export default async function SchedulePage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "MyKStars — K-culture concert & fan-meeting schedule",
+    name: "MyKStars · K-culture concert & fan-meeting schedule",
     itemListElement: events.map((e, i) => ({
       "@type": "ListItem",
       position: i + 1,
       item: {
         "@type": e.type === "concert" ? "MusicEvent" : "Event",
-        name: `${e.headliner}${e.tour ? ` — ${e.tour}` : ""}`,
+        name: `${e.headliner}${e.tour ? `: ${stripEmphasis(e.tour)}` : ""}`,
         startDate: e.date,
         ...(e.endDate ? { endDate: e.endDate } : {}),
         eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
@@ -140,7 +143,7 @@ export default async function SchedulePage({
         <h1 className="font-serif text-4xl sm:text-5xl mt-2">D-Day calendar</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
           Officially-announced concerts and fan meetings, counting down to the day. Built for fans
-          outside Korea — international stops lead; switch regions or filter by type below.
+          outside Korea. International stops lead; switch regions or filter by type below.
         </p>
       </header>
 
@@ -167,7 +170,7 @@ export default async function SchedulePage({
 
       <p className="text-xs text-muted-2 mt-12 max-w-2xl leading-relaxed">
         Dates are compiled from official announcements and ticketing pages and are accurate as of
-        June 2026. Tour schedules change — always confirm with the official link before booking
+        June 2026. Tour schedules change, so always confirm with the official link before booking
         travel.
       </p>
     </div>

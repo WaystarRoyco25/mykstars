@@ -21,8 +21,8 @@ export default async function ArtistsPage() {
         <p className="kicker">People</p>
         <h1 className="font-serif text-4xl sm:text-5xl mt-2">Hubs</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-          A photo timeline and profile for each person — idols, actors and
-          directors — the Naver profile page, in English.
+          A photo timeline and profile for each person (idols, actors and
+          directors): the Naver profile page, in English.
         </p>
       </header>
 

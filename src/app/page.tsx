@@ -17,6 +17,7 @@ import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
 import JsonLd from "@/components/JsonLd";
+import { renderEmphasis } from "@/lib/text";
 
 // Tiles per pillar band, weighted to coverage (K-Pop > K-Drama > Fashion > K-Movie).
 const BAND_COUNT: Record<Pillar, number> = {
@@ -60,7 +61,7 @@ export default async function HomePage() {
       />
 
       <h1 className="sr-only">
-        MyKStars — the freshest organized, credited photos of Korean celebrities
+        MyKStars: the freshest organized, credited photos of Korean celebrities
       </h1>
 
       {/* Hero — global featured gallery */}
@@ -74,7 +75,7 @@ export default async function HomePage() {
                 {PILLAR_LABELS[featured.pillar]} · {TAG_LABELS[featured.category]} · Featured
               </p>
               <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
-                {featured.title}
+                {renderEmphasis(featured.title)}
               </h2>
               <div className="mt-4 flex items-center gap-3 text-sm text-bone">
                 <span className="label text-bone">{featured.media.length} photos</span>

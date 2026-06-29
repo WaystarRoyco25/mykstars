@@ -17,7 +17,7 @@ export default async function NewsPage() {
         <p className="kicker">News &amp; analysis</p>
         <h1 className="font-serif text-4xl sm:text-5xl mt-2">The context</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-          Neutral reporting with the photo context — and a clear label on what is
+          Neutral reporting with the photo context, and a clear label on what is
           confirmed versus unverified.
         </p>
       </header>

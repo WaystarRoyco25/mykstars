@@ -1,5 +1,6 @@
 import type { MediaItem } from "@/lib/types";
 import { IconArrowUpRight, IconCamera } from "./icons";
+import { stripEmphasis } from "@/lib/text";
 
 const PLATFORM_LABEL: Record<string, string> = {
   instagram: "Instagram",
@@ -25,7 +26,7 @@ export default function EmbedFacade({
       href={item.embedUrl ?? item.credit.url}
       target="_blank"
       rel="nofollow noopener noreferrer"
-      aria-label={`${item.alt} — view on ${platform}`}
+      aria-label={`${stripEmphasis(item.alt)}, view on ${platform}`}
       className={`group flex h-full w-full flex-col items-center justify-center gap-3 bg-ink-2 text-bone ${className}`}
     >
       <IconCamera size={26} className="text-muted-2" />

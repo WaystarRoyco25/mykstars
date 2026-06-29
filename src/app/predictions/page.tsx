@@ -5,11 +5,12 @@ import type { Pillar } from "@/lib/types";
 import PredictionCard from "@/components/PredictionCard";
 import PredictionFilter from "@/components/PredictionFilter";
 import JsonLd from "@/components/JsonLd";
+import { stripEmphasis } from "@/lib/text";
 
 export const metadata: Metadata = {
   title: "Fan Forecast",
   description:
-    "Predict the next big moments in K-culture — awards, charts, comebacks and box office. A vote-only fan-sentiment meter: what fans believe and hope, not a betting market.",
+    "Predict the next big moments in K-culture: awards, charts, comebacks and box office. A vote-only fan-sentiment meter: what fans believe and hope, not a betting market.",
 };
 
 export default async function PredictionsPage({
@@ -25,11 +26,11 @@ export default async function PredictionsPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "MyKStars — Fan Forecast",
+    name: "MyKStars · Fan Forecast",
     itemListElement: predictions.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: p.question,
+      name: stripEmphasis(p.question),
     })),
   };
 
@@ -41,7 +42,7 @@ export default async function PredictionsPage({
         <p className="kicker">Fan Forecast</p>
         <h1 className="font-serif text-4xl sm:text-5xl mt-2">Call it before it happens</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-          A fan-sentiment meter for the moments ahead — awards, charts, comebacks, box office. Cast
+          A fan-sentiment meter for the moments ahead: awards, charts, comebacks, box office. Cast
           your pick, then come back when it resolves. This is for fun and for fandom: what fans
           believe and hope, never a bet.
         </p>
@@ -62,7 +63,7 @@ export default async function PredictionsPage({
       )}
 
       <p className="text-xs text-muted-2 mt-12 max-w-2xl leading-relaxed">
-        Voting is live and anonymous — one pick per question, no account needed. Each breakdown
+        Voting is live and anonymous: one pick per question, no account needed. Each breakdown
         stays hidden until enough fans have weighed in. Every question resolves against an objective,
         public source and covers professional outcomes only.
       </p>

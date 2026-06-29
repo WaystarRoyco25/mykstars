@@ -17,6 +17,7 @@ import JsonLd from "@/components/JsonLd";
 import PredictionOptions from "@/components/PredictionOptions";
 import PredictionStatusBadge from "@/components/PredictionStatusBadge";
 import VoteForm from "@/components/VoteForm";
+import { renderEmphasis, stripEmphasis } from "@/lib/text";
 
 // Known forecast slugs; unknown ones 404 via notFound() below. The page reads
 // the voter cookie, so it renders dynamically per request — live tallies, no
@@ -33,12 +34,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const prediction = await getPrediction(slug);
   if (!prediction) return { title: "Not found" };
+  const question = stripEmphasis(prediction.question);
+  const framing = stripEmphasis(prediction.framing);
   return {
-    title: prediction.question,
-    description: prediction.framing,
+    title: question,
+    description: framing,
     openGraph: {
-      title: `${prediction.question} — MyKStars Fan Forecast`,
-      description: prediction.framing,
+      title: `${question} · MyKStars Fan Forecast`,
+      description: framing,
       type: "website",
     },
   };
@@ -69,7 +72,7 @@ export default async function PredictionDetailPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Question",
-    name: prediction.question,
+    name: stripEmphasis(prediction.question),
     ...(prediction.resolution
       ? { acceptedAnswer: { "@type": "Answer", text: winningLabel } }
       : {}),
@@ -95,8 +98,10 @@ export default async function PredictionDetailPage({
             initialStatus={status}
           />
         </div>
-        <h1 className="font-serif text-3xl sm:text-4xl leading-tight">{prediction.question}</h1>
-        <p className="text-muted mt-3 leading-relaxed">{prediction.framing}</p>
+        <h1 className="font-serif text-3xl sm:text-4xl leading-tight">
+          {renderEmphasis(prediction.question)}
+        </h1>
+        <p className="text-muted mt-3 leading-relaxed">{renderEmphasis(prediction.framing)}</p>
       </header>
 
       <PredictionOptions prediction={prediction} tally={tally} status={status} />
@@ -113,7 +118,7 @@ export default async function PredictionDetailPage({
       {/* Resolution context */}
       {prediction.resolution?.note && (
         <p className="text-sm text-muted mt-6 leading-relaxed border-l-2 border-crimson pl-4">
-          {prediction.resolution.note}
+          {renderEmphasis(prediction.resolution.note)}
         </p>
       )}
 
@@ -125,7 +130,9 @@ export default async function PredictionDetailPage({
         </span>
         <AttributionBadge source={prediction.resolutionSource} className="text-muted" />
       </div>
-      <p className="text-xs text-muted-2 mt-3 leading-relaxed">{prediction.resolutionSourceLabel}</p>
+      <p className="text-xs text-muted-2 mt-3 leading-relaxed">
+        {renderEmphasis(prediction.resolutionSourceLabel)}
+      </p>
     </div>
   );
 }

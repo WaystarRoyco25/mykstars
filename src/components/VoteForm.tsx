@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { castVote, type VoteResult } from "@/app/predictions/actions";
+import { renderEmphasis } from "@/lib/text";
 
 // The interactive vote control on an open question. Each option is a button;
 // casting (or changing) a pick calls the castVote Server Action, which records
@@ -32,7 +33,7 @@ export default function VoteForm({
   return (
     <div className="mt-6 border border-line p-5">
       <p className="label text-muted mb-3">
-        {voted ? "Your pick — tap another to change it" : "Cast your prediction"}
+        {voted ? "Your pick. Tap another to change it" : "Cast your prediction"}
       </p>
       <div className="flex flex-col gap-2">
         {options.map((o) => {
@@ -50,7 +51,7 @@ export default function VoteForm({
                   : "border-line text-bone hover:border-crimson"
               }`}
             >
-              {o.label}
+              {renderEmphasis(o.label)}
               {isPick && <span className="label text-crimson ml-2 align-middle">Your pick</span>}
             </button>
           );
@@ -58,7 +59,7 @@ export default function VoteForm({
       </div>
       {error && <p className="text-sm text-crimson mt-3">{error}</p>}
       <p className="text-xs text-muted-2 mt-3 leading-relaxed">
-        One pick per question, change it anytime while voting is open. For fun and for fandom — never a bet.
+        One pick per question, change it anytime while voting is open. For fun and for fandom, never a bet.
       </p>
     </div>
   );

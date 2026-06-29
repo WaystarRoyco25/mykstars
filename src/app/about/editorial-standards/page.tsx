@@ -14,7 +14,7 @@ const SECTIONS = [
   },
   {
     h: "Confirmed vs unverified",
-    p: "We attach a Confirmed label only to facts an official source has stated on the record, with that source linked. Unverified marks reporting that is circulating but not confirmed at the source — and we explain what would have to change for the status to update. We do not repeat unconfirmed personal claims as if established.",
+    p: "We attach a Confirmed label only to facts an official source has stated on the record, with that source linked. Unverified marks reporting that is circulating but not confirmed at the source, and we explain what would have to change for the status to update. We do not repeat unconfirmed personal claims as if established.",
   },
   {
     h: "Neutral framing",
@@ -32,7 +32,7 @@ export default function EditorialStandardsPage() {
       <p className="kicker">About</p>
       <h1 className="font-serif text-4xl sm:text-5xl mt-2">Editorial standards</h1>
       <p className="text-muted mt-4 leading-relaxed">
-        MyKStars exists to give global fans the freshest K-celebrity photography —
+        MyKStars exists to give global fans the freshest K-celebrity photography,
         organized, credited, and presented with credible context rather than
         clickbait. These are the rules we hold ourselves to.
       </p>

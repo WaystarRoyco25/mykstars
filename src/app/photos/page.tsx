@@ -5,7 +5,7 @@ import GalleryGrid from "@/components/GalleryGrid";
 export const metadata: Metadata = {
   title: "Photos",
   description:
-    "The freshest organized, credited HD photos of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion — choose a pillar to dive in.",
+    "The freshest organized, credited HD photos of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion. Choose a pillar to dive in.",
 };
 
 export default async function PhotosPage() {
@@ -17,7 +17,7 @@ export default async function PhotosPage() {
         <p className="kicker">Photos</p>
         <h1 className="font-serif text-4xl sm:text-5xl mt-2">The latest, organized</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-          Every set is credited and links back to its source — newest first.
+          Every set is credited and links back to its source, newest first.
           Pick a pillar in the header to focus on K-Pop, K-Drama, Fashion or
           K-Movie.
         </p>

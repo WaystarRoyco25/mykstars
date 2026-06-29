@@ -7,6 +7,7 @@ import { absoluteDate, relativeTime } from "@/lib/format";
 import GalleryViewer from "@/components/GalleryViewer";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
+import { renderEmphasis, stripEmphasis } from "@/lib/text";
 
 export function generateStaticParams() {
   return allGallerySlugs().map((gallerySlug) => ({ gallerySlug }));
@@ -20,10 +21,12 @@ export async function generateMetadata({
   const { gallerySlug } = await params;
   const gallery = await getGallery(gallerySlug);
   if (!gallery) return { title: "Gallery not found" };
+  const title = stripEmphasis(gallery.title);
+  const description = stripEmphasis(gallery.excerpt);
   return {
-    title: gallery.title,
-    description: gallery.excerpt,
-    openGraph: { title: gallery.title, description: gallery.excerpt, type: "article" },
+    title,
+    description,
+    openGraph: { title, description, type: "article" },
   };
 }
 
@@ -46,7 +49,7 @@ export default async function GalleryPage({
         data={{
           "@context": "https://schema.org",
           "@type": "ImageGallery",
-          name: gallery.title,
+          name: stripEmphasis(gallery.title),
           datePublished: gallery.date,
           about: artists.map((a) => ({ "@type": "Person", name: a.name })),
           publisher: { "@type": "Organization", name: "MyKStars" },
@@ -73,7 +76,9 @@ export default async function GalleryPage({
           {TAG_LABELS[gallery.category]}
           {gallery.event ? ` · ${gallery.event}` : ""}
         </p>
-        <h1 className="font-serif text-3xl sm:text-4xl leading-tight mt-3">{gallery.title}</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl leading-tight mt-3">
+          {renderEmphasis(gallery.title)}
+        </h1>
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
           <span>{relativeTime(gallery.date)}</span>
           <span className="text-muted-2">·</span>
@@ -85,7 +90,7 @@ export default async function GalleryPage({
 
       <GalleryViewer media={gallery.media} />
 
-      <p className="text-muted mt-8 leading-relaxed max-w-2xl">{gallery.excerpt}</p>
+      <p className="text-muted mt-8 leading-relaxed max-w-2xl">{renderEmphasis(gallery.excerpt)}</p>
 
       {artists.length > 0 && (
         <div className="mt-8">
