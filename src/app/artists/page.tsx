@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getArtists, getGalleriesByArtist } from "@/lib/data";
-import { roleLabel } from "@/lib/people";
+import ArtistCard from "@/components/ArtistCard";
 
 export const metadata: Metadata = {
   title: "People",
@@ -28,23 +27,7 @@ export default async function ArtistsPage() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
         {artists.map((a, i) => (
-          <Link
-            key={a.slug}
-            href={`/artists/${a.slug}`}
-            className="group bg-ink p-6 hover:bg-ink-2 transition-colors"
-          >
-            <div className="flex items-baseline justify-between gap-3">
-              <h2 className="font-serif text-2xl group-hover:text-crimson transition-colors">
-                {a.name}
-              </h2>
-              {a.koreanName && <span className="text-muted text-sm">{a.koreanName}</span>}
-            </div>
-            <p className="label mt-3 text-muted">
-              {roleLabel(a)}
-              {a.agency ? ` · ${a.agency}` : ""}
-            </p>
-            <p className="label mt-1 text-muted">{counts[i]} photo sets</p>
-          </Link>
+          <ArtistCard key={a.slug} artist={a} photoSets={counts[i]} />
         ))}
       </div>
     </div>

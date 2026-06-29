@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import {
   getArticles,
+  getArtistsInFocus,
   getEvents,
   getFeaturedGallery,
   getGalleriesForPillar,
@@ -19,6 +20,7 @@ import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
 import EventCard from "@/components/EventCard";
+import ArtistCard from "@/components/ArtistCard";
 import JsonLd from "@/components/JsonLd";
 import { renderEmphasis } from "@/lib/text";
 
@@ -32,7 +34,7 @@ const BAND_COUNT: Record<Pillar, number> = {
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
-  const [bands, articles, rankings, forecasts, events] = await Promise.all([
+  const [bands, articles, rankings, forecasts, events, peopleInFocus] = await Promise.all([
     Promise.all(
       PILLAR_ORDER.map(async (pillar) => ({
         pillar,
@@ -45,6 +47,7 @@ export default async function HomePage() {
     getRankings(),
     getOpenPredictions(),
     getEvents({ upcomingFrom: NOW }),
+    getArtistsInFocus(6),
   ]);
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
@@ -147,6 +150,24 @@ export default async function HomePage() {
                   <div className="grid gap-5 sm:grid-cols-3">
                     {topForecasts.map((p) => (
                       <PredictionCard key={p.slug} prediction={p} />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {/* People in focus — interleaved after the K-Drama band, a pillar spread into the per-person hubs */}
+              {b.pillar === "k-drama" && peopleInFocus.length > 0 && (
+                <section className="mx-auto max-w-6xl px-5 mt-16">
+                  <div className="flex items-end justify-between mb-6">
+                    <Link href="/artists" className="group inline-block">
+                      <h2 className="kicker group-hover:text-bone transition-colors">People in focus</h2>
+                    </Link>
+                    <Link href="/artists" className="label hover:text-bone transition-colors">
+                      All people →
+                    </Link>
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+                    {peopleInFocus.map(({ artist, photoSets }) => (
+                      <ArtistCard key={artist.slug} artist={artist} photoSets={photoSets} />
                     ))}
                   </div>
                 </section>

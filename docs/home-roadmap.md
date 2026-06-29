@@ -27,24 +27,25 @@ predictions) carry the unsurfaced inventory and the only live elements.
   Forecast, K-Drama band + ranking, Fashion & Beauty, K-Movie, Analysis. Fully
   server-rendered; the only live islands are `DDayBadge` and `PredictionStatusBadge`.
 
-## Next: Step 2 candidates
+### Step 2 (2026-06): People in focus
 
-Pick one; they are independent.
+- New `src/components/ArtistCard.tsx`: a person card (name, optional Korean name, role,
+  agency, photo-set count) extracted from the `/artists` index so the hub and the home
+  page share one card. The `/artists` grid renders through it too.
+- New `getArtistsInFocus()` in `src/lib/data.ts`: a pillar-spread selector that
+  round-robins across the four pillars (de-duping cross-pillar names) so the set is not
+  all K-Pop, with each person's credited photo-set count attached.
+- A 6-card "People in focus" grid added after the K-Drama band: the first artists on the
+  front page, and a fresh set of links into the per-person hubs (deeper dwell).
+- Result: the home page order is now Hero, Schedule rail, K-Pop band + ranking, Fan
+  Forecast, K-Drama band + ranking, People in focus, Fashion & Beauty, K-Movie,
+  Analysis. Still fully server-rendered; no new client islands.
 
-### A. People in focus (highest new surface)
+## Next: Step 3 candidates
 
-Artists are the one content type absent from the home page. A People rail or section
-linking to `/artists/{slug}` adds a new content type and more internal links (deeper
-dwell).
+Pick one; they are independent. (Step 2 shipped People in focus.)
 
-- Data: `getArtists()` / `getArtistsByPillar()` in `src/lib/data.ts` (13 artists: name,
-  agency, bio, official socials).
-- Reuse: check `src/app/artists/page.tsx` for an existing card; otherwise build a
-  compact card modeled on `EventCard`.
-- Decide: rail vs grid; ordering (alphabetical, by pillar, or "currently active" tied to
-  upcoming events); placement in the page order.
-
-### B. Forecast payoff loop (completes the engagement loop)
+### A. Forecast payoff loop (completes the engagement loop)
 
 Step 1 added the hook (open countdowns). The payoff (did my pick win?) is what pulls
 people back. Surface recently resolved predictions ("Called it") next to the open ones.
@@ -55,7 +56,7 @@ people back. Surface recently resolved predictions ("Called it") next to the ope
   questions to have volume. It pairs with the recurring Fan Forecast refresh task
   (`docs/forecast-playbook.md`).
 
-### C. Rankings movers (cheap, live-ish)
+### B. Rankings movers (cheap, live-ish)
 
 The ranking rows already carry rank deltas. A compact "biggest movers" strip reads as
 "what changed" and updates period over period.

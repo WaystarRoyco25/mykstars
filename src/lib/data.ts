@@ -17,6 +17,7 @@ import type {
   Ranking,
   StarEvent,
 } from "./types";
+import { PILLAR_ORDER } from "./types";
 
 // ---------------------------------------------------------------------------
 // Data access layer (the "CMS seam").
@@ -128,6 +129,38 @@ export async function getArtists(): Promise<Artist[]> {
 
 export async function getArtistsByPillar(pillar: Pillar): Promise<Artist[]> {
   return (await getArtists()).filter((a) => (a.pillars ?? ["k-pop"]).includes(pillar));
+}
+
+// People in focus on the home page: a pillar-spread teaser. Round-robins across
+// PILLAR_ORDER (one fresh artist per pillar per round, A to Z within a pillar),
+// de-duping cross-pillar names by slug, then attaches each one's photo-set count.
+export async function getArtistsInFocus(
+  limit = 6,
+): Promise<{ artist: Artist; photoSets: number }[]> {
+  const byPillar = await Promise.all(PILLAR_ORDER.map((p) => getArtistsByPillar(p)));
+  const cursors = byPillar.map(() => 0);
+  const picked: Artist[] = [];
+  const seen = new Set<string>();
+  let progressed = true;
+  while (picked.length < limit && progressed) {
+    progressed = false;
+    for (let i = 0; i < byPillar.length && picked.length < limit; i++) {
+      const list = byPillar[i];
+      while (cursors[i] < list.length && seen.has(list[cursors[i]].slug)) cursors[i]++;
+      if (cursors[i] < list.length) {
+        const a = list[cursors[i]++];
+        seen.add(a.slug);
+        picked.push(a);
+        progressed = true;
+      }
+    }
+  }
+  return Promise.all(
+    picked.map(async (a) => ({
+      artist: a,
+      photoSets: (await getGalleriesByArtist(a.slug)).length,
+    })),
+  );
 }
 
 export async function getArtist(slug: string): Promise<Artist | undefined> {
