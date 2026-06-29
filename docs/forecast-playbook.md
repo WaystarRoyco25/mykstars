@@ -85,3 +85,24 @@ Votes live in the Supabase `votes` table (deduped by the `myk_voter` cookie); ta
 live via the `prediction_tallies` view. To clear test/sample votes, run in **Supabase → SQL
 Editor**: `truncate table votes;`. No code or schema change — the table is managed in Supabase, not
 in a repo migration.
+
+## Vote store security
+
+The `votes` table and `prediction_tallies` view are service-role only, and two settings keep them
+that way. Supabase's `security_definer_view` advisor flags the view if the first is missing:
+
+- `prediction_tallies` is created `with (security_invoker = on)`, so it runs as the querying role,
+  not the view owner (the Postgres default, which the linter reports as SECURITY DEFINER).
+- `votes` has row level security enabled with no `anon` / `authenticated` policies. All app access is
+  server-side via the service-role key (`SUPABASE_SERVICE_ROLE_KEY`), which bypasses RLS, so no
+  public policy is needed.
+
+If you ever recreate the view or table by hand, re-apply both. To set them on the existing schema,
+run in **Supabase → SQL Editor**:
+
+```sql
+alter view  public.prediction_tallies set (security_invoker = on);
+alter table public.votes enable row level security;
+revoke select on public.prediction_tallies from anon, authenticated;
+revoke select on public.votes              from anon, authenticated;
+```
