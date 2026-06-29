@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Wordmark from "./Wordmark";
+import LogoLockup from "./LogoLockup";
 import { IconShield, IconBolt, IconGlobe } from "./icons";
 
 const SIGNALS = [
@@ -31,7 +31,7 @@ export default function SiteFooter() {
 
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-t border-line pt-8">
           <div>
-            <Wordmark size="text-xl" />
+            <LogoLockup className="h-7 w-auto" />
             <p className="text-sm text-muted mt-3 max-w-md leading-relaxed">
               The world&apos;s photo-first K-Culture newspaper and magazine. Photos are
               aggregated and embedded from their original sources, always credited and

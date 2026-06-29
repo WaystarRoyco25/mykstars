@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
@@ -46,6 +46,10 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
     },
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0e0e0e",
 };
 
 export default function RootLayout({

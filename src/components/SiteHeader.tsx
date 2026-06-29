@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Wordmark from "./Wordmark";
+import LogoLockup from "./LogoLockup";
 import { PILLAR_LABELS, PILLAR_ORDER, pillarSlug } from "@/lib/types";
 
 // Primary navigation = the four pillars.
@@ -23,7 +23,7 @@ export default function SiteHeader() {
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex items-end justify-between gap-4 py-4">
           <div>
-            <Wordmark />
+            <LogoLockup className="h-9 sm:h-10 w-auto" />
             <p className="label mt-1.5">K-stars, in focus</p>
           </div>
 
