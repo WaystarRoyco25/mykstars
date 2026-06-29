@@ -1,16 +1,15 @@
 import Link from "next/link";
 import type { Gallery } from "@/lib/types";
-import { TAG_LABELS } from "@/lib/types";
 import { aspectClass, orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
 import { renderEmphasis } from "@/lib/text";
 import PhotoMedia from "./PhotoMedia";
-import AttributionBadge from "./AttributionBadge";
 
-// A single gallery card: cover tile + typographic tag + serif headline +
-// timestamp and credit. Monochrome by design — the photography carries the color.
-// Portrait cards keep the default 3:4; landscape covers break out wide
-// (col-span-2 on md+) instead of being cropped to portrait.
+// A single gallery brick in the column-balanced masonry: the cover fills its box
+// and crops to fit (aspectClass sets the box shape per orientation), with a black
+// gradient bar carrying title, timestamp and credit at the bottom. Monochrome by
+// design, the photography carries the color. Portraits sit tall, landscapes wide,
+// so bricks of different heights interlock with no empty space (see GalleryGrid).
 export default function PhotoCard({
   gallery,
   priority = false,
@@ -19,39 +18,42 @@ export default function PhotoCard({
   priority?: boolean;
 }) {
   const orientation = orientationOf(gallery.cover);
-  const wide = orientation === "landscape";
-  const sizes = wide
-    ? "(max-width: 768px) 100vw, 66vw"
-    : "(max-width: 768px) 50vw, 33vw";
+  // Keep faces in frame as covers crop to their cell.
+  const position =
+    orientation === "portrait"
+      ? "50% 30%"
+      : orientation === "square"
+        ? "50% 35%"
+        : undefined;
 
   return (
     <Link
       href={`/photos/${gallery.slug}`}
-      className={`group block ${wide ? "md:col-span-2" : ""}`}
+      className={`group relative mb-2 md:mb-3 block break-inside-avoid overflow-hidden border border-line ${aspectClass(orientation)}`}
     >
-      <div className={`relative ${aspectClass(orientation)} overflow-hidden border border-line`}>
-        <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
-          <PhotoMedia
-            item={gallery.cover}
-            priority={priority}
-            showCredit
-            sizes={sizes}
-            position={orientation === "portrait" ? "50% 30%" : undefined}
-          />
+      <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
+        <PhotoMedia
+          item={gallery.cover}
+          priority={priority}
+          sizes="(max-width: 768px) 50vw, 25vw"
+          position={position}
+        />
+      </div>
+
+      {/* Gradient info bar — fades the photo into black so the type stays legible. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink via-ink/55 to-transparent"
+        aria-hidden
+      />
+      <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3">
+        <h3 className="font-serif text-sm sm:text-base leading-snug text-bone line-clamp-2 group-hover:text-crimson transition-colors">
+          {renderEmphasis(gallery.title)}
+        </h3>
+        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+          <span className="shrink-0 whitespace-nowrap">{relativeTime(gallery.date)}</span>
+          <span aria-hidden className="shrink-0">·</span>
+          <span className="min-w-0 truncate">via {gallery.source.name}</span>
         </div>
-      </div>
-      <div className="mt-3 flex items-center gap-2">
-        <span className="label text-muted">{TAG_LABELS[gallery.category]}</span>
-        <span className="text-muted">·</span>
-        <span className="label text-muted">{gallery.media.length} photos</span>
-      </div>
-      <h3 className="font-serif text-lg leading-snug mt-1.5 group-hover:text-crimson transition-colors">
-        {renderEmphasis(gallery.title)}
-      </h3>
-      <div className="mt-2 flex items-center gap-2 text-xs text-muted">
-        <span>{relativeTime(gallery.date)}</span>
-        <span>·</span>
-        <AttributionBadge source={gallery.source} asLink={false} className="text-muted" />
       </div>
     </Link>
   );

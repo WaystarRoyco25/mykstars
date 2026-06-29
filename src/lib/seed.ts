@@ -84,6 +84,10 @@ export const artists: Artist[] = [
     agency: "ADOR",
     debutYear: 2022,
     bio: "Five-member group known for a clean, retro-leaning visual identity and a strong international following.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/newjeans_official/", handle: "@newjeans_official" },
+      { platform: "x", url: "https://x.com/NewJeans_ADOR", handle: "@NewJeans_ADOR" },
+    ],
   },
   {
     slug: "blackpink",
@@ -95,6 +99,10 @@ export const artists: Artist[] = [
     agency: "YG Entertainment",
     debutYear: 2016,
     bio: "One of the most globally recognized K-pop groups, with a long record of fashion-house ambassadorships.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/blackpinkofficial/", handle: "@blackpinkofficial" },
+      { platform: "x", url: "https://x.com/BLACKPINK", handle: "@BLACKPINK" },
+    ],
   },
   {
     slug: "iu",
@@ -106,6 +114,10 @@ export const artists: Artist[] = [
     agency: "EDAM Entertainment",
     debutYear: 2008,
     bio: "Singer-songwriter and actor whose red-carpet and award-show appearances are widely covered.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/dlwlrma/", handle: "@dlwlrma" },
+      { platform: "x", url: "https://x.com/_IUofficial", handle: "@_IUofficial" },
+    ],
   },
   {
     slug: "stray-kids",
@@ -117,6 +129,9 @@ export const artists: Artist[] = [
     agency: "JYP Entertainment",
     debutYear: 2018,
     bio: "Self-producing group with a high-energy performance style and frequent music-show appearances.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/realstraykids/", handle: "@realstraykids" },
+    ],
   },
   {
     slug: "aespa",
@@ -128,6 +143,10 @@ export const artists: Artist[] = [
     agency: "SM Entertainment",
     debutYear: 2020,
     bio: "Concept-driven group whose fan events, showcases and fashion-week appearances draw large audiences.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/aespa_official/", handle: "@aespa_official" },
+      { platform: "x", url: "https://x.com/aespa_official", handle: "@aespa_official" },
+    ],
   },
   {
     slug: "cha-eunwoo",
@@ -139,6 +158,10 @@ export const artists: Artist[] = [
     agency: "Fantagio",
     debutYear: 2016,
     bio: "Idol and actor, a recurring face of fashion and beauty pictorials.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/eunwo.o_c/", handle: "@eunwo.o_c" },
+      { platform: "youtube", url: "https://www.youtube.com/@offclCHAEUNWOO", handle: "@offclCHAEUNWOO" },
+    ],
   },
   {
     slug: "twice",
@@ -150,6 +173,10 @@ export const artists: Artist[] = [
     agency: "JYP Entertainment",
     debutYear: 2015,
     bio: "Long-running group with a steady touring schedule and heavy airport-fashion coverage.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/twicetagram/", handle: "@twicetagram" },
+      { platform: "x", url: "https://x.com/JYPETWICE", handle: "@JYPETWICE" },
+    ],
   },
   // --- K-Drama actors ---
   {
@@ -161,6 +188,9 @@ export const artists: Artist[] = [
     pillars: ["k-drama"],
     debutYear: 2006,
     bio: "Television actor with a large international following, widely covered at premieres and brand events.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/actorleeminho/", handle: "@actorleeminho" },
+    ],
   },
   {
     slug: "park-eun-bin",
@@ -170,6 +200,9 @@ export const artists: Artist[] = [
     disciplines: ["actor"],
     pillars: ["k-drama"],
     bio: "Television actor whose awards and press-event appearances draw heavy coverage.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/eunbining0904/", handle: "@eunbining0904" },
+    ],
   },
   {
     slug: "kim-tae-ri",
@@ -179,6 +212,9 @@ export const artists: Artist[] = [
     disciplines: ["actor"],
     pillars: ["k-drama", "k-movie"],
     bio: "Actor working across film and television, a regular presence on the festival and press circuit.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/kimtaeri_official/", handle: "@kimtaeri_official" },
+    ],
   },
   // --- K-Movie directors ---
   {
@@ -208,6 +244,9 @@ export const artists: Artist[] = [
     disciplines: ["model", "actor"],
     pillars: ["fashion-beauty", "k-drama"],
     bio: "Model and actor, a fixture of luxury-house campaigns and fashion-week front rows.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/hoooooyeony/", handle: "@hoooooyeony" },
+    ],
   },
 ];
 

@@ -145,6 +145,14 @@ export interface MediaItem {
 // ---------------------------------------------------------------------------
 export type Discipline = "idol" | "actor" | "director" | "model";
 
+// A verified official account. Used to credit/link out (never rehost) and to top
+// up a sparse grid with official-channel tiles.
+export interface SocialLink {
+  platform: EmbedPlatform;
+  url: string; // the verified official account URL
+  handle: string; // e.g. "@newjeans_official"
+}
+
 export interface Artist {
   slug: string;
   name: string;
@@ -156,6 +164,7 @@ export interface Artist {
   debutYear?: number;
   knownFor?: string[]; // neutral, factual descriptors (reserved for CMS)
   bio: string;
+  social?: SocialLink[]; // verified official accounts (used to top up sparse grids)
 }
 
 // ---------------------------------------------------------------------------

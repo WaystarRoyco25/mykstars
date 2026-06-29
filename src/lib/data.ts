@@ -4,9 +4,11 @@ import type {
   Article,
   Artist,
   CategoryTag,
+  EmbedPlatform,
   EventRegion,
   EventType,
   Gallery,
+  MediaItem,
   Pillar,
   Prediction,
   PredictionStatus,
@@ -95,6 +97,52 @@ export async function getArtistsByPillar(pillar: Pillar): Promise<Artist[]> {
 
 export async function getArtist(slug: string): Promise<Artist | undefined> {
   return artists.find((a) => a.slug === slug);
+}
+
+const PLATFORM_NAMES: Record<EmbedPlatform, string> = {
+  instagram: "Instagram",
+  x: "X",
+  tiktok: "TikTok",
+  youtube: "YouTube",
+};
+
+// Official-account tiles for an artist. We only link out (the photo stays on the
+// source platform, always credited) — the embed-first, legally-safe pattern.
+export function artistEmbeds(artist: Artist): MediaItem[] {
+  return (artist.social ?? []).map(
+    (s): MediaItem => ({
+      id: `${artist.slug}-${s.platform}`,
+      kind: "embed",
+      platform: s.platform,
+      embedUrl: s.url,
+      alt: `${artist.name} on ${PLATFORM_NAMES[s.platform]}`,
+      credit: { name: s.handle, url: s.url, kind: "embed" },
+    }),
+  );
+}
+
+// Ground rule: a grid never renders sparse. When a page has fewer than `minTiles`
+// galleries (a full desktop row is 3), top it up to fill the empty columns: first
+// with the artist's official-account embeds, then, if still short (e.g. directors
+// with no linked accounts), with related galleries from the same pillar. Both link
+// out and stay credited; nothing is rehosted or fabricated. Each list is capped so
+// a grid that is already full never grows.
+export async function sparseFill(
+  artist: Artist,
+  ownGalleries: Gallery[],
+  minTiles = 3,
+): Promise<{ embeds: MediaItem[]; galleries: Gallery[] }> {
+  const deficit = minTiles - ownGalleries.length;
+  if (deficit <= 0) return { embeds: [], galleries: [] };
+  const embeds = artistEmbeds(artist).slice(0, deficit);
+  const stillShort = deficit - embeds.length;
+  if (stillShort <= 0) return { embeds, galleries: [] };
+  const pillar = artist.pillars?.[0] ?? "k-pop";
+  const own = new Set(ownGalleries.map((g) => g.slug));
+  const related = (await getGalleriesForPillar(pillar))
+    .filter((g) => !own.has(g.slug))
+    .slice(0, stillShort);
+  return { embeds, galleries: related };
 }
 
 export async function getArticles(opts?: { pillar?: Pillar }): Promise<Article[]> {

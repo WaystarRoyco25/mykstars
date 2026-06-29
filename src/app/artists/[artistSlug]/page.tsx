@@ -6,6 +6,7 @@ import {
   getArtist,
   getGalleriesByArtist,
   getRelatedArticles,
+  sparseFill,
 } from "@/lib/data";
 import GalleryGrid from "@/components/GalleryGrid";
 import ArticleListItem from "@/components/ArticleListItem";
@@ -44,6 +45,13 @@ export default async function ArtistPage({
     getGalleriesByArtist(artistSlug),
     getRelatedArticles(artistSlug),
   ]);
+  // Keep the photo timeline from looking empty: top up a sparse grid with the
+  // artist's official-account tiles, then related same-pillar sets (links out,
+  // credited; never rehosted or fabricated).
+  const { embeds: fillEmbeds, galleries: fillGalleries } = await sparseFill(
+    artist,
+    galleries,
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-10">
@@ -81,7 +89,12 @@ export default async function ArtistPage({
       <section className="mb-16">
         <h2 className="kicker mb-6">Photo timeline</h2>
         {galleries.length > 0 ? (
-          <GalleryGrid galleries={galleries} priorityCount={3} />
+          <GalleryGrid
+            galleries={galleries}
+            priorityCount={3}
+            fillEmbeds={fillEmbeds}
+            fillGalleries={fillGalleries}
+          />
         ) : (
           <p className="text-muted">No photo sets yet.</p>
         )}

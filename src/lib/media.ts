@@ -14,7 +14,11 @@ export function orientationOf(m: MediaItem): Orientation {
   return "portrait";
 }
 
-// Tailwind aspect-ratio class per orientation (used by cards and tiles).
+// Tailwind aspect-ratio class per orientation for the column-balanced masonry.
+// Portraits get a tall box, landscapes a wide one, squares a 1:1 cell; the cover
+// crops to fill via object-cover. Different heights interlock like bricks while
+// CSS multi-column balancing keeps the columns even, so there is no empty space
+// regardless of how many galleries a page holds (see GalleryGrid).
 export function aspectClass(o: Orientation): string {
   if (o === "landscape") return "aspect-[3/2]";
   if (o === "square") return "aspect-square";
