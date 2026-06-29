@@ -143,6 +143,29 @@ export interface MediaItem {
 }
 
 // ---------------------------------------------------------------------------
+// Clips — standalone short-form social posts (Instagram Reels/posts, YouTube
+// Shorts) that render as live, lazy-hydrated embeds in the home rails. Unlike a
+// Gallery, a clip has no detail page and no rehosted media: it links out to the
+// source platform and the real player only mounts when scrolled into view (see
+// LiveEmbed). Every clip is credited (kind: "embed") and dated like a gallery so
+// a rail reads newest-first. Real, verified permalinks only — never fabricated.
+// ---------------------------------------------------------------------------
+export type ClipFormat = "reel" | "short" | "post";
+
+export interface Clip {
+  id: string;
+  platform: EmbedPlatform; // "instagram" | "youtube" (x / tiktok reserved)
+  format: ClipFormat; // vertical reel, YouTube Short, or feed post
+  embedUrl: string; // canonical, verified post / Reel / Short URL
+  pillar: Pillar;
+  artistSlugs: string[];
+  date: string; // ISO; sorts newest-first like galleries
+  caption: string; // neutral, house-style (may carry *work titles*)
+  credit: Source; // the real account / outlet, kind: "embed"
+  orientation?: Orientation; // defaults to portrait (vertical) for reel/short
+}
+
+// ---------------------------------------------------------------------------
 // People — generalized beyond K-pop idols to actors, directors and models.
 // Cross-pillar people (an idol who acts) carry multiple pillars/disciplines.
 // ---------------------------------------------------------------------------

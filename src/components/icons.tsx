@@ -55,6 +55,15 @@ export function IconCamera(p: IconProps) {
   );
 }
 
+export function IconPlay(p: IconProps) {
+  // Filled triangle (overrides the outline defaults) for the video play affordance.
+  return (
+    <svg {...base(p)} fill="currentColor" stroke="none">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+
 export function IconCheck(p: IconProps) {
   return (
     <svg {...base(p)}>

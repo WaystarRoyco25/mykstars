@@ -10,10 +10,11 @@ Bring time-urgent, *live* content to the front page and interleave it between th
 bands for a varied, hard-to-stop scroll. The engine of return visits is live motion
 (D-Day countdowns, vote tallies), not an endless feed.
 
-The constraint that shapes everything: the catalog is finite and credited. The photo
-library is small (about 16 galleries) and the home bands already render nearly all of
-it, so "more photos" is not a lever. Schedule (about 25 events) and Forecast (about 12
-predictions) carry the unsurfaced inventory and the only live elements.
+The constraint that shapes everything: the catalog is finite and credited. As of Step 3
+the lever for "more visual content" is curated, official social embeds (Instagram
+Reels/posts, YouTube videos), which need no rehosting and no CMS. The photo galleries
+(about 30 now) plus those embeds feed the bands and two new live rails; Schedule and
+Forecast still carry the time-urgent inventory.
 
 ## Shipped
 
@@ -41,9 +42,30 @@ predictions) carry the unsurfaced inventory and the only live elements.
   Forecast, K-Drama band + ranking, People in focus, Fashion & Beauty, K-Movie,
   Analysis. Still fully server-rendered; no new client islands.
 
-## Next: Step 3 candidates
+### Step 3 (2026-06): Live social rails and a deeper catalog
 
-Pick one; they are independent. (Step 2 shipped People in focus.)
+- New `src/components/LiveEmbed.tsx` (the first non-trivial client island): a facade-first
+  embed that upgrades to a real player on view/click. YouTube is a no-cookie lite-embed
+  (thumbnail to iframe on click, no autoplay-on-scroll); Instagram is the official
+  blockquote + `embed.js` (loaded once via the singleton in `src/lib/embeds.ts`), hydrated
+  in-view. Both degrade to the link-out facade with JS off or on error, so nothing breaks.
+- New `Clip` model (`src/lib/types.ts`) + `clips` seed array: standalone short-form posts
+  with no detail page, kept out of the photo archive. Accessors `getReels()` / `getShorts()`
+  / `getClips()` / `getClipsByArtist()` in `src/lib/data.ts`. Every clip is a real, verified
+  permalink (YouTube oEmbed-verified; Instagram official-account posts), credited and dated.
+- New `src/components/ClipCard.tsx` + two horizontal rails: "On the feed" (Instagram, after
+  the K-Pop band) and "In motion" (YouTube, after the K-Drama band), cloning the Schedule
+  rail pattern.
+- Denser bands (K-Pop 8 to 12, K-Drama 6 to 10, Fashion 3 to 8, K-Movie 2 to 6), topped up
+  by `pillarFillEmbeds()` (official-account tiles) so a thin band never shows empty columns.
+  New galleries were added for the sparse Fashion and K-Movie pillars.
+- Result order: Hero, Schedule rail, K-Pop band + ranking, On the feed (Reels), Fan
+  Forecast, K-Drama band + ranking, In motion (Shorts), People in focus, Fashion & Beauty,
+  K-Movie, Analysis. Roughly 3x the home page's visual items.
+
+## Next: Step 4 candidates
+
+Pick one; they are independent. (Step 3 shipped the live social rails.)
 
 ### A. Forecast payoff loop (completes the engagement loop)
 
@@ -72,14 +94,15 @@ The ranking rows already carry rank deltas. A compact "biggest movers" strip rea
 
 ## Guardrails
 
-- No infinite scroll or "Load more": deliberately deferred. A finite catalog would loop
-  or run dry and cheapen the brand. Revisit only when the photo library grows
-  substantially.
+- No infinite scroll or "Load more": still deliberately deferred. Step 3 grew the catalog
+  with curated embeds, but the inventory is finite and would still loop or run dry; a
+  paginated feed waits for a real CMS.
 - House style (`docs/style-guide.md`): no em or en dashes; italicize work titles with
   `*asterisks*` via `renderEmphasis()`. Run `node scripts/check-dashes.mjs <files>` on
   anything carrying new copy.
-- Server-first: keep `page.tsx` a server component; the only client islands are the live
-  countdown chips. Avoid adding client JS without a clear reason.
+- Server-first: keep `page.tsx` a server component. Client islands are the live countdown
+  chips and now `LiveEmbed` (the social players); the latter stays cheap via facade-first,
+  in-view hydration. Avoid adding client JS without a clear reason.
 - Determinism: the site freezes "now" at `NOW` in `src/lib/seed.ts` for SSR and
   reconciles to the real clock client-side. Reuse that pattern; do not read the live
   clock during server render.

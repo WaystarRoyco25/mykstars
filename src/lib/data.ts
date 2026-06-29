@@ -1,9 +1,11 @@
-import { articles, artists, events, galleries, predictions, rankings } from "./seed";
+import { articles, artists, clips, events, galleries, predictions, rankings } from "./seed";
 import { getSupabase } from "./supabase";
 import type {
   Article,
   Artist,
   CategoryTag,
+  Clip,
+  ClipFormat,
   EmbedPlatform,
   EventRegion,
   EventType,
@@ -213,6 +215,38 @@ export async function sparseFill(
   return { embeds, galleries: related };
 }
 
+// Official-account tiles to top up a whole pillar band on the home page, so a thin
+// band (K-Movie, Fashion) never renders with empty columns. Collects the distinct
+// artists across the band's galleries, maps each to its official-account embeds
+// (reusing artistEmbeds), de-dupes, and caps at `cap` (the band's deficit) so a
+// full band never grows. Sync — it reads the already-loaded seed arrays.
+export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaItem[] {
+  if (cap <= 0) return [];
+  const slugs: string[] = [];
+  const slugSeen = new Set<string>();
+  for (const g of bandGalleries) {
+    for (const s of g.artistSlugs) {
+      if (!slugSeen.has(s)) {
+        slugSeen.add(s);
+        slugs.push(s);
+      }
+    }
+  }
+  const out: MediaItem[] = [];
+  const idSeen = new Set<string>();
+  for (const slug of slugs) {
+    const artist = artists.find((a) => a.slug === slug);
+    if (!artist) continue;
+    for (const m of artistEmbeds(artist)) {
+      if (idSeen.has(m.id)) continue;
+      idSeen.add(m.id);
+      out.push(m);
+      if (out.length >= cap) return out;
+    }
+  }
+  return out;
+}
+
 export async function getArticles(opts?: { pillar?: Pillar }): Promise<Article[]> {
   const list = byDateDesc(articles);
   if (opts?.pillar) return list.filter((a) => a.pillar === opts.pillar);
@@ -261,6 +295,39 @@ export async function getEvents(opts?: {
   }
   if (opts?.type) list = list.filter((e) => e.type === opts.type);
   return list;
+}
+
+// ---------------------------------------------------------------------------
+// Clips — standalone short-form posts (Instagram Reels/posts, YouTube videos)
+// that power the home rails. Newest-first like galleries; clips never enter the
+// photo archive and generate no route.
+// ---------------------------------------------------------------------------
+export async function getClips(opts?: {
+  platform?: EmbedPlatform;
+  format?: ClipFormat;
+  pillar?: Pillar;
+  artist?: string;
+}): Promise<Clip[]> {
+  let list = byDateDesc(clips);
+  if (opts?.platform) list = list.filter((c) => c.platform === opts.platform);
+  if (opts?.format) list = list.filter((c) => c.format === opts.format);
+  if (opts?.pillar) list = list.filter((c) => c.pillar === opts.pillar);
+  if (opts?.artist) list = list.filter((c) => c.artistSlugs.includes(opts.artist!));
+  return list;
+}
+
+// The home "On the feed" rail: official Instagram Reels/posts, newest-first.
+export async function getReels(limit = 12): Promise<Clip[]> {
+  return (await getClips({ platform: "instagram" })).slice(0, limit);
+}
+
+// The home "In motion" rail: official YouTube videos/Shorts, newest-first.
+export async function getShorts(limit = 12): Promise<Clip[]> {
+  return (await getClips({ platform: "youtube" })).slice(0, limit);
+}
+
+export async function getClipsByArtist(artistSlug: string): Promise<Clip[]> {
+  return byDateDesc(clips).filter((c) => c.artistSlugs.includes(artistSlug));
 }
 
 // Synchronous slug lists for generateStaticParams.

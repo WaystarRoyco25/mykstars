@@ -8,6 +8,9 @@ import {
   getGalleriesForPillar,
   getOpenPredictions,
   getRankings,
+  getReels,
+  getShorts,
+  pillarFillEmbeds,
 } from "@/lib/data";
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
 import type { Pillar } from "@/lib/types";
@@ -16,6 +19,7 @@ import { NOW } from "@/lib/seed";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
 import GalleryGrid from "@/components/GalleryGrid";
+import ClipCard from "@/components/ClipCard";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
@@ -26,29 +30,38 @@ import { renderEmphasis } from "@/lib/text";
 
 // Tiles per pillar band, weighted to coverage (K-Pop > K-Drama > Fashion > K-Movie).
 const BAND_COUNT: Record<Pillar, number> = {
-  "k-pop": 8,
-  "k-drama": 6,
-  "fashion-beauty": 3,
-  "k-movie": 2,
+  "k-pop": 12,
+  "k-drama": 10,
+  "fashion-beauty": 8,
+  "k-movie": 6,
 };
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
-  const [bands, articles, rankings, forecasts, events, peopleInFocus] = await Promise.all([
-    Promise.all(
-      PILLAR_ORDER.map(async (pillar) => ({
-        pillar,
-        galleries: (await getGalleriesForPillar(pillar))
-          .filter((g) => g.slug !== featured.slug)
-          .slice(0, BAND_COUNT[pillar]),
-      })),
-    ),
-    getArticles(),
-    getRankings(),
-    getOpenPredictions(),
-    getEvents({ upcomingFrom: NOW }),
-    getArtistsInFocus(6),
-  ]);
+  const [bands, articles, rankings, forecasts, events, peopleInFocus, reels, shorts] =
+    await Promise.all([
+      Promise.all(
+        PILLAR_ORDER.map(async (pillar) => {
+          const galleries = (await getGalleriesForPillar(pillar))
+            .filter((g) => g.slug !== featured.slug)
+            .slice(0, BAND_COUNT[pillar]);
+          // Top up a thin band with the band artists' official-account tiles so it
+          // never renders with empty columns (deficit only; a full band is unchanged).
+          return {
+            pillar,
+            galleries,
+            fillEmbeds: pillarFillEmbeds(galleries, BAND_COUNT[pillar] - galleries.length),
+          };
+        }),
+      ),
+      getArticles(),
+      getRankings(),
+      getOpenPredictions(),
+      getEvents({ upcomingFrom: NOW }),
+      getArtistsInFocus(6),
+      getReels(14),
+      getShorts(14),
+    ]);
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
   // The Fan Forecast block, interleaved after the K-Pop band: six open questions
@@ -133,9 +146,26 @@ export default async function HomePage() {
                     </h2>
                   </Link>
                 </div>
-                <GalleryGrid galleries={b.galleries} priorityCount={b.pillar === "k-pop" ? 3 : 0} />
+                <GalleryGrid
+                  galleries={b.galleries}
+                  priorityCount={b.pillar === "k-pop" ? 3 : 0}
+                  fillEmbeds={b.fillEmbeds}
+                />
               </section>
               {ranking && <RankingTable ranking={ranking} />}
+              {/* On the feed — a live Instagram rail right after the K-Pop band */}
+              {b.pillar === "k-pop" && reels.length > 0 && (
+                <section className="mx-auto max-w-6xl px-5 mt-16">
+                  <div className="mb-6">
+                    <h2 className="kicker">On the feed</h2>
+                  </div>
+                  <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+                    {reels.map((c) => (
+                      <ClipCard key={c.id} clip={c} />
+                    ))}
+                  </div>
+                </section>
+              )}
               {/* Fan Forecast — interleaved right after the K-Pop band, the return-visit hook */}
               {b.pillar === "k-pop" && topForecasts.length > 0 && (
                 <section className="mx-auto max-w-6xl px-5 mt-16">
@@ -150,6 +180,19 @@ export default async function HomePage() {
                   <div className="grid gap-5 sm:grid-cols-3">
                     {topForecasts.map((p) => (
                       <PredictionCard key={p.slug} prediction={p} />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {/* In motion — a live YouTube rail right after the K-Drama band */}
+              {b.pillar === "k-drama" && shorts.length > 0 && (
+                <section className="mx-auto max-w-6xl px-5 mt-16">
+                  <div className="mb-6">
+                    <h2 className="kicker">In motion</h2>
+                  </div>
+                  <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+                    {shorts.map((c) => (
+                      <ClipCard key={c.id} clip={c} />
                     ))}
                   </div>
                 </section>

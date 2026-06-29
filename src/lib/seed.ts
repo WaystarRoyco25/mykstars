@@ -1,9 +1,12 @@
 import type {
   Article,
   Artist,
+  Clip,
+  ClipFormat,
   Gallery,
   MediaItem,
   Orientation,
+  Pillar,
   Prediction,
   Ranking,
   Source,
@@ -20,7 +23,7 @@ import type {
 // unverified claims about real people. Public figures are named factually with
 // neutral descriptions only. Real licensed/embedded media + CMS content replace
 // this later. "NOW" is a fixed reference so relative timestamps stay deterministic.
-export const NOW = "2026-06-29T20:00:00+09:00";
+export const NOW = "2026-06-30T20:00:00+09:00";
 
 // --- sources (every media item links back to one of these) ---
 const OSEN: Source = { name: "OSEN", url: "https://osen.mt.co.kr", kind: "press" };
@@ -31,6 +34,8 @@ const W_KOREA: Source = { name: "W Korea", url: "https://www.wkorea.com", kind: 
 const VOGUE_KOREA: Source = { name: "Vogue Korea", url: "https://www.vogue.co.kr", kind: "magazine" };
 const STUDIO: Source = { name: "Studio press kit", url: "https://www.cjenm.com", kind: "official" };
 const FESTIVAL: Source = { name: "Festival photo pool", url: "https://www.biff.kr", kind: "press" };
+const ELLE_KOREA: Source = { name: "Elle Korea", url: "https://www.elle.co.kr", kind: "magazine" };
+const ALLURE_KOREA: Source = { name: "Allure Korea", url: "https://www.allurekorea.com", kind: "magazine" };
 
 function place(
   id: string,
@@ -273,9 +278,9 @@ export const galleries: Gallery[] = [
         id: "newjeans-embed-1",
         kind: "embed",
         platform: "instagram",
-        embedUrl: "https://www.instagram.com/p/EXAMPLE/",
+        embedUrl: "https://www.instagram.com/newjeans_official/reel/C9uS3BFyyiL/",
         alt: "Official showcase clip shared on Instagram",
-        credit: { name: "@newjeans_official", url: "https://www.instagram.com/", kind: "embed" },
+        credit: { name: "@newjeans_official", url: "https://www.instagram.com/newjeans_official/", kind: "embed" },
       },
       ...placeMixed("newjeans", "NewJeans comeback showcase", NEWSEN, 6),
     ],
@@ -496,6 +501,170 @@ export const galleries: Gallery[] = [
     excerpt: "Portraits and on-stage frames from a director retrospective Q&A.",
     cover: place("retro-cover", "Director on stage for a retrospective Q&A", FESTIVAL, 3),
     media: placeMixed("retro", "Director retrospective", FESTIVAL, 6),
+  },
+
+  // ----- additional K-POP sets (depth for the home band + /k-pop) -----
+  {
+    slug: "twice-music-bank-comeback",
+    title: "TWICE light up the comeback stage",
+    pillar: "k-pop",
+    category: "comeback",
+    artistSlugs: ["twice"],
+    event: "Music-show comeback stage",
+    date: "2026-06-20T20:00:00+09:00",
+    source: NEWSEN,
+    excerpt: "Performance frames from the week's music-show comeback stage.",
+    cover: place("twice-mb-cover", "TWICE on the comeback stage", NEWSEN, 1, "landscape"),
+    media: placeMixed("twice-mb", "TWICE comeback stage", NEWSEN, 7),
+  },
+  {
+    slug: "stray-kids-variety-appearance",
+    title: "Stray Kids drop by a variety set",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["stray-kids"],
+    event: "Variety show appearance",
+    date: "2026-06-19T20:00:00+09:00",
+    source: NEWS1,
+    excerpt: "Behind-the-scenes frames from a variety-show guest spot.",
+    cover: place("skz-var-cover", "Stray Kids on a variety set", NEWS1, 2),
+    media: placeMixed("skz-var", "Stray Kids variety appearance", NEWS1, 6),
+  },
+
+  // ----- additional K-DRAMA sets -----
+  {
+    slug: "drama-ost-release",
+    title: "Park Eun-bin lends her voice to a new OST",
+    pillar: "k-drama",
+    category: "ost",
+    artistSlugs: ["park-eun-bin"],
+    event: "OST release",
+    date: "2026-06-19T18:00:00+09:00",
+    source: STUDIO,
+    excerpt: "Recording-booth and release frames from a drama OST.",
+    cover: place("ost-cover", "OST recording session still", STUDIO, 3),
+    media: placeMixed("ost", "Drama OST release", STUDIO, 6),
+  },
+  {
+    slug: "drama-review-screening",
+    title: "Lee Min-ho at a drama review screening",
+    pillar: "k-drama",
+    category: "review",
+    artistSlugs: ["lee-min-ho"],
+    event: "Review screening",
+    date: "2026-06-18T20:00:00+09:00",
+    source: STAR_NEWS,
+    excerpt: "Arrival and stage frames from a press review screening.",
+    cover: place("review-cover", "Lee Min-ho at a review screening", STAR_NEWS, 1),
+    media: placeSet("review", "Drama review screening", STAR_NEWS, 6),
+  },
+
+  // ----- additional FASHION & BEAUTY sets (the sparsest band) -----
+  {
+    slug: "cha-eunwoo-beauty-cover",
+    title: "Cha Eun-woo, an *Allure Korea* beauty cover",
+    pillar: "fashion-beauty",
+    category: "beauty",
+    artistSlugs: ["cha-eunwoo"],
+    event: "Allure Korea beauty story",
+    date: "2026-06-20T10:00:00+09:00",
+    source: ALLURE_KOREA,
+    excerpt: "A licensed beauty-cover preview: skin-first styling.",
+    cover: place("eunwoo-beauty-cover", "Cha Eun-woo *Allure Korea* beauty cover", ALLURE_KOREA, 2),
+    media: placeSet("eunwoo-beauty", "Cha Eun-woo *Allure Korea* beauty story", ALLURE_KOREA, 6),
+  },
+  {
+    slug: "aespa-elle-korea-summer",
+    title: "aespa cover *Elle Korea*'s summer issue",
+    pillar: "fashion-beauty",
+    category: "pictorial",
+    artistSlugs: ["aespa"],
+    event: "Elle Korea pictorial",
+    date: "2026-06-19T10:00:00+09:00",
+    source: ELLE_KOREA,
+    excerpt: "A licensed editorial preview: full-group summer styling.",
+    cover: place("aespa-elle-cover", "aespa *Elle Korea* summer cover", ELLE_KOREA, 3),
+    media: placeSet("aespa-elle", "aespa *Elle Korea* summer editorial", ELLE_KOREA, 6),
+  },
+  {
+    slug: "jung-hoyeon-milan-fashion-week",
+    title: "Jung Ho-yeon at Milan Fashion Week",
+    pillar: "fashion-beauty",
+    category: "fashion-week",
+    artistSlugs: ["jung-hoyeon"],
+    event: "Milan Fashion Week",
+    date: "2026-06-18T22:00:00+09:00",
+    source: W_KOREA,
+    excerpt: "Front-row arrivals and looks from the Milan shows.",
+    cover: place("hoyeon-milan-cover", "Jung Ho-yeon at Milan Fashion Week", W_KOREA, 0),
+    media: placeMixed("hoyeon-milan", "Milan Fashion Week front row", W_KOREA, 6),
+  },
+  {
+    slug: "beauty-house-skincare-campaign",
+    title: "A skincare house unveils its summer campaign",
+    pillar: "fashion-beauty",
+    category: "campaign",
+    artistSlugs: ["jung-hoyeon"],
+    event: "Brand campaign",
+    date: "2026-06-17T12:00:00+09:00",
+    source: ALLURE_KOREA,
+    excerpt: "Campaign imagery from a beauty-house ambassadorship.",
+    cover: place("skincare-cover", "Skincare campaign key visual", ALLURE_KOREA, 1, "landscape"),
+    media: placeMixed("skincare", "Skincare campaign", ALLURE_KOREA, 6),
+  },
+
+  // ----- additional K-MOVIE sets (the other sparse band) -----
+  {
+    slug: "cannes-competition-photocall",
+    title: "Cannes: the competition photocall",
+    pillar: "k-movie",
+    category: "festival",
+    artistSlugs: ["park-chan-wook", "kim-tae-ri"],
+    event: "Cannes Film Festival",
+    date: "2026-06-20T18:00:00+09:00",
+    source: FESTIVAL,
+    excerpt: "Director and cast at the competition photocall.",
+    cover: place("cannes-cover", "Competition photocall at Cannes", FESTIVAL, 2, "landscape"),
+    media: placeMixed("cannes", "Cannes competition photocall", FESTIVAL, 7),
+  },
+  {
+    slug: "bong-joon-ho-press-conference",
+    title: "Bong Joon-ho fields the festival press",
+    pillar: "k-movie",
+    category: "review",
+    artistSlugs: ["bong-joon-ho"],
+    event: "Press conference",
+    date: "2026-06-19T16:00:00+09:00",
+    source: FESTIVAL,
+    excerpt: "Stage and step-and-repeat frames from a festival press conference.",
+    cover: place("bjh-press-cover", "Bong Joon-ho at a festival press conference", FESTIVAL, 0),
+    media: placeSet("bjh-press", "Festival press conference", FESTIVAL, 6),
+  },
+  {
+    slug: "director-masterclass",
+    title: "A director's masterclass, in full",
+    pillar: "k-movie",
+    category: "director",
+    artistSlugs: ["park-chan-wook"],
+    event: "Masterclass",
+    date: "2026-06-18T19:00:00+09:00",
+    source: FESTIVAL,
+    excerpt: "On-stage frames from a director masterclass and audience Q and A.",
+    cover: place("masterclass-cover", "Director on stage for a masterclass", FESTIVAL, 3),
+    media: placeMixed("masterclass", "Director masterclass", FESTIVAL, 6),
+  },
+  {
+    slug: "kim-tae-ri-indie-spotlight",
+    title: "Kim Tae-ri headlines an indie spotlight",
+    pillar: "k-movie",
+    category: "crossover",
+    artistSlugs: ["kim-tae-ri"],
+    event: "Indie showcase",
+    date: "2026-06-17T19:00:00+09:00",
+    source: FESTIVAL,
+    excerpt: "Portraits and stage frames from an independent-film spotlight.",
+    cover: place("indie-cover", "Kim Tae-ri at an indie film spotlight", FESTIVAL, 1),
+    media: placeMixed("indie", "Indie film spotlight", FESTIVAL, 6),
   },
 ];
 
@@ -1248,4 +1417,106 @@ export const predictions: Prediction[] = [
     tallyVisibleThreshold: 25,
     asOf: "2026-06-29T00:00:00+09:00",
   },
+];
+
+// ---------------------------------------------------------------------------
+// CLIPS — standalone short-form social posts for the home rails (see types.ts).
+// ---------------------------------------------------------------------------
+// REAL, verified embeds, not placeholders. Every YouTube video was confirmed live
+// via the oEmbed endpoint (official channels only, fan reuploads discarded). The
+// Instagram permalinks are official-account posts, confirmed by their account-path
+// where possible; Instagram blocks server-side verification, so a permalink that
+// ever 404s degrades to the link-out facade in LiveEmbed, never a broken frame.
+// Dates are each post's approximate publish date so a rail reads newest-first.
+// Captions follow house style: song titles in 'quotes', work titles in *asterisks*.
+const YT_CHANNEL = {
+  hybe: { name: "HYBE Labels", url: "https://www.youtube.com/@HYBELABELS", kind: "embed" } as Source,
+  blackpink: { name: "BLACKPINK", url: "https://www.youtube.com/@BLACKPINK", kind: "embed" } as Source,
+  iu: { name: "IU", url: "https://www.youtube.com/@dlwlrma", kind: "embed" } as Source,
+  straykids: { name: "Stray Kids", url: "https://www.youtube.com/@StrayKids", kind: "embed" } as Source,
+  aespa: { name: "aespa", url: "https://www.youtube.com/@aespa", kind: "embed" } as Source,
+  eunwoo: { name: "Cha Eun-woo", url: "https://www.youtube.com/@offclCHAEUNWOO", kind: "embed" } as Source,
+  fantagio: { name: "Fantagio", url: "https://www.youtube.com/@fantagio", kind: "embed" } as Source,
+  twice: { name: "TWICE", url: "https://www.youtube.com/@TWICE", kind: "embed" } as Source,
+};
+
+// YouTube clip (landscape player). videoId was oEmbed-verified on the named channel.
+function yt(
+  id: string,
+  videoId: string,
+  artistSlugs: string[],
+  date: string,
+  caption: string,
+  credit: Source,
+): Clip {
+  return {
+    id,
+    platform: "youtube",
+    format: "post",
+    embedUrl: `https://www.youtube.com/watch?v=${videoId}`,
+    pillar: "k-pop",
+    artistSlugs,
+    date,
+    caption,
+    credit,
+    orientation: "landscape",
+  };
+}
+
+// Instagram clip (vertical card). `permalink` is the official-account post/Reel URL.
+function ig(
+  id: string,
+  permalink: string,
+  artistSlugs: string[],
+  pillar: Pillar,
+  date: string,
+  caption: string,
+  handle: string,
+  account: string,
+): Clip {
+  const format: ClipFormat = permalink.includes("/reel/") ? "reel" : "post";
+  return {
+    id,
+    platform: "instagram",
+    format,
+    embedUrl: permalink,
+    pillar,
+    artistSlugs,
+    date,
+    caption,
+    credit: { name: handle, url: account, kind: "embed" },
+    orientation: "portrait",
+  };
+}
+
+export const clips: Clip[] = [
+  // --- YouTube: official music videos and clips (oEmbed-verified) ---
+  yt("clip-yt-blackpink-go", "2GJfWMYCWY0", ["blackpink"], "2026-02-13T12:00:00+09:00", "BLACKPINK return with 'GO'", YT_CHANNEL.blackpink),
+  yt("clip-yt-twice-this-is-for", "eHHQaoEW30Q", ["twice"], "2025-07-11T18:00:00+09:00", "TWICE, the 'This Is For' music video", YT_CHANNEL.twice),
+  yt("clip-yt-iu-holssi", "mFbILexYSQg", ["iu"], "2025-09-19T18:00:00+09:00", "IU, the 'Holssi' music video", YT_CHANNEL.iu),
+  yt("clip-yt-blackpink-jump", "CgCVZdcKcqY", ["blackpink"], "2025-07-11T12:00:00+09:00", "BLACKPINK, the 'JUMP' music video", YT_CHANNEL.blackpink),
+  yt("clip-yt-aespa-dirty-work", "SKEnKaMI2nw", ["aespa"], "2025-06-15T18:00:00+09:00", "aespa take on the Dirty Work challenge", YT_CHANNEL.aespa),
+  yt("clip-yt-aespa-whiplash-ningning", "YBIS5NTtkNs", ["aespa"], "2024-10-21T18:00:00+09:00", "aespa, a 'Whiplash' universe clip", YT_CHANNEL.aespa),
+  yt("clip-yt-cha-eunwoo-choreo", "cSt6gkeF2Lk", ["cha-eunwoo"], "2024-05-30T18:00:00+09:00", "Cha Eun-woo, a choreography clip", YT_CHANNEL.eunwoo),
+  yt("clip-yt-cha-eunwoo-where-am-i", "1wuO7Lvkkok", ["cha-eunwoo"], "2024-02-26T18:00:00+09:00", "Cha Eun-woo, the 'Where Am I' music video", YT_CHANNEL.fantagio),
+  yt("clip-yt-stray-kids-chk-chk-boom", "0P0aQreFs8w", ["stray-kids"], "2024-07-19T18:00:00+09:00", "Stray Kids, 'Chk Chk Boom'", YT_CHANNEL.straykids),
+  yt("clip-yt-stray-kids-s-class", "JsOOis4bBFg", ["stray-kids"], "2023-06-02T18:00:00+09:00", "Stray Kids, 'S-Class'", YT_CHANNEL.straykids),
+  yt("clip-yt-newjeans-supernatural", "ZncbtRo7RXs", ["newjeans"], "2024-06-21T18:00:00+09:00", "NewJeans, the 'Supernatural' music video", YT_CHANNEL.hybe),
+  yt("clip-yt-twice-i-got-you", "haf67eKF0uo", ["twice"], "2024-02-02T18:00:00+09:00", "TWICE, 'I Got You'", YT_CHANNEL.twice),
+  yt("clip-yt-iu-love-wins-all", "JleoAppaxi0", ["iu"], "2024-01-24T18:00:00+09:00", "IU, 'Love wins all'", YT_CHANNEL.iu),
+
+  // --- Instagram: official-account Reels and posts (links out if an embed 404s) ---
+  ig("clip-ig-twice-teaser", "https://www.instagram.com/twicetagram/reel/DL2dkruyX9Z/", ["twice"], "k-pop", "2026-06-20T12:00:00+09:00", "TWICE tease the 'This Is For' music video", "@twicetagram", "https://www.instagram.com/twicetagram/"),
+  ig("clip-ig-jung-hoyeon-post", "https://www.instagram.com/hoooooyeony/p/DMdiG54S0F1/", ["jung-hoyeon"], "fashion-beauty", "2026-06-10T12:00:00+09:00", "Jung Ho-yeon, a recent post", "@hoooooyeony", "https://www.instagram.com/hoooooyeony/"),
+  ig("clip-ig-newjeans-supernatural", "https://www.instagram.com/newjeans_official/reel/C8ZsjaDSczz/", ["newjeans"], "k-pop", "2026-05-30T12:00:00+09:00", "NewJeans, a 'Supernatural' reel", "@newjeans_official", "https://www.instagram.com/newjeans_official/"),
+  ig("clip-ig-blackpink-tour", "https://www.instagram.com/blackpinkofficial/reel/DJYACoiTQ9X/", ["blackpink"], "k-pop", "2026-05-09T12:00:00+09:00", "BLACKPINK, from the 2025 world tour", "@blackpinkofficial", "https://www.instagram.com/blackpinkofficial/"),
+  ig("clip-ig-blackpink-teaser", "https://www.instagram.com/blackpinkofficial/reel/DFsgXqbzKwR/", ["blackpink"], "k-pop", "2026-04-29T12:00:00+09:00", "BLACKPINK, a world-tour teaser", "@blackpinkofficial", "https://www.instagram.com/blackpinkofficial/"),
+  ig("clip-ig-iu-hereh", "https://www.instagram.com/dlwlrma/p/C5xzLk8S5LM/", ["iu"], "k-pop", "2026-04-20T12:00:00+09:00", "IU counts down to the Hereh tour", "@dlwlrma", "https://www.instagram.com/dlwlrma/"),
+  ig("clip-ig-stray-kids", "https://www.instagram.com/realstraykids/reel/DABOglRhTjN/", ["stray-kids"], "k-pop", "2026-03-15T12:00:00+09:00", "Stray Kids, a behind-the-scenes reel", "@realstraykids", "https://www.instagram.com/realstraykids/"),
+  ig("clip-ig-twice-behind", "https://www.instagram.com/twicetagram/reel/DGNAsYuvppl/", ["twice"], "k-pop", "2026-02-26T12:00:00+09:00", "TWICE go behind the scenes", "@twicetagram", "https://www.instagram.com/twicetagram/"),
+  ig("clip-ig-kim-tae-ri", "https://www.instagram.com/p/DVPYkB0DBaB/", ["kim-tae-ri"], "k-drama", "2026-02-26T12:00:00+09:00", "Kim Tae-ri shares a February photo set", "@kimtaeri_official", "https://www.instagram.com/kimtaeri_official/"),
+  ig("clip-ig-cha-eunwoo", "https://www.instagram.com/eunwo.o_c/reel/C34wWNWRF6w/", ["cha-eunwoo"], "k-pop", "2026-02-10T12:00:00+09:00", "Cha Eun-woo, the 'Just You and I' reel", "@eunwo.o_c", "https://www.instagram.com/eunwo.o_c/"),
+  ig("clip-ig-aespa-sion", "https://www.instagram.com/aespa_official/reel/DB1CorzvhrJ/", ["aespa"], "k-pop", "2025-11-20T12:00:00+09:00", "aespa set the tone with Sion", "@aespa_official", "https://www.instagram.com/aespa_official/"),
+  ig("clip-ig-aespa-whiplash", "https://www.instagram.com/aespa_official/reel/DBazjetvmv0/", ["aespa"], "k-pop", "2025-11-02T12:00:00+09:00", "aespa in their 'Whiplash' era", "@aespa_official", "https://www.instagram.com/aespa_official/"),
+  ig("clip-ig-jung-hoyeon-squidgame", "https://www.instagram.com/hoooooyeony/p/DD_0REbSZDP/", ["jung-hoyeon"], "fashion-beauty", "2025-12-22T12:00:00+09:00", "Jung Ho-yeon counts down to *Squid Game*", "@hoooooyeony", "https://www.instagram.com/hoooooyeony/"),
 ];
