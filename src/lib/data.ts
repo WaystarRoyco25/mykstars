@@ -8,6 +8,7 @@ import type {
   EventRegion,
   EventType,
   Gallery,
+  GallerySort,
   MediaItem,
   Pillar,
   Prediction,
@@ -32,6 +33,14 @@ function byDateDesc<T extends { date: string }>(items: T[]): T[] {
 // Schedule reads soonest-first (the opposite of the newest-first photo feed).
 function byDateAsc<T extends { date: string }>(items: T[]): T[] {
   return [...items].sort((a, b) => (a.date > b.date ? 1 : -1));
+}
+
+// Densest sets first (by photo count). Ties keep newest-first so the "most
+// photos" view stays chronologically sensible within a tie.
+function byPhotoCountDesc(items: Gallery[]): Gallery[] {
+  return [...items].sort(
+    (a, b) => b.media.length - a.media.length || (a.date < b.date ? 1 : -1),
+  );
 }
 
 function matchesTag(g: Gallery, tag: CategoryTag): boolean {
@@ -85,6 +94,32 @@ export async function getFeaturedGallery(): Promise<Gallery> {
 
 export async function getGalleriesByArtist(artistSlug: string): Promise<Gallery[]> {
   return byDateDesc(galleries).filter((g) => g.artistSlugs.includes(artistSlug));
+}
+
+// The photo archive (/photos): the full library, narrowed by any combination of
+// pillar, tag and artist, then ordered. Tag filtering is delegated to the
+// existing helpers so matchesTag stays the single source of truth: the pillar
+// branch reuses getGalleriesForPillar (incl. the Fashion & Beauty lens); the
+// no-pillar branch reuses getGalleries({ tag }). Sort adds the one order those
+// helpers don't (most photos); latest/oldest reuse the date sorters.
+export async function getArchiveGalleries(opts?: {
+  pillar?: Pillar;
+  tag?: CategoryTag;
+  artist?: string;
+  sort?: GallerySort;
+}): Promise<Gallery[]> {
+  let list = opts?.pillar
+    ? await getGalleriesForPillar(opts.pillar, opts.tag)
+    : await getGalleries({ tag: opts?.tag });
+  if (opts?.artist) list = list.filter((g) => g.artistSlugs.includes(opts.artist!));
+  switch (opts?.sort) {
+    case "oldest":
+      return byDateAsc(list);
+    case "photos":
+      return byPhotoCountDesc(list);
+    default:
+      return list; // already newest-first from the helpers above
+  }
 }
 
 export async function getArtists(): Promise<Artist[]> {

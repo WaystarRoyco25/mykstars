@@ -87,7 +87,17 @@ export default async function ArtistPage({
       </header>
 
       <section className="mb-16">
-        <h2 className="kicker mb-6">Photo timeline</h2>
+        <div className="flex items-end justify-between mb-6">
+          <h2 className="kicker">Photo timeline</h2>
+          {galleries.length > 0 && (
+            <Link
+              href={`/photos?artist=${artistSlug}`}
+              className="label hover:text-bone transition-colors"
+            >
+              All photos of {artist.name} →
+            </Link>
+          )}
+        </div>
         {galleries.length > 0 ? (
           <GalleryGrid
             galleries={galleries}

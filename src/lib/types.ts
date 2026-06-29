@@ -97,6 +97,9 @@ export const PILLAR_TAGS: Record<Pillar, CategoryTag[]> = {
 
 export const ALL_TAGS = Object.keys(TAG_LABELS) as CategoryTag[];
 
+// Sort order for the photo archive (/photos): newest, oldest, or densest set.
+export type GallerySort = "latest" | "oldest" | "photos";
+
 // ---------------------------------------------------------------------------
 // Media
 // ---------------------------------------------------------------------------
