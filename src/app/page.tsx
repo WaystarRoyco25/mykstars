@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import {
   getArticles,
+  getEvents,
   getFeaturedGallery,
   getGalleriesForPillar,
   getOpenPredictions,
@@ -10,26 +11,28 @@ import {
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
 import type { Pillar } from "@/lib/types";
 import { relativeTime } from "@/lib/format";
+import { NOW } from "@/lib/seed";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
 import GalleryGrid from "@/components/GalleryGrid";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
+import EventCard from "@/components/EventCard";
 import JsonLd from "@/components/JsonLd";
 import { renderEmphasis } from "@/lib/text";
 
 // Tiles per pillar band, weighted to coverage (K-Pop > K-Drama > Fashion > K-Movie).
 const BAND_COUNT: Record<Pillar, number> = {
-  "k-pop": 6,
-  "k-drama": 5,
+  "k-pop": 8,
+  "k-drama": 6,
   "fashion-beauty": 3,
   "k-movie": 2,
 };
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
-  const [bands, articles, rankings, forecasts] = await Promise.all([
+  const [bands, articles, rankings, forecasts, events] = await Promise.all([
     Promise.all(
       PILLAR_ORDER.map(async (pillar) => ({
         pillar,
@@ -41,11 +44,15 @@ export default async function HomePage() {
     getArticles(),
     getRankings(),
     getOpenPredictions(),
+    getEvents({ upcomingFrom: NOW }),
   ]);
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
-  // A small teaser of open questions drives the return-visit loop from the home page.
-  const topForecasts = forecasts.slice(0, 3);
+  // The Fan Forecast block, interleaved after the K-Pop band: six open questions
+  // (soonest-closing first) drive the return-visit loop from the home page.
+  const topForecasts = forecasts.slice(0, 6);
+  // The soonest shows lead a horizontal D-Day rail under the hero, the urgency hook.
+  const upcomingEvents = events.slice(0, 8);
 
   return (
     <>
@@ -89,6 +96,25 @@ export default async function HomePage() {
         </Link>
       </section>
 
+      {/* Schedule — a horizontal D-Day rail of the soonest shows, the urgency hook */}
+      {upcomingEvents.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 mt-12">
+          <div className="mb-6 flex items-end justify-between">
+            <Link href="/schedule" className="group inline-block">
+              <h2 className="kicker group-hover:text-bone transition-colors">On the calendar</h2>
+            </Link>
+            <Link href="/schedule" className="label hover:text-bone transition-colors">
+              All dates →
+            </Link>
+          </div>
+          <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+            {upcomingEvents.map((e) => (
+              <EventCard key={e.slug} event={e} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* One band per pillar, with its ranking table interleaved right after it */}
       {bands
         .filter((b) => b.galleries.length > 0)
@@ -107,28 +133,27 @@ export default async function HomePage() {
                 <GalleryGrid galleries={b.galleries} priorityCount={b.pillar === "k-pop" ? 3 : 0} />
               </section>
               {ranking && <RankingTable ranking={ranking} />}
+              {/* Fan Forecast — interleaved right after the K-Pop band, the return-visit hook */}
+              {b.pillar === "k-pop" && topForecasts.length > 0 && (
+                <section className="mx-auto max-w-6xl px-5 mt-16">
+                  <div className="flex items-end justify-between mb-6">
+                    <Link href="/predictions" className="group inline-block">
+                      <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
+                    </Link>
+                    <Link href="/predictions" className="label hover:text-bone transition-colors">
+                      All forecasts →
+                    </Link>
+                  </div>
+                  <div className="grid gap-5 sm:grid-cols-3">
+                    {topForecasts.map((p) => (
+                      <PredictionCard key={p.slug} prediction={p} />
+                    ))}
+                  </div>
+                </section>
+              )}
             </Fragment>
           );
         })}
-
-      {/* Fan Forecast — predictions teaser, the return-visit hook */}
-      {topForecasts.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 mt-16">
-          <div className="flex items-end justify-between mb-6">
-            <Link href="/predictions" className="group inline-block">
-              <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
-            </Link>
-            <Link href="/predictions" className="label hover:text-bone transition-colors">
-              All forecasts →
-            </Link>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-3">
-            {topForecasts.map((p) => (
-              <PredictionCard key={p.slug} prediction={p} />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Analysis — light editorial band */}
       <section className="bg-bone text-ink mt-16">
@@ -140,7 +165,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="flex flex-col gap-6">
-            {articles.slice(0, 4).map((a) => (
+            {articles.slice(0, 8).map((a) => (
               <ArticleListItem key={a.slug} article={a} on="light" />
             ))}
           </div>
