@@ -1,20 +1,8 @@
-import type { Clip, MediaItem } from "@/lib/types";
+import type { Clip } from "@/lib/types";
 import AttributionBadge from "./AttributionBadge";
 import LiveEmbed from "./LiveEmbed";
+import { clipMedia } from "@/lib/media";
 import { renderEmphasis } from "@/lib/text";
-
-// LiveEmbed speaks MediaItem, so adapt the Clip on the way in (no stored adapter).
-function clipMedia(clip: Clip): MediaItem {
-  return {
-    id: clip.id,
-    kind: "embed",
-    platform: clip.platform,
-    embedUrl: clip.embedUrl,
-    alt: clip.caption,
-    credit: clip.credit,
-    orientation: clip.orientation ?? "portrait",
-  };
-}
 
 // A fixed-width card for the home rails (Reels / Shorts) — the live-video sibling
 // of EventCard. The media box reserves its size from first paint so the player

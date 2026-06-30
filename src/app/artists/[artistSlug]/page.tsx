@@ -46,8 +46,8 @@ export default async function ArtistPage({
     getRelatedArticles(artistSlug),
   ]);
   // Keep the photo timeline from looking empty: top up a sparse grid with the
-  // artist's official-account tiles, then related same-pillar sets (links out,
-  // credited; never rehosted or fabricated).
+  // artist's curated posts (live embeds) and official-account tiles, then related
+  // same-pillar sets (credited; never rehosted or fabricated).
   const { embeds: fillEmbeds, galleries: fillGalleries } = await sparseFill(
     artist,
     galleries,

@@ -1,7 +1,10 @@
 // Helpers for the live, lazy social embeds (see components/LiveEmbed.tsx).
-// Pure URL parsing plus a singleton loader for Instagram's embed.js. Nothing here
-// touches the DOM at module scope, so the file is safe to import anywhere; the
-// window/document calls only run when invoked from a client effect.
+// Pure URL parsing plus singleton loaders for Instagram's embed.js and X's
+// widgets.js. Nothing here touches the DOM at module scope, so the file is safe
+// to import anywhere; the window/document calls only run when invoked from a
+// client effect.
+
+import type { MediaItem } from "./types";
 
 // A YouTube video id is exactly 11 chars of [A-Za-z0-9_-].
 const YT_ID = /^[A-Za-z0-9_-]{11}$/;
@@ -59,6 +62,15 @@ export function instagramPermalink(url: string): string {
   }
 }
 
+// The shortcode of a specific Instagram post/Reel (/p/, /reel/, /tv/), or null for
+// a bare profile URL. Lets callers tell a real, embeddable post from an account
+// link — instagramPermalink alone happily returns a profile path.
+export function instagramPostId(url: string | undefined): string | null {
+  if (!url) return null;
+  const m = url.match(/\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
 // --- Instagram embed.js: load once, idempotently, for the whole page ---------
 // next/script would also de-dupe, but a module singleton is more robust when many
 // LiveEmbeds mount at once and each needs to await readiness before calling
@@ -66,6 +78,7 @@ export function instagramPermalink(url: string): string {
 declare global {
   interface Window {
     instgrm?: { Embeds: { process: () => void } };
+    twttr?: { widgets: { load: (el?: HTMLElement) => void } };
   }
 }
 
@@ -104,4 +117,97 @@ export function loadInstagram(): Promise<void> {
 export function processInstagram(): void {
   if (typeof window === "undefined") return;
   window.instgrm?.Embeds?.process();
+}
+
+// --- X / Twitter -------------------------------------------------------------
+
+// Pull the numeric tweet id out of an x.com / twitter.com status URL. Returns
+// null for profiles or anything we can't parse (callers fall back to the facade).
+export function tweetId(url: string | undefined): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^(www\.|mobile\.)/, "");
+    if (host !== "x.com" && host !== "twitter.com") return null;
+    const m = u.pathname.match(/\/status(?:es)?\/(\d+)/);
+    return m ? m[1] : null;
+  } catch {
+    const m = url.match(/(?:x|twitter)\.com\/[^/]+\/status(?:es)?\/(\d+)/);
+    return m ? m[1] : null;
+  }
+}
+
+// Normalize a tweet URL for the blockquote's <a href>: force https, keep the
+// handle and id, drop everything after it (e.g. /photo/1), query and hash. The
+// original host is preserved (x.com vs twitter.com); widgets.js accepts either.
+export function xPermalink(url: string): string {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^(www\.|mobile\.)/, "");
+    const m = u.pathname.match(/^\/([^/]+)\/status(?:es)?\/(\d+)/);
+    if (m) return `https://${host}/${m[1]}/status/${m[2]}`;
+    return url;
+  } catch {
+    return url;
+  }
+}
+
+// --- X widgets.js: load once, idempotently, for the whole page ---------------
+// Same singleton shape as loadInstagram: many XEmbeds can mount at once and each
+// awaits readiness before calling widgets.load() on its own container.
+const X_SCRIPT_ID = "twitter-widgets-js";
+let xPromise: Promise<void> | null = null;
+
+export function loadTwitter(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (window.twttr?.widgets) return Promise.resolve();
+  if (xPromise) return xPromise;
+  xPromise = new Promise<void>((resolve, reject) => {
+    const done = () => resolve();
+    const fail = () => {
+      xPromise = null; // allow a later retry
+      reject(new Error("twitter widgets.js failed to load"));
+    };
+    const existing = document.getElementById(X_SCRIPT_ID) as HTMLScriptElement | null;
+    if (existing) {
+      if (window.twttr?.widgets) return resolve();
+      existing.addEventListener("load", done);
+      existing.addEventListener("error", fail);
+      return;
+    }
+    const s = document.createElement("script");
+    s.id = X_SCRIPT_ID;
+    s.src = "https://platform.twitter.com/widgets.js";
+    s.async = true;
+    s.addEventListener("load", done);
+    s.addEventListener("error", fail);
+    document.body.appendChild(s);
+  });
+  return xPromise;
+}
+
+// Ask X to hydrate the tweet blockquote(s) inside `el` (or the whole page if
+// omitted). Scoping to the container avoids re-scanning every embed on the page.
+export function processTwitter(el?: HTMLElement): void {
+  if (typeof window === "undefined") return;
+  window.twttr?.widgets?.load(el);
+}
+
+// --- shared ------------------------------------------------------------------
+
+// Whether a media item points at a specific, embeddable post (not a bare profile
+// or an unparseable URL). The grid uses this to choose a live embed over the
+// link-out facade. Mirrors the per-platform parsers above.
+export function isEmbeddablePost(item: MediaItem): boolean {
+  if (item.kind !== "embed" || !item.embedUrl) return false;
+  switch (item.platform) {
+    case "youtube":
+      return youtubeId(item.embedUrl) != null;
+    case "instagram":
+      return instagramPostId(item.embedUrl) != null;
+    case "x":
+      return tweetId(item.embedUrl) != null;
+    default:
+      return false;
+  }
 }

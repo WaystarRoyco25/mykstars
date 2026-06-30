@@ -1489,6 +1489,33 @@ function ig(
   };
 }
 
+// X clip (tweet card, dark-themed embed). `permalink` is the official-account
+// status URL. Tweets are variable height and scroll inside the portrait cell; if a
+// tweet fails to embed (deleted, protected, widget blocked) the UI links out.
+function x(
+  id: string,
+  permalink: string,
+  artistSlugs: string[],
+  pillar: Pillar,
+  date: string,
+  caption: string,
+  handle: string,
+  account: string,
+): Clip {
+  return {
+    id,
+    platform: "x",
+    format: "post",
+    embedUrl: permalink,
+    pillar,
+    artistSlugs,
+    date,
+    caption,
+    credit: { name: handle, url: account, kind: "embed" },
+    orientation: "portrait",
+  };
+}
+
 export const clips: Clip[] = [
   // --- YouTube: official music videos and clips (oEmbed-verified) ---
   yt("clip-yt-blackpink-go", "2GJfWMYCWY0", ["blackpink"], "2026-02-13T12:00:00+09:00", "BLACKPINK return with 'GO'", YT_CHANNEL.blackpink),
@@ -1519,4 +1546,9 @@ export const clips: Clip[] = [
   ig("clip-ig-aespa-sion", "https://www.instagram.com/aespa_official/reel/DB1CorzvhrJ/", ["aespa"], "k-pop", "2025-11-20T12:00:00+09:00", "aespa set the tone with Sion", "@aespa_official", "https://www.instagram.com/aespa_official/"),
   ig("clip-ig-aespa-whiplash", "https://www.instagram.com/aespa_official/reel/DBazjetvmv0/", ["aespa"], "k-pop", "2025-11-02T12:00:00+09:00", "aespa in their 'Whiplash' era", "@aespa_official", "https://www.instagram.com/aespa_official/"),
   ig("clip-ig-jung-hoyeon-squidgame", "https://www.instagram.com/hoooooyeony/p/DD_0REbSZDP/", ["jung-hoyeon"], "fashion-beauty", "2025-12-22T12:00:00+09:00", "Jung Ho-yeon counts down to *Squid Game*", "@hoooooyeony", "https://www.instagram.com/hoooooyeony/"),
+
+  // --- X: official-account posts (links out if a tweet fails to embed) ---
+  x("clip-x-twice-thisisfor-boston", "https://x.com/JYPETWICE/status/2039854226680295782", ["twice"], "k-pop", "2026-04-03T12:00:00+09:00", "TWICE bring the *This Is For* world tour to Boston", "@JYPETWICE", "https://x.com/JYPETWICE"),
+  x("clip-x-iu-love-wins-all", "https://x.com/_IUofficial/status/1968704238642438407", ["iu"], "k-pop", "2025-09-19T12:00:00+09:00", "IU, a 'Love wins all' note", "@_IUofficial", "https://x.com/_IUofficial"),
+  x("clip-x-blackpink-2025-tour", "https://x.com/BLACKPINK/status/1920297633794691278", ["blackpink"], "k-pop", "2025-05-08T12:00:00+09:00", "BLACKPINK, a 2025 world tour announcement", "@BLACKPINK", "https://x.com/BLACKPINK"),
 ];

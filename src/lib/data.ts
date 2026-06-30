@@ -1,5 +1,6 @@
 import { articles, artists, clips, events, galleries, predictions, rankings } from "./seed";
 import { getSupabase } from "./supabase";
+import { clipMedia } from "./media";
 import type {
   Article,
   Artist,
@@ -191,12 +192,49 @@ export function artistEmbeds(artist: Artist): MediaItem[] {
   );
 }
 
+// Distinct artist slugs across a set of galleries, in first-seen order.
+function distinctArtistSlugs(galleries: Gallery[]): string[] {
+  const slugs: string[] = [];
+  const seen = new Set<string>();
+  for (const g of galleries) {
+    for (const s of g.artistSlugs) {
+      if (!seen.has(s)) {
+        seen.add(s);
+        slugs.push(s);
+      }
+    }
+  }
+  return slugs;
+}
+
+// Curated Instagram/X posts for a set of artists, as grid-ready MediaItems. These
+// upgrade grid fill from a plain account link-out to a real, click-to-view embed
+// (see EmbedCard). X leads, then Instagram, each newest-first: X carries no rail of
+// its own, so it never duplicates one, while Instagram already has the "On the
+// feed" rail. Deduped to the cap. Sync — reads the already-loaded seed arrays.
+function artistPostEmbeds(slugs: string[], cap: number): MediaItem[] {
+  if (cap <= 0) return [];
+  const rank: Record<string, number> = { x: 0, instagram: 1 };
+  return clips
+    .filter(
+      (c) =>
+        (c.platform === "x" || c.platform === "instagram") &&
+        c.artistSlugs.some((s) => slugs.includes(s)),
+    )
+    .sort((a, b) => {
+      const pr = (rank[a.platform] ?? 9) - (rank[b.platform] ?? 9);
+      return pr !== 0 ? pr : a.date < b.date ? 1 : -1;
+    })
+    .slice(0, cap)
+    .map(clipMedia);
+}
+
 // Ground rule: a grid never renders sparse. When a page has fewer than `minTiles`
 // galleries (a full desktop row is 3), top it up to fill the empty columns: first
-// with the artist's official-account embeds, then, if still short (e.g. directors
-// with no linked accounts), with related galleries from the same pillar. Both link
-// out and stay credited; nothing is rehosted or fabricated. Each list is capped so
-// a grid that is already full never grows.
+// with the artist's curated posts (real, click-to-view embeds), then their
+// official-account link-outs, then related galleries from the same pillar (e.g.
+// directors with no posts or accounts). Everything links out and stays credited;
+// nothing is rehosted or fabricated. Each list is capped so a full grid never grows.
 export async function sparseFill(
   artist: Artist,
   ownGalleries: Gallery[],
@@ -204,7 +242,10 @@ export async function sparseFill(
 ): Promise<{ embeds: MediaItem[]; galleries: Gallery[] }> {
   const deficit = minTiles - ownGalleries.length;
   if (deficit <= 0) return { embeds: [], galleries: [] };
-  const embeds = artistEmbeds(artist).slice(0, deficit);
+  const posts = artistPostEmbeds([artist.slug], deficit);
+  const postIds = new Set(posts.map((m) => m.id));
+  const accounts = artistEmbeds(artist).filter((m) => !postIds.has(m.id));
+  const embeds = [...posts, ...accounts].slice(0, deficit);
   const stillShort = deficit - embeds.length;
   if (stillShort <= 0) return { embeds, galleries: [] };
   const pillar = artist.pillars?.[0] ?? "k-pop";
@@ -215,33 +256,32 @@ export async function sparseFill(
   return { embeds, galleries: related };
 }
 
-// Official-account tiles to top up a whole pillar band on the home page, so a thin
-// band (K-Movie, Fashion) never renders with empty columns. Collects the distinct
-// artists across the band's galleries, maps each to its official-account embeds
-// (reusing artistEmbeds), de-dupes, and caps at `cap` (the band's deficit) so a
-// full band never grows. Sync — it reads the already-loaded seed arrays.
+// Top up a whole pillar band on the home page so a thin band (K-Movie, Fashion)
+// never renders with empty columns. Posts first: curated Instagram/X embeds for the
+// band's artists (real, click-to-view tiles). Then official-account link-outs as a
+// backstop for artists with no curated posts. Deduped by id and capped at `cap`
+// (the band's deficit) so a full band never grows. Sync — reads the loaded seed.
 export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaItem[] {
   if (cap <= 0) return [];
-  const slugs: string[] = [];
-  const slugSeen = new Set<string>();
-  for (const g of bandGalleries) {
-    for (const s of g.artistSlugs) {
-      if (!slugSeen.has(s)) {
-        slugSeen.add(s);
-        slugs.push(s);
-      }
-    }
-  }
+  const slugs = distinctArtistSlugs(bandGalleries);
   const out: MediaItem[] = [];
   const idSeen = new Set<string>();
+  // Returns true once the cap is reached, so callers can stop early.
+  const push = (m: MediaItem): boolean => {
+    if (!idSeen.has(m.id)) {
+      idSeen.add(m.id);
+      out.push(m);
+    }
+    return out.length >= cap;
+  };
+  for (const m of artistPostEmbeds(slugs, cap)) {
+    if (push(m)) return out;
+  }
   for (const slug of slugs) {
     const artist = artists.find((a) => a.slug === slug);
     if (!artist) continue;
     for (const m of artistEmbeds(artist)) {
-      if (idSeen.has(m.id)) continue;
-      idSeen.add(m.id);
-      out.push(m);
-      if (out.length >= cap) return out;
+      if (push(m)) return out;
     }
   }
   return out;

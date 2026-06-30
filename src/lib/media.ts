@@ -1,4 +1,4 @@
-import type { MediaItem, Orientation } from "./types";
+import type { Clip, MediaItem, Orientation } from "./types";
 
 // Resolve a media item's orientation for the vertical-leaning masonry.
 // Explicit `orientation` wins; otherwise derive from intrinsic width/height
@@ -23,4 +23,20 @@ export function aspectClass(o: Orientation): string {
   if (o === "landscape") return "aspect-[3/2]";
   if (o === "square") return "aspect-square";
   return "aspect-[3/4]";
+}
+
+// Adapt a Clip to the MediaItem the embed renderers speak (LiveEmbed, PhotoMedia,
+// EmbedCard). Pure mapping, no I/O: the single source of truth for the Clip ->
+// MediaItem shape, shared by the home rails (ClipCard) and the grid fill (data.ts).
+// Reels/Shorts default to portrait.
+export function clipMedia(clip: Clip): MediaItem {
+  return {
+    id: clip.id,
+    kind: "embed",
+    platform: clip.platform,
+    embedUrl: clip.embedUrl,
+    alt: clip.caption,
+    credit: clip.credit,
+    orientation: clip.orientation ?? "portrait",
+  };
 }

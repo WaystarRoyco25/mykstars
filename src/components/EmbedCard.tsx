@@ -1,6 +1,8 @@
 import type { MediaItem } from "@/lib/types";
 import { IconArrowUpRight, IconCamera } from "./icons";
 import { stripEmphasis } from "@/lib/text";
+import { isEmbeddablePost } from "@/lib/embeds";
+import LiveEmbed from "./LiveEmbed";
 
 const PLATFORM_LABEL: Record<string, string> = {
   instagram: "Instagram",
@@ -9,12 +11,26 @@ const PLATFORM_LABEL: Record<string, string> = {
   youtube: "YouTube",
 };
 
-// A masonry tile that links out to an artist's official account, used to top up
-// a sparse grid so it never renders with empty columns. We never rehost the
-// photo: the tile only links to the source platform and names the account, the
-// same embed-first, legally-safe pattern as EmbedFacade.
+// A masonry tile for a social embed used to top up a sparse grid so it never
+// renders with empty columns. When the item is a specific, embeddable post
+// (Instagram / X / YouTube permalink) it hydrates into a real, click-to-view
+// player in place (LiveEmbed) — the same on-site experience as the home rails.
+// When it is only an official-account link (a profile URL, the backstop fill), it
+// stays a lightweight link-out tile. Either way the photo is never rehosted: it
+// lives on the source platform and is always credited.
 export default function EmbedCard({ item }: { item: MediaItem }) {
   const platform = item.platform ? PLATFORM_LABEL[item.platform] ?? "source" : "source";
+
+  // Real post → live, click-to-expand embed inside the portrait masonry cell.
+  if (isEmbeddablePost(item)) {
+    return (
+      <div className="relative mb-2 block aspect-[3/4] break-inside-avoid overflow-hidden border border-line bg-ink-2 md:mb-3">
+        <LiveEmbed item={item} />
+      </div>
+    );
+  }
+
+  // Account-only link-out (a profile URL): the lightweight backstop tile.
   return (
     <a
       href={item.embedUrl ?? item.credit.url}

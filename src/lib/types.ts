@@ -154,7 +154,7 @@ export type ClipFormat = "reel" | "short" | "post";
 
 export interface Clip {
   id: string;
-  platform: EmbedPlatform; // "instagram" | "youtube" (x / tiktok reserved)
+  platform: EmbedPlatform; // "instagram" | "youtube" | "x" (tiktok reserved)
   format: ClipFormat; // vertical reel, YouTube Short, or feed post
   embedUrl: string; // canonical, verified post / Reel / Short URL
   pillar: Pillar;

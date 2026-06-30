@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MediaItem } from "@/lib/types";
 import { stripEmphasis } from "@/lib/text";
 import {
   instagramPermalink,
   loadInstagram,
+  loadTwitter,
   processInstagram,
+  processTwitter,
+  tweetId,
+  xPermalink,
   youtubeEmbedSrc,
   youtubeId,
   youtubeThumbnail,
@@ -23,10 +27,13 @@ import { IconArrowUpRight, IconCamera, IconPlay } from "./icons";
 //    own embeds are unreliable on some hosts/contexts (login walls, frame blocks),
 //    so we default to the clean facade tile rather than risk a blank auto-embed, and
 //    fall back to the link-out facade if the script fails.
+//  - X: the official blockquote + widgets.js, loaded on click (dark theme). Same
+//    click-to-load and graceful-facade-fallback contract as Instagram.
 // Fills its (relatively-positioned) parent, like PhotoMedia.
 export default function LiveEmbed({ item }: { item: MediaItem }) {
   if (item.platform === "youtube") return <YouTubeEmbed item={item} />;
   if (item.platform === "instagram") return <InstagramEmbed item={item} />;
+  if (item.platform === "x") return <XEmbed item={item} />;
   return <EmbedFacade item={item} className="absolute inset-0" />;
 }
 
@@ -129,6 +136,73 @@ function InstagramEmbed({ item }: { item: MediaItem }) {
         data-instgrm-permalink={permalink}
         data-instgrm-version="14"
         style={{ margin: 0, width: "100%", minWidth: 0 }}
+      >
+        <a href={permalink} target="_blank" rel="nofollow noopener noreferrer">
+          {stripEmphasis(item.alt)}
+        </a>
+      </blockquote>
+    </div>
+  );
+}
+
+function XEmbed({ item }: { item: MediaItem }) {
+  const [active, setActive] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Once the blockquote is in the DOM (after a click), load widgets.js (once) and
+  // ask X to upgrade just this container. If the script fails, drop to the facade.
+  useEffect(() => {
+    if (!active || failed) return;
+    let cancelled = false;
+    loadTwitter()
+      .then(() => {
+        if (!cancelled) processTwitter(ref.current ?? undefined);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [active, failed]);
+
+  // A bare profile / unparseable URL can't be embedded as a tweet — link out instead.
+  if (!tweetId(item.embedUrl) || failed)
+    return <EmbedFacade item={item} className="absolute inset-0" />;
+
+  const permalink = xPermalink(item.embedUrl ?? item.credit.url);
+
+  if (!active) {
+    return (
+      <a
+        href={permalink}
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+        onClick={(e) => {
+          e.preventDefault();
+          setActive(true);
+        }}
+        className="group absolute inset-0 flex flex-col items-center justify-center gap-3 bg-ink-2 text-bone"
+      >
+        <IconCamera size={26} className="text-muted-2" />
+        <span className="label">X</span>
+        <span className="label inline-flex items-center gap-1 text-crimson">
+          View post
+          <IconArrowUpRight size={12} />
+        </span>
+      </a>
+    );
+  }
+
+  return (
+    <div ref={ref} className="absolute inset-0 overflow-y-auto bg-ink">
+      <blockquote
+        className="twitter-tweet"
+        data-theme="dark"
+        data-dnt="true"
+        data-conversation="none"
+        style={{ margin: 0, width: "100%" }}
       >
         <a href={permalink} target="_blank" rel="nofollow noopener noreferrer">
           {stripEmphasis(item.alt)}
