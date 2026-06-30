@@ -26,7 +26,7 @@ export default function EmbedCard({ item }: { item: MediaItem }) {
   // 3:4 box so the column never collapses while it hydrates.
   if (isEmbeddablePost(item)) {
     return (
-      <div className="relative mb-2 break-inside-avoid overflow-hidden border border-line bg-ink-2 md:mb-3">
+      <div className="relative mb-2 break-inside-avoid overflow-hidden rounded-tile border border-line bg-ink-2 md:mb-3">
         <LiveEmbed item={item} layout="flow" />
       </div>
     );
@@ -39,7 +39,7 @@ export default function EmbedCard({ item }: { item: MediaItem }) {
       target="_blank"
       rel="nofollow noopener noreferrer"
       aria-label={`${stripEmphasis(item.alt)}, view on ${platform}`}
-      className="group relative mb-2 block aspect-[3/4] break-inside-avoid overflow-hidden border border-line bg-ink-2 md:mb-3"
+      className="group relative mb-2 block aspect-[3/4] break-inside-avoid overflow-hidden rounded-tile border border-line bg-ink-2 md:mb-3"
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center text-bone">
         <IconCamera size={26} className="text-muted-2" />

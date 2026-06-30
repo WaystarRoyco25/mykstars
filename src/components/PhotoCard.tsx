@@ -29,7 +29,7 @@ export default function PhotoCard({
   return (
     <Link
       href={`/photos/${gallery.slug}`}
-      className={`group relative mb-2 md:mb-3 block break-inside-avoid overflow-hidden border border-line ${aspectClass(orientation)}`}
+      className={`group relative mb-2 md:mb-3 block break-inside-avoid overflow-hidden rounded-tile border border-line ${aspectClass(orientation)}`}
     >
       <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
         <PhotoMedia

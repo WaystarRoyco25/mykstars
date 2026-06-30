@@ -13,7 +13,7 @@ export default function ClipCard({ clip }: { clip: Clip }) {
   const isIg = clip.platform === "instagram";
   return (
     <div
-      className={`group flex shrink-0 snap-start flex-col border border-line transition-colors hover:border-crimson ${
+      className={`group flex shrink-0 snap-start flex-col overflow-hidden rounded-tile border border-line transition-colors hover:border-crimson ${
         isIg ? "w-[21rem]" : "w-[22rem]"
       }`}
     >

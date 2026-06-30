@@ -14,7 +14,7 @@ export default function EventCard({ event }: { event: StarEvent }) {
   return (
     <Link
       href="/schedule"
-      className="group flex w-60 shrink-0 snap-start flex-col gap-2 border border-line p-4 transition-colors hover:border-crimson hover:bg-ink-2"
+      className="group flex w-60 shrink-0 snap-start flex-col gap-2 rounded-tile border border-line p-4 transition-colors hover:border-crimson hover:bg-ink-2"
     >
       <div className="flex items-center justify-between gap-2">
         <DDayBadge date={event.date} initialLabel={dDayLabel(event.date)} />

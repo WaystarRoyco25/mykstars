@@ -41,7 +41,7 @@ export default async function PredictionCard({ prediction }: { prediction: Predi
   }
 
   return (
-    <article className="border border-line p-5 hover:border-crimson transition-colors flex flex-col gap-3 h-full">
+    <article className="rounded-tile border border-line p-5 hover:border-crimson transition-colors flex flex-col gap-3 h-full">
       <div className="flex items-center justify-between gap-3">
         <span className="kicker">
           {PILLAR_LABELS[prediction.pillar]} · {PREDICTION_CATEGORY_LABELS[prediction.category]}

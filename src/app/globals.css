@@ -13,6 +13,8 @@
   --color-crimson: #cc001e;
   --color-crimson-dark: #a3001a;
 
+  --radius-tile: 12px;
+
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
 }
@@ -71,6 +73,16 @@ a {
     border: 0;
     border-top: 1px solid var(--color-line);
   }
+}
+
+/* X (Twitter) embeds render a rounded tweet card inside a cross-origin iframe whose
+   corner cut-outs paint white. Clip the widget to the card's curve so the dark frame
+   shows through instead, and drop widgets.js's default 10px margins so it sits flush. */
+twitter-widget,
+.twitter-tweet-rendered {
+  margin: 0 !important;
+  border-radius: var(--radius-tile);
+  overflow: hidden;
 }
 
 :where(a, button, input, textarea, select, [tabindex]):focus-visible {

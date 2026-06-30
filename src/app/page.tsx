@@ -90,7 +90,7 @@ export default async function HomePage() {
       {/* Hero — global featured gallery */}
       <section className="mx-auto max-w-6xl px-5 pt-6">
         <Link href={`/photos/${featured.slug}`} className="group block">
-          <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden border border-line">
+          <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden rounded-tile border border-line">
             <PhotoMedia item={featured.cover} sizes="100vw" priority />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
@@ -208,7 +208,7 @@ export default async function HomePage() {
                       All people →
                     </Link>
                   </div>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line rounded-tile overflow-hidden">
                     {peopleInFocus.map(({ artist, photoSets }) => (
                       <ArtistCard key={artist.slug} artist={artist} photoSets={photoSets} />
                     ))}
