@@ -13,19 +13,21 @@ const PLATFORM_LABEL: Record<string, string> = {
 
 // A masonry tile for a social embed used to top up a sparse grid so it never
 // renders with empty columns. When the item is a specific, embeddable post
-// (Instagram / X / YouTube permalink) it hydrates into a real, click-to-view
-// player in place (LiveEmbed) — the same on-site experience as the home rails.
+// (Instagram / X / YouTube permalink) it hydrates into a real player in place as it
+// scrolls into view (LiveEmbed), the same on-site experience as the home rails.
 // When it is only an official-account link (a profile URL, the backstop fill), it
 // stays a lightweight link-out tile. Either way the photo is never rehosted: it
 // lives on the source platform and is always credited.
 export default function EmbedCard({ item }: { item: MediaItem }) {
   const platform = item.platform ? PLATFORM_LABEL[item.platform] ?? "source" : "source";
 
-  // Real post → live, click-to-expand embed inside the portrait masonry cell.
+  // Real post → live embed that auto-loads in view and grows to the post's natural
+  // height inside the masonry cell (layout="flow"); the pre-load facade reserves a
+  // 3:4 box so the column never collapses while it hydrates.
   if (isEmbeddablePost(item)) {
     return (
-      <div className="relative mb-2 block aspect-[3/4] break-inside-avoid overflow-hidden border border-line bg-ink-2 md:mb-3">
-        <LiveEmbed item={item} />
+      <div className="relative mb-2 break-inside-avoid overflow-hidden border border-line bg-ink-2 md:mb-3">
+        <LiveEmbed item={item} layout="flow" />
       </div>
     );
   }

@@ -71,6 +71,23 @@ export function instagramPostId(url: string | undefined): string | null {
   return m ? m[1] : null;
 }
 
+// The canonical, username-less permalink embed.js hydrates most reliably, e.g.
+// https://www.instagram.com/reel/<shortcode>/. The username-prefixed form the seed
+// stores (.../<user>/reel/<id>/) resolves flakily and commonly renders a blank/cream
+// embed, so we feed THIS form to the blockquote's data-instgrm-permalink while the
+// human-facing link keeps the prettier instagramPermalink(). Returns null for a bare
+// profile (no shortcode) so callers fall back to the facade, like tweetId() does.
+export function instagramEmbedPermalink(url: string | undefined): string | null {
+  const id = instagramPostId(url);
+  if (!id) return null;
+  const kind = /\/(?:reel|reels)\//.test(url ?? "")
+    ? "reel"
+    : /\/tv\//.test(url ?? "")
+      ? "tv"
+      : "p";
+  return `https://www.instagram.com/${kind}/${id}/`;
+}
+
 // --- Instagram embed.js: load once, idempotently, for the whole page ---------
 // next/script would also de-dupe, but a module singleton is more robust when many
 // LiveEmbeds mount at once and each needs to await readiness before calling
@@ -117,6 +134,20 @@ export function loadInstagram(): Promise<void> {
 export function processInstagram(): void {
   if (typeof window === "undefined") return;
   window.instgrm?.Embeds?.process();
+}
+
+// Whether embed.js has actually hydrated the embed inside `wrapper`. On success it
+// REPLACES the blockquote with an <iframe.instagram-media-rendered>, so we check the
+// stable wrapper for a descendant iframe (checking the blockquote itself would miss
+// it, since that node is detached on success). A positive check (vs. "the loading
+// placeholder is gone") avoids the false-positive window mid-hydration. The retry
+// loop in LiveEmbed polls this to tell a real render from a blank box.
+export function isInstagramRendered(wrapper: Element | null): boolean {
+  if (!wrapper) return false;
+  return (
+    wrapper.querySelector("iframe") != null ||
+    wrapper.querySelector(".instagram-media-rendered") != null
+  );
 }
 
 // --- X / Twitter -------------------------------------------------------------

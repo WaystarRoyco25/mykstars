@@ -159,7 +159,7 @@ export default async function HomePage() {
                   <div className="mb-6">
                     <h2 className="kicker">On the feed</h2>
                   </div>
-                  <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+                  <div className="flex snap-x items-start gap-3 overflow-x-auto pb-2">
                     {reels.map((c) => (
                       <ClipCard key={c.id} clip={c} />
                     ))}
