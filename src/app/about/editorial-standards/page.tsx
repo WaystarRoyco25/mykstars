@@ -13,6 +13,10 @@ const SECTIONS = [
     p: "Every photograph is credited to its originating outlet, photographer or platform and links back to the original. We prefer official social embeds so images stay on their source. We do not strip watermarks or credit lines, and we honor removal requests.",
   },
   {
+    h: "Logos and trademarks",
+    p: "Company names and logos (record labels, agencies and broadcasters) are the trademarks of their respective owners. We show them only to identify the companies behind the artists and titles we cover, and their use here implies no endorsement or affiliation.",
+  },
+  {
     h: "Confirmed vs unverified",
     p: "We attach a Confirmed label only to facts an official source has stated on the record, with that source linked. Unverified marks reporting that is circulating but not confirmed at the source, and we explain what would have to change for the status to update. We do not repeat unconfirmed personal claims as if established.",
   },

@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Ranking, RankingRow } from "@/lib/types";
 import { absoluteDate } from "@/lib/format";
 import { renderEmphasis } from "@/lib/text";
+import { splitCompanyDetail } from "@/lib/companies";
+import CompanyLogo from "@/components/CompanyLogo";
 
 // A scannable K-Culture chart table, interleaved between photo bands to break up
 // the feed. Server component (no client JS), styled to the editorial-noir system:
@@ -30,15 +32,30 @@ function ChangeCell({ row }: { row: RankingRow }) {
   );
 }
 
+// The line under a row's name usually names a company: the idol table carries a
+// bare agency ("ADOR"); the drama table carries a network, optionally trailed by
+// a lead actor ("tvN · Kim Tae-ri"). Show the logo chip when we recognize the
+// company, and keep any trailing text (and every unknown detail) as muted type.
+function RowDetail({ detail }: { detail: string }) {
+  const { company, rest } = splitCompanyDetail(detail);
+  if (!company) {
+    return <span className="label text-muted mt-0.5">{renderEmphasis(detail)}</span>;
+  }
+  return (
+    <span className="label text-muted mt-1 inline-flex items-center gap-1.5 flex-wrap">
+      <CompanyLogo name={company.name} />
+      {rest && <span>{renderEmphasis(rest)}</span>}
+    </span>
+  );
+}
+
 function RowName({ row }: { row: RankingRow }) {
   const inner = (
     <span className="inline-flex flex-col">
       <span className="font-serif text-base sm:text-lg leading-tight group-hover:text-crimson transition-colors">
         {renderEmphasis(row.name)}
       </span>
-      {row.detail && (
-        <span className="label text-muted mt-0.5">{renderEmphasis(row.detail)}</span>
-      )}
+      {row.detail && <RowDetail detail={row.detail} />}
     </span>
   );
   return row.artistSlug ? (

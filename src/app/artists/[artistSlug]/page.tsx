@@ -13,6 +13,8 @@ import ArticleListItem from "@/components/ArticleListItem";
 import JsonLd from "@/components/JsonLd";
 import { roleLabel } from "@/lib/people";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
+import { getCompany } from "@/lib/companies";
+import CompanyLogo from "@/components/CompanyLogo";
 
 export function generateStaticParams() {
   return allArtistSlugs().map((artistSlug) => ({ artistSlug }));
@@ -78,10 +80,24 @@ export default async function ArtistPage({
             <span className="text-muted text-xl">{artist.koreanName}</span>
           )}
         </div>
-        <p className="label mt-4 text-muted">
-          {roleLabel(artist)}
-          {artist.agency ? ` · ${artist.agency}` : ""}
-          {artist.debutYear ? ` · Debuted ${artist.debutYear}` : ""}
+        <p className="label mt-4 text-muted flex items-center gap-1.5 flex-wrap">
+          <span>{roleLabel(artist)}</span>
+          {artist.agency && (
+            <>
+              <span aria-hidden>·</span>
+              {getCompany(artist.agency) ? (
+                <CompanyLogo name={artist.agency} />
+              ) : (
+                <span>{artist.agency}</span>
+              )}
+            </>
+          )}
+          {artist.debutYear && (
+            <>
+              <span aria-hidden>·</span>
+              <span>Debuted {artist.debutYear}</span>
+            </>
+          )}
         </p>
         <p className="text-muted mt-4 max-w-2xl leading-relaxed">{renderEmphasis(artist.bio)}</p>
       </header>

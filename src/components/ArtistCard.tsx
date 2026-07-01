@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Artist } from "@/lib/types";
 import { roleLabel } from "@/lib/people";
+import { getCompany } from "@/lib/companies";
+import CompanyLogo from "@/components/CompanyLogo";
 
 // One person's card: name, optional Korean name, role and agency, and how many
 // credited photo sets they anchor. Shared by the People index (/artists) and the
@@ -23,9 +25,18 @@ export default function ArtistCard({
         </h2>
         {artist.koreanName && <span className="text-muted text-sm">{artist.koreanName}</span>}
       </div>
-      <p className="label mt-3 text-muted">
-        {roleLabel(artist)}
-        {artist.agency ? ` · ${artist.agency}` : ""}
+      <p className="label mt-3 text-muted flex items-center gap-1.5 flex-wrap">
+        <span>{roleLabel(artist)}</span>
+        {artist.agency && (
+          <>
+            <span aria-hidden>·</span>
+            {getCompany(artist.agency) ? (
+              <CompanyLogo name={artist.agency} />
+            ) : (
+              <span>{artist.agency}</span>
+            )}
+          </>
+        )}
       </p>
       <p className="label mt-1 text-muted">
         {photoSets} photo set{photoSets === 1 ? "" : "s"}
