@@ -35,7 +35,7 @@ export default function PhotoCard({
         <PhotoMedia
           item={gallery.cover}
           priority={priority}
-          sizes="(max-width: 768px) 50vw, 25vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
           position={position}
         />
       </div>

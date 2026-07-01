@@ -20,7 +20,7 @@ export default function GalleryGrid({
   fillGalleries?: Gallery[];
 }) {
   return (
-    <div className="columns-2 md:columns-3 gap-2 md:gap-3">
+    <div className="columns-1 sm:columns-2 md:columns-3 gap-2 md:gap-3">
       {galleries.map((g, i) => (
         <PhotoCard key={g.slug} gallery={g} priority={i < priorityCount} />
       ))}
