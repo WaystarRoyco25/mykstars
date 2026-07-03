@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
     // Allow remote licensed/embedded imagery once real sources are wired in.
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
+  async redirects() {
+    return [
+      // The News section is now Analysis; keep live inbound links + search results working.
+      { source: "/news", destination: "/analysis", permanent: true },
+      { source: "/news/:slug", destination: "/analysis/:slug", permanent: true },
+      // The standalone People/Artists index is retired; per-person hubs (/artists/:slug) remain.
+      { source: "/artists", destination: "/", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -17,7 +17,7 @@ export default function ArticleListItem({
   return (
     <article className={`border-t ${ruleColor} pt-5`}>
       <div className="flex items-baseline justify-between gap-4">
-        <Link href={`/news/${article.slug}`} className="group">
+        <Link href={`/analysis/${article.slug}`} className="group">
           <h3 className="font-serif text-xl leading-snug group-hover:text-crimson transition-colors">
             {renderEmphasis(article.title)}
           </h3>

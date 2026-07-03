@@ -3,22 +3,22 @@ import { getArticles } from "@/lib/data";
 import ArticleListItem from "@/components/ArticleListItem";
 
 export const metadata: Metadata = {
-  title: "News & analysis",
+  title: "Analysis",
   description:
-    "Credible, neutral analysis with a clear rumor-vs-confirmed labeling system. No clickbait.",
+    "In-depth analysis of how each artist is doing and where K-culture is heading, with a clear label on what is confirmed versus unverified.",
 };
 
-export default async function NewsPage() {
+export default async function AnalysisPage() {
   const articles = await getArticles();
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
       <header className="mb-10">
-        <p className="kicker">News &amp; analysis</p>
-        <h1 className="font-serif text-4xl sm:text-5xl mt-2">The context</h1>
+        <p className="kicker">Analysis</p>
+        <h1 className="font-serif text-4xl sm:text-5xl mt-2">In depth</h1>
         <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-          Neutral reporting with the photo context, and a clear label on what is
-          confirmed versus unverified.
+          How each artist is doing and where the K-culture industry is heading,
+          with a clear label on what is confirmed versus unverified.
         </p>
       </header>
 

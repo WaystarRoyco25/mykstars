@@ -187,7 +187,7 @@ export default async function PillarPage({
         <section className="mt-16">
           <div className="flex items-end justify-between mb-6">
             <h2 className="kicker">Analysis</h2>
-            <Link href="/news" className="label hover:text-bone transition-colors">
+            <Link href="/analysis" className="label hover:text-bone transition-colors">
               All analysis →
             </Link>
           </div>

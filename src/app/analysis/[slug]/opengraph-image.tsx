@@ -20,7 +20,7 @@ export default async function ArticleOg({
   const { slug } = await params;
   const article = await getArticle(slug);
   const title = stripEmphasis(article?.title ?? "MyKStars");
-  const status = article ? STATUS_LABEL[article.status] : "NEWS";
+  const status = article ? STATUS_LABEL[article.status] : "ANALYSIS";
 
   return new ImageResponse(
     (

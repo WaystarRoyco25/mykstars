@@ -11,8 +11,7 @@ const PILLAR_NAV = PILLAR_ORDER.map((p) => ({
 // Secondary / utility lenses.
 const UTILITY_NAV = [
   { label: "Photos", href: "/photos" },
-  { label: "People", href: "/artists" },
-  { label: "News", href: "/news" },
+  { label: "Analysis", href: "/analysis" },
   { label: "Schedule", href: "/schedule" },
   { label: "Forecast", href: "/predictions" },
 ];

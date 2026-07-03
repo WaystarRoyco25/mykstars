@@ -2,7 +2,7 @@ import type { ArticleStatus } from "@/lib/types";
 import { IconCheck, IconAlert } from "./icons";
 
 // The rumor-vs-confirmed labeling system. On-palette: confirmed reads neutral and
-// authoritative, unverified is flagged crimson, analysis is muted. `on` adapts the
+// authoritative, unverified is flagged crimson, the analysis default reads muted (shown as "Context"). `on` adapts the
 // neutral tones to a dark canvas or a light (bone) editorial band.
 export default function StatusFlag({
   status,
@@ -32,5 +32,5 @@ export default function StatusFlag({
       </span>
     );
   }
-  return <span className={`label ${muted}`}>Analysis</span>;
+  return <span className={`label ${muted}`}>Context</span>;
 }

@@ -50,7 +50,7 @@ export default async function ArticlePage({
       <JsonLd
         data={{
           "@context": "https://schema.org",
-          "@type": "NewsArticle",
+          "@type": "AnalysisNewsArticle",
           headline: stripEmphasis(article.title),
           description: stripEmphasis(article.dek),
           datePublished: article.date,
@@ -59,8 +59,8 @@ export default async function ArticlePage({
         }}
       />
 
-      <Link href="/news" className="label text-muted hover:text-bone mb-6 inline-block">
-        ← News &amp; analysis
+      <Link href="/analysis" className="label text-muted hover:text-bone mb-6 inline-block">
+        ← Analysis
       </Link>
 
       <header className="mb-8">

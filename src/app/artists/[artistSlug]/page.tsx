@@ -68,7 +68,7 @@ export default async function ArtistPage({
       />
 
       <nav className="label text-muted mb-6">
-        <Link href="/artists" className="hover:text-bone">People</Link>
+        <Link href="/" className="hover:text-bone">MyKStars</Link>
         <span className="mx-2">/</span>
         <span>{artist.name}</span>
       </nav>

@@ -10,8 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths: string[] = [
     "",
     "/photos",
-    "/artists",
-    "/news",
+    "/analysis",
     "/schedule",
     "/legal/dmca",
     "/about/editorial-standards",
@@ -24,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...REGION_ORDER.map((r) => `/schedule?region=${r}`),
     ...allGallerySlugs().map((s) => `/photos/${s}`),
     ...allArtistSlugs().map((s) => `/artists/${s}`),
-    ...allArticleSlugs().map((s) => `/news/${s}`),
+    ...allArticleSlugs().map((s) => `/analysis/${s}`),
   ];
 
   const isFresh = (path: string) =>

@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import Link from "next/link";
 import {
   getArticles,
-  getArtistsInFocus,
   getEvents,
   getFeaturedGallery,
   getGalleriesForPillar,
@@ -24,7 +23,6 @@ import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
 import EventCard from "@/components/EventCard";
-import ArtistCard from "@/components/ArtistCard";
 import JsonLd from "@/components/JsonLd";
 import { renderEmphasis } from "@/lib/text";
 
@@ -38,7 +36,7 @@ const BAND_COUNT: Record<Pillar, number> = {
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
-  const [bands, articles, rankings, forecasts, events, peopleInFocus, reels, shorts] =
+  const [bands, articles, rankings, forecasts, events, reels, shorts] =
     await Promise.all([
       Promise.all(
         PILLAR_ORDER.map(async (pillar) => {
@@ -58,7 +56,6 @@ export default async function HomePage() {
       getRankings(),
       getOpenPredictions(),
       getEvents({ upcomingFrom: NOW }),
-      getArtistsInFocus(6),
       getReels(14),
       getShorts(14),
     ]);
@@ -197,24 +194,6 @@ export default async function HomePage() {
                   </div>
                 </section>
               )}
-              {/* People in focus — interleaved after the K-Drama band, a pillar spread into the per-person hubs */}
-              {b.pillar === "k-drama" && peopleInFocus.length > 0 && (
-                <section className="mx-auto max-w-6xl px-5 mt-16">
-                  <div className="flex items-end justify-between mb-6">
-                    <Link href="/artists" className="group inline-block">
-                      <h2 className="kicker group-hover:text-bone transition-colors">People in focus</h2>
-                    </Link>
-                    <Link href="/artists" className="label hover:text-bone transition-colors">
-                      All people →
-                    </Link>
-                  </div>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line rounded-tile overflow-hidden">
-                    {peopleInFocus.map(({ artist, photoSets }) => (
-                      <ArtistCard key={artist.slug} artist={artist} photoSets={photoSets} />
-                    ))}
-                  </div>
-                </section>
-              )}
             </Fragment>
           );
         })}
@@ -224,7 +203,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-5 py-14">
           <div className="flex items-end justify-between mb-8">
             <h2 className="kicker">Analysis</h2>
-            <Link href="/news" className="label text-muted-2 hover:text-ink transition-colors">
+            <Link href="/analysis" className="label text-muted-2 hover:text-ink transition-colors">
               All analysis →
             </Link>
           </div>

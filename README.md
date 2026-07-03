@@ -25,7 +25,7 @@ npm run lint
 - `src/lib/types.ts` — domain model (Artist, Gallery, MediaItem, Article, Source).
 - `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions; today they're backed by `src/lib/seed.ts`. Swap in a headless CMS (Sanity/Payload) later by re-implementing this module against the same signatures — no page changes.
 - `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), `CategoryFilter`, etc.
-- `src/app/` — home, `photos/` (+ `[gallerySlug]`), `artists/` (+ `[artistSlug]`), `news/` (+ `[slug]`), `legal/dmca`, `about/editorial-standards`, `api/takedown`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
+- `src/app/` — home, `photos/` (+ `[gallerySlug]`), `artists/[artistSlug]` (per-person hubs), `analysis/` (+ `[slug]`), `legal/dmca`, `about/editorial-standards`, `api/takedown`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
 
 ## Defensible aggregation (content/legal model)
 
