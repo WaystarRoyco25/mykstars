@@ -23,8 +23,11 @@
   color-scheme: dark;
 }
 
-html,
-body {
+/* Height on html only: body must be allowed to grow with its content, or it
+   becomes the 100vh containing block that clamps sticky children (the nav
+   strip) to the first viewport of scroll. Body still fills short pages via
+   its min-h-full class, which resolves against html's definite height. */
+html {
   height: 100%;
 }
 
@@ -72,6 +75,15 @@ a {
   .rule {
     border: 0;
     border-top: 1px solid var(--color-line);
+  }
+
+  /* Horizontal scrollers that must not paint a scrollbar track (header nav
+     rows). Content stays swipe/wheel scrollable and focus-scrollable. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 

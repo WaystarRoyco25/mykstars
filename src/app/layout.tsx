@@ -62,7 +62,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="flex-1">
+        <main id="main" className="flex-1 scroll-mt-20">
           {children}
         </main>
         <SiteFooter />
