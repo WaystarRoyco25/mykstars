@@ -126,7 +126,8 @@ The ranking rows already carry rank deltas. A compact "biggest movers" strip rea
 ## Verification
 
 1. `npm run check:style` and `node scripts/check-dashes.mjs <new files>`.
-2. `npm run lint` and `npx tsc --noEmit`.
-3. Preview the home page: confirm the section order and the new module, check for
+2. `npm run check:fresh` (embed freshness and true-date gates; see docs/roster-playbook.md).
+3. `npm run lint` and `npx tsc --noEmit`.
+4. Preview the home page: confirm the section order and the new module, check for
    console/hydration warnings, verify colors by inspecting elements (not screenshots),
    and do a mobile-width pass.

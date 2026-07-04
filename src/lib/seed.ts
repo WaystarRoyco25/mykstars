@@ -23,7 +23,7 @@ import type {
 // unverified claims about real people. Public figures are named factually with
 // neutral descriptions only. Real licensed/embedded media + CMS content replace
 // this later. "NOW" is a fixed reference so relative timestamps stay deterministic.
-export const NOW = "2026-06-30T20:00:00+09:00";
+export const NOW = "2026-07-05T20:00:00+09:00";
 
 // --- sources (every media item links back to one of these) ---
 const OSEN: Source = { name: "OSEN", url: "https://osen.mt.co.kr", kind: "press" };
@@ -253,6 +253,131 @@ export const artists: Artist[] = [
       { platform: "instagram", url: "https://www.instagram.com/hoooooyeony/", handle: "@hoooooyeony" },
     ],
   },
+
+  // --- Added in the 2026-07-05 roster expansion (docs/roster-playbook.md). Every
+  // profile fact, handle and era summary below was web-verified on 2026-07-05. ---
+  {
+    slug: "bts",
+    name: "BTS",
+    koreanName: "방탄소년단",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "BIGHIT MUSIC",
+    debutYear: 2013,
+    bio: "Seven members back at full strength after military service, with the 2026 album *Arirang* and a sold-out stadium world tour marking the reunion.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/bts.bighitofficial/", handle: "@bts.bighitofficial" },
+      { platform: "x", url: "https://x.com/BTS_twt", handle: "@BTS_twt" },
+    ],
+  },
+  {
+    slug: "seventeen",
+    name: "SEVENTEEN",
+    koreanName: "세븐틴",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "PLEDIS Entertainment",
+    debutYear: 2015,
+    bio: "Thirteen-member self-producing group, fresh off a stadium world tour and a tenth-anniversary fan meeting, now rolling out unit releases.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/saythename_17/", handle: "@saythename_17" },
+      { platform: "x", url: "https://x.com/pledis_17", handle: "@pledis_17" },
+    ],
+  },
+  {
+    slug: "ive",
+    name: "IVE",
+    koreanName: "아이브",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "Starship Entertainment",
+    debutYear: 2021,
+    bio: "Six members holding the top of the girl group brand rankings, taking the SHOW WHAT I AM world tour across North America.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/ivestarship/", handle: "@ivestarship" },
+      { platform: "x", url: "https://x.com/IVEstarship", handle: "@IVEstarship" },
+    ],
+  },
+  {
+    // Rookie graduation case (playbook rule 4): Golden Disc Rookie of the Year,
+    // brand reputation top 10, and a 2.3M first week on *GREENGREEN* (Hanteo).
+    slug: "cortis",
+    name: "CORTIS",
+    koreanName: "코르티스",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "BIGHIT MUSIC",
+    debutYear: 2025,
+    bio: "Five-member Big Hit group leading the 2026 rookie class: a Golden Disc win, an NBA halftime stage, and a first world tour opening in Incheon.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/cortis/", handle: "@cortis" },
+      { platform: "x", url: "https://x.com/cortis_bighit", handle: "@cortis_bighit" },
+    ],
+  },
+  {
+    slug: "hearts2hearts",
+    name: "Hearts2Hearts",
+    koreanName: "하츠투하츠",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "SM Entertainment",
+    debutYear: 2025,
+    bio: "Eight-member SM group whose 'RUDE!' and *Lemon Tang* releases turned a solid 2025 debut into breakout 2026 scale.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/hearts2hearts/", handle: "@hearts2hearts" },
+      { platform: "x", url: "https://x.com/Hearts2Hearts", handle: "@Hearts2Hearts" },
+    ],
+  },
+  {
+    slug: "babymonster",
+    name: "BABYMONSTER",
+    koreanName: "베이비몬스터",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "YG Entertainment",
+    debutYear: 2023,
+    bio: "Seven-member YG group on a second world tour behind *Choom*, with their first Japanese dome dates booked for the fall.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/babymonster_ygofficial/", handle: "@babymonster_ygofficial" },
+      { platform: "x", url: "https://x.com/ygbabymonster_", handle: "@ygbabymonster_" },
+    ],
+  },
+  {
+    slug: "le-sserafim",
+    name: "LE SSERAFIM",
+    koreanName: "르세라핌",
+    type: "group",
+    disciplines: ["idol"],
+    pillars: ["k-pop"],
+    agency: "Source Music",
+    debutYear: 2022,
+    bio: "Five-member Source Music group riding the Latin house single 'BOOMPALA' into PUREFLOW, their second world tour.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/le_sserafim/", handle: "@le_sserafim" },
+      { platform: "x", url: "https://x.com/le_sserafim", handle: "@le_sserafim" },
+    ],
+  },
+  // --- K-Drama (actor) ---
+  {
+    slug: "byeon-woo-seok",
+    name: "Byeon Woo-seok",
+    koreanName: "변우석",
+    type: "individual",
+    disciplines: ["actor"],
+    pillars: ["k-drama"],
+    agency: "VARO Entertainment",
+    debutYear: 2016,
+    bio: "Leading man of *Lovely Runner* and *Perfect Crown*, now adding a Netflix variety turn and an Asia fan meeting tour to the run.",
+    social: [
+      { platform: "instagram", url: "https://www.instagram.com/byeonwooseok/", handle: "@byeonwooseok" },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -261,29 +386,22 @@ export const artists: Artist[] = [
 export const galleries: Gallery[] = [
   // ===================== K-POP =====================
   {
-    slug: "newjeans-comeback-showcase",
-    title: "NewJeans return, shot in monochrome",
+    // 2026-07-05 correction: the prior "comeback showcase" set described an event
+    // that never happened (and embedded a 2024 reel). Re-anchored to the verified
+    // real moment: ADOR-confirmed pre-production sessions in Copenhagen, April
+    // 13 to 17, 2026, with Haerin, Hyein and Hanni. See docs/roster-playbook.md.
+    slug: "newjeans-copenhagen-sessions",
+    title: "NewJeans regroup in Copenhagen",
     pillar: "k-pop",
-    category: "comeback",
+    category: "event",
     artistSlugs: ["newjeans"],
-    event: "2026 comeback showcase",
-    date: "2026-06-21T19:22:00+09:00",
-    source: NEWSEN,
+    event: "ADOR pre-production sessions",
+    date: "2026-04-17T18:00:00+09:00",
+    source: NEWS1,
     excerpt:
-      "Concept frames from the comeback showcase, presented as a single black-and-white set.",
-    cover: place("newjeans-cover", "NewJeans comeback showcase, key visual", NEWSEN, 2),
-    media: [
-      place("newjeans-1", "NewJeans on the showcase stage", NEWSEN, 2),
-      {
-        id: "newjeans-embed-1",
-        kind: "embed",
-        platform: "instagram",
-        embedUrl: "https://www.instagram.com/newjeans_official/reel/C9uS3BFyyiL/",
-        alt: "Official showcase clip shared on Instagram",
-        credit: { name: "@newjeans_official", url: "https://www.instagram.com/newjeans_official/", kind: "embed" },
-      },
-      ...placeMixed("newjeans", "NewJeans comeback showcase", NEWSEN, 6),
-    ],
+      "The first confirmed NewJeans activity of 2026: pre-production sessions in Copenhagen, confirmed by ADOR, with three members at work.",
+    cover: place("newjeans-cph-cover", "NewJeans members arriving for the Copenhagen sessions", NEWS1, 2),
+    media: placeMixed("newjeans-cph", "NewJeans Copenhagen sessions", NEWS1, 8),
   },
   {
     slug: "blackpink-incheon-airport",
@@ -327,12 +445,12 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "iu-baeksang-red-carpet",
-    title: "IU on the Baeksang red carpet",
+    title: "IU on an awards-night red carpet",
     pillar: "k-pop",
     category: "red-carpet",
     tags: ["pictorial"],
     artistSlugs: ["iu"],
-    event: "Baeksang Arts Awards",
+    event: "Awards ceremony",
     date: "2026-06-21T14:00:00+09:00",
     source: STAR_NEWS,
     excerpt: "Arrival and pose frames from the awards red carpet.",
@@ -531,6 +649,136 @@ export const galleries: Gallery[] = [
     media: placeMixed("skz-var", "Stray Kids variety appearance", NEWS1, 6),
   },
 
+  // ----- 2026-07-05 roster expansion: new K-POP subjects, each anchored to a
+  // web-verified real moment (docs/roster-playbook.md rule 2) -----
+  {
+    slug: "bts-the-city-london",
+    title: "BTS THE CITY takes over London",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["bts"],
+    event: "BTS THE CITY, London",
+    date: "2026-07-04T20:00:00+09:00",
+    source: STAR_NEWS,
+    excerpt:
+      "The citywide fan activation opens ahead of the ARIRANG tour's Tottenham Hotspur Stadium nights.",
+    cover: place("bts-city-cover", "BTS THE CITY signage lighting up central London", STAR_NEWS, 0),
+    media: placeMixed("bts-city", "BTS THE CITY London activation", STAR_NEWS, 7),
+  },
+  {
+    slug: "bts-gwanghwamun-comeback",
+    title: "BTS pack Gwanghwamun for the comeback",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["bts"],
+    event: "BTS THE COMEBACK LIVE, Gwanghwamun Square",
+    date: "2026-03-21T20:00:00+09:00",
+    source: NEWS1,
+    excerpt:
+      "Frames from the free outdoor show in central Seoul, the first full-group stage in nearly four years, one day after *Arirang* arrived.",
+    cover: place("bts-gwang-cover", "BTS on the Gwanghwamun Square stage", NEWS1, 3, "landscape"),
+    media: placeMixed("bts-gwang", "BTS comeback show at Gwanghwamun Square", NEWS1, 9),
+  },
+  {
+    slug: "seventeen-carat-land",
+    title: "SEVENTEEN scale CARAT LAND up to a stadium",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["seventeen"],
+    event: "SEVENTEEN in CARAT LAND",
+    date: "2026-06-20T19:00:00+09:00",
+    source: OSEN,
+    excerpt:
+      "The tenth-anniversary fan meeting fills Incheon Asiad Main Stadium across two nights.",
+    cover: place("svt-cl-cover", "SEVENTEEN greeting the crowd at CARAT LAND", OSEN, 1),
+    media: placeMixed("svt-cl", "SEVENTEEN in CARAT LAND fan meeting", OSEN, 8),
+  },
+  {
+    slug: "ive-blackhole-comeback",
+    title: "IVE pull the room into 'BLACKHOLE'",
+    pillar: "k-pop",
+    category: "comeback",
+    artistSlugs: ["ive"],
+    event: "*REVIVE+* comeback week",
+    date: "2026-02-23T19:00:00+09:00",
+    source: NEWSEN,
+    excerpt:
+      "Comeback-week performance frames from the *REVIVE+* title track's first stages.",
+    cover: place("ive-bh-cover", "IVE on the 'BLACKHOLE' comeback stage", NEWSEN, 2),
+    media: placeMixed("ive-bh", "IVE 'BLACKHOLE' comeback stage", NEWSEN, 7),
+  },
+  {
+    slug: "cortis-golden-disc-rookie",
+    title: "CORTIS take Rookie of the Year in Taipei",
+    pillar: "k-pop",
+    category: "event",
+    tags: ["red-carpet"],
+    artistSlugs: ["cortis"],
+    event: "40th Golden Disc Awards",
+    date: "2026-01-10T21:00:00+09:00",
+    source: STAR_NEWS,
+    excerpt:
+      "Red-carpet and acceptance frames from the Taipei Dome ceremony that crowned the rookie class.",
+    cover: place("cortis-gda-cover", "CORTIS accepting Rookie of the Year", STAR_NEWS, 0),
+    media: placeMixed("cortis-gda", "CORTIS at the Golden Disc Awards", STAR_NEWS, 8),
+  },
+  {
+    slug: "cortis-nba-celebrity-game",
+    title: "CORTIS bring K-pop to the NBA Celebrity Game",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["cortis"],
+    event: "NBA All-Star Celebrity Game halftime",
+    date: "2026-02-13T14:00:00+09:00",
+    source: NEWS1,
+    excerpt:
+      "Halftime-stage frames from the Kia Forum, the first K-pop act to play the Celebrity Game.",
+    cover: place("cortis-nba-cover", "CORTIS at halftime of the NBA Celebrity Game", NEWS1, 1, "landscape"),
+    media: placeMixed("cortis-nba", "CORTIS NBA Celebrity Game halftime", NEWS1, 7),
+  },
+  {
+    slug: "hearts2hearts-lemon-tang-week",
+    title: "Hearts2Hearts squeeze summer into *Lemon Tang*",
+    pillar: "k-pop",
+    category: "comeback",
+    artistSlugs: ["hearts2hearts"],
+    event: "*Lemon Tang* comeback week",
+    date: "2026-06-22T19:00:00+09:00",
+    source: NEWSEN,
+    excerpt:
+      "Release-week stage and fan-event frames as the mini album posts the group's best first week yet.",
+    cover: place("h2h-lt-cover", "Hearts2Hearts on the *Lemon Tang* comeback stage", NEWSEN, 2),
+    media: placeMixed("h2h-lt", "Hearts2Hearts *Lemon Tang* comeback week", NEWSEN, 8),
+  },
+  {
+    slug: "babymonster-choom-tour-opener",
+    title: "BABYMONSTER open the *Choom* tour at home",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["babymonster"],
+    event: "Choom World Tour, Seoul opener",
+    date: "2026-06-26T20:00:00+09:00",
+    source: OSEN,
+    excerpt:
+      "Opening-night frames from Jamsil as the second world tour gets moving.",
+    cover: place("bm-choom-cover", "BABYMONSTER opening the Choom world tour in Seoul", OSEN, 3),
+    media: placeMixed("bm-choom", "BABYMONSTER Choom tour opener", OSEN, 8),
+  },
+  {
+    slug: "le-sserafim-boompala-comeback",
+    title: "LE SSERAFIM go Latin house with 'BOOMPALA'",
+    pillar: "k-pop",
+    category: "comeback",
+    artistSlugs: ["le-sserafim"],
+    event: "*PUREFLOW pt.1* comeback week",
+    date: "2026-05-22T19:00:00+09:00",
+    source: NEWSEN,
+    excerpt:
+      "First-week performance frames from the single that set up the PUREFLOW tour.",
+    cover: place("lsf-bp-cover", "LE SSERAFIM on the 'BOOMPALA' stage", NEWSEN, 1),
+    media: placeMixed("lsf-bp", "LE SSERAFIM 'BOOMPALA' comeback stage", NEWSEN, 7),
+  },
+
   // ----- additional K-DRAMA sets -----
   {
     slug: "drama-ost-release",
@@ -557,6 +805,34 @@ export const galleries: Gallery[] = [
     excerpt: "Arrival and stage frames from a press review screening.",
     cover: place("review-cover", "Lee Min-ho at a review screening", STAR_NEWS, 1),
     media: placeSet("review", "Drama review screening", STAR_NEWS, 6),
+  },
+  {
+    slug: "byeon-woo-seok-perfect-crown-press",
+    title: "Byeon Woo-seok and IU present *Perfect Crown*",
+    pillar: "k-drama",
+    category: "press",
+    artistSlugs: ["byeon-woo-seok", "iu"],
+    event: "Production press conference",
+    date: "2026-04-06T15:00:00+09:00",
+    source: STAR_NEWS,
+    excerpt:
+      "Step-and-repeat and stage frames from the Seoul press conference, four days before the premiere.",
+    cover: place("bws-pc-cover", "Byeon Woo-seok and IU at the Perfect Crown press conference", STAR_NEWS, 2),
+    media: placeMixed("bws-pc", "Perfect Crown press conference", STAR_NEWS, 8),
+  },
+  {
+    slug: "byeon-woo-seok-bnb-set",
+    title: "Byeon Woo-seok checks into *Jae Seok's B&B Rules!*",
+    pillar: "k-drama",
+    category: "stills",
+    artistSlugs: ["byeon-woo-seok"],
+    event: "Variety set stills",
+    date: "2026-05-26T12:00:00+09:00",
+    source: STUDIO,
+    excerpt:
+      "Set stills from the actor's first fixed variety role, released with the premiere.",
+    cover: place("bws-bnb-cover", "Byeon Woo-seok on the variety set", STUDIO, 0),
+    media: placeMixed("bws-bnb", "Jae Seok's B&B Rules! set stills", STUDIO, 6),
   },
 
   // ----- additional FASHION & BEAUTY sets (the sparsest band) -----
@@ -672,6 +948,60 @@ export const galleries: Gallery[] = [
 // ARTICLES
 // ---------------------------------------------------------------------------
 export const articles: Article[] = [
+  // --- 2026-07-05 roster expansion: multi-artist analysis for the new subjects ---
+  {
+    slug: "arirang-numbers-reading",
+    title: "Reading the *Arirang* return: what the numbers actually say",
+    dek: "A No. 1 debut, a free show at Gwanghwamun, a sold-out stadium run: BTS's comeback is best understood as three different records at once.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "Min-seo Park",
+    date: "2026-07-03T09:00:00+09:00",
+    body: [
+      "Comebacks after a service gap usually restart an engine. *Arirang* skipped the warmup: a Billboard 200 No. 1, the biggest Korean first week of the year, and a tour that sold through its London, Paris and Los Angeles stadium legs before the first night.",
+      "The subtler number is the free one. The Gwanghwamun show in March cost nothing to attend and worked as a statement of scale: the group's first full stage in nearly four years, held as a public event in the middle of Seoul rather than behind a paywall.",
+      "What to watch next is durability: whether the album's tracks re-enter the global charts as the European and American legs roll through the summer. That is the version of momentum that outlives a release week.",
+    ],
+    source: NEWS1,
+    related: { artistSlugs: ["bts"], gallerySlugs: ["bts-gwanghwamun-comeback", "bts-the-city-london"] },
+  },
+  {
+    slug: "rookie-class-2026-first-week-curve",
+    title: "The 2026 rookie class is bending the first-week curve",
+    dek: "CORTIS and Hearts2Hearts turned respectable debuts into record sophomore weeks. The old rookie math no longer holds.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "Daniel Cho",
+    date: "2026-07-02T09:00:00+09:00",
+    body: [
+      "For years the informal bar for a strong rookie debut sat around two hundred thousand first-week copies. The 2026 class made that a floor, not a ceiling: CORTIS moved over 2.3 million copies of *GREENGREEN* in a week, and Hearts2Hearts set a personal best just short of six hundred thousand with *Lemon Tang*.",
+      "The pattern is the same in both cases: a solid debut, then a sophomore release that scales five to ten times. The machinery behind it (global pre-saves, day-one tour announcements, festival slots booked before the first anniversary) compresses what used to be a three-year build into eighteen months.",
+      "The question that matters for the rest of the year is whether the third release holds the altitude. That, more than any award, is what separates a class from a cohort.",
+    ],
+    source: STAR_NEWS,
+    related: {
+      artistSlugs: ["cortis", "hearts2hearts", "babymonster"],
+      gallerySlugs: ["cortis-golden-disc-rookie", "hearts2hearts-lemon-tang-week"],
+    },
+  },
+  {
+    slug: "girl-group-brand-race-2026",
+    title: "The mid-2026 girl group brand race, in three moves",
+    dek: "IVE hold the top, BLACKPINK surge on the *Deadline* era, and LE SSERAFIM turn a Macarena sample into a tour setup.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "Soo-ah Yun",
+    date: "2026-06-30T09:00:00+09:00",
+    body: [
+      "Brand reputation indexes are a blunt instrument, but they move on real events. IVE's hold on first place tracks a comeback cycle that never quite cooled; BLACKPINK's climb follows the *Deadline* records; LE SSERAFIM's rise maps almost exactly onto the week 'BOOMPALA' landed.",
+      "What the index cannot see is the touring map underneath it. All three acts spend the second half of 2026 on the road, which means the next six months of this race will be decided in arenas, not on release calendars.",
+    ],
+    source: STAR_NEWS,
+    related: {
+      artistSlugs: ["ive", "blackpink", "le-sserafim"],
+      gallerySlugs: ["ive-blackhole-comeback", "le-sserafim-boompala-comeback"],
+    },
+  },
   {
     slug: "monochrome-concept-photos-2026",
     title: "Why monochrome concept photos are dominating 2026 comebacks",
@@ -686,7 +1016,7 @@ export const articles: Article[] = [
       "The risk is sameness. When everyone reaches for the same restraint, the differentiation moves back to where it always lived: styling, casting of the photographer, and the strength of a single hero frame.",
     ],
     source: NEWSEN,
-    related: { artistSlugs: ["newjeans", "stray-kids"], gallerySlugs: ["newjeans-comeback-showcase"] },
+    related: { artistSlugs: ["newjeans", "stray-kids"] },
   },
   {
     slug: "the-airport-runway",
@@ -807,47 +1137,48 @@ const SAMPLE_DATA: Source = {
 
 export const rankings: Ranking[] = [
   {
+    // Order mirrors the real June 2026 group brand-reputation announcement
+    // (verified 2026-07-05); index values remain illustrative (sample: true).
     slug: "idol-brand-reputation",
-    title: "Idol Brand Reputation",
+    title: "Idol Group Brand Reputation",
     pillar: "k-pop",
     metricLabel: "Brand index",
     period: "June 2026",
-    asOf: "2026-06-15T00:00:00+09:00",
+    asOf: "2026-06-17T00:00:00+09:00",
     source: SAMPLE_DATA,
     sample: true,
-    blurb: "Monthly idol & group brand-reputation index by big-data volume.",
+    blurb: "Monthly idol-group brand-reputation index by big-data volume.",
     rows: [
-      { rank: 1, name: "NewJeans", detail: "ADOR", value: "8,742,153", change: 2, artistSlug: "newjeans" },
-      { rank: 2, name: "BLACKPINK", detail: "YG Entertainment", value: "8,201,884", change: -1, artistSlug: "blackpink" },
-      { rank: 3, name: "IU", detail: "EDAM Entertainment", value: "7,884,402", change: 1, artistSlug: "iu" },
-      { rank: 4, name: "BTS", detail: "BIGHIT MUSIC", value: "7,540,119", change: -2 },
-      { rank: 5, name: "aespa", detail: "SM Entertainment", value: "6,932,571", change: 3, artistSlug: "aespa" },
-      { rank: 6, name: "Stray Kids", detail: "JYP Entertainment", value: "6,415,260", change: 0, artistSlug: "stray-kids" },
-      { rank: 7, name: "SEVENTEEN", detail: "PLEDIS Entertainment", value: "6,008,344", change: -1 },
-      { rank: 8, name: "Cha Eun-woo", detail: "Fantagio", value: "5,772,090", change: 4, artistSlug: "cha-eunwoo" },
-      { rank: 9, name: "IVE", detail: "Starship Entertainment", value: "5,310,778", isNew: true },
-      { rank: 10, name: "TWICE", detail: "JYP Entertainment", value: "5,002,615", change: -3, artistSlug: "twice" },
+      { rank: 1, name: "BTS", detail: "BIGHIT MUSIC", value: "8,912,442", artistSlug: "bts" },
+      { rank: 2, name: "CORTIS", detail: "BIGHIT MUSIC", value: "8,204,315", artistSlug: "cortis" },
+      { rank: 3, name: "IVE", detail: "Starship Entertainment", value: "7,981,207", artistSlug: "ive" },
+      { rank: 4, name: "RESCENE", detail: "THE MUZE Entertainment", value: "7,410,556" },
+      { rank: 5, name: "BLACKPINK", detail: "YG Entertainment", value: "7,102,388", artistSlug: "blackpink" },
+      { rank: 6, name: "SEVENTEEN", detail: "PLEDIS Entertainment", value: "6,845,910", artistSlug: "seventeen" },
+      { rank: 7, name: "LE SSERAFIM", detail: "Source Music", value: "6,512,473", artistSlug: "le-sserafim" },
+      { rank: 8, name: "TWICE", detail: "JYP Entertainment", value: "6,208,114", artistSlug: "twice" },
+      { rank: 9, name: "ILLIT", detail: "BELIFT LAB", value: "5,921,660" },
+      { rank: 10, name: "SHINee", detail: "SM Entertainment", value: "5,644,905" },
     ],
   },
   {
+    // Real series airing in the week of June 29, 2026 (web-verified 2026-07-05:
+    // Nielsen figures via trade press). Kept sample: true until a live ratings
+    // feed replaces the hand-compiled table.
     slug: "drama-viewership",
     title: "Drama Viewership",
     pillar: "k-drama",
     metricLabel: "Rating",
-    period: "Week of June 15, 2026",
-    asOf: "2026-06-21T00:00:00+09:00",
+    period: "Week of June 29, 2026",
+    asOf: "2026-07-05T00:00:00+09:00",
     source: SAMPLE_DATA,
     sample: true,
-    blurb: "Nationwide average audience share for scripted series.",
+    blurb: "Nationwide audience share for scripted series on air this week.",
     rows: [
-      { rank: 1, name: "*The Crown Physician*", detail: "tvN · Kim Tae-ri", value: "14.7%", change: 1, artistSlug: "kim-tae-ri" },
-      { rank: 2, name: "*Glass Tower*", detail: "SBS · Lee Min-ho", value: "12.3%", change: -1, artistSlug: "lee-min-ho" },
-      { rank: 3, name: "*Court Lady Hong*", detail: "KBS2 · Park Eun-bin", value: "10.9%", change: 2, artistSlug: "park-eun-bin" },
-      { rank: 4, name: "*Midnight Dispatch*", detail: "JTBC", value: "9.5%", change: -1 },
-      { rank: 5, name: "*The Last Semester*", detail: "tvN", value: "8.8%", change: 3 },
-      { rank: 6, name: "*Harbor Lights*", detail: "MBC", value: "7.6%", isNew: true },
-      { rank: 7, name: "*Seoul, 1999*", detail: "OCN", value: "6.9%", change: -2 },
-      { rank: 8, name: "*The Understudy*", detail: "ENA", value: "5.4%", change: 0 },
+      { rank: 1, name: "*Agent Kim Reactivated*", detail: "SBS · So Ji-sub", value: "18.8%" },
+      { rank: 2, name: "*Reborn Rookie*", detail: "JTBC · Lee Jun-young", value: "9.5%" },
+      { rank: 3, name: "*Fifties Professionals*", detail: "MBC · Shin Ha-kyun", value: "6.0%" },
+      { rank: 4, name: "*See You at Work Tomorrow!*", detail: "tvN · Seo In-guk", value: "4.8%" },
     ],
   },
 ];
@@ -856,7 +1187,7 @@ export const rankings: Ranking[] = [
 // EVENTS — D-Day schedule of officially-announced concerts and fan meetings.
 // ---------------------------------------------------------------------------
 // Unlike the sample rankings above, these are REAL announced dates, compiled
-// from official tour pages and reputable trade/fan press as of June 2026. Each
+// from official tour pages and reputable trade/fan press as of July 5, 2026. Each
 // event links back to its source. The set leans toward post-NOW dates outside
 // Korea (the international audience) so the upcoming-only page stays populated;
 // a couple of Korea dates exist so the region filter has content there too.
@@ -868,7 +1199,8 @@ const POLLSTAR: Source = { name: "Pollstar", url: "https://news.pollstar.com", k
 const TICKETMASTER: Source = { name: "Ticketmaster", url: "https://www.ticketmaster.com", kind: "official" };
 const STRAY_KIDS_TOUR: Source = { name: "Stray Kids official tour", url: "https://straykidstour.org", kind: "official" };
 const TWICE_TOUR: Source = { name: "TWICE official tour", url: "https://twicetours.com", kind: "official" };
-const SONGKICK: Source = { name: "Songkick", url: "https://www.songkick.com/artists/10151159-cha-eun-woo", kind: "press" };
+const IBIGHIT: Source = { name: "BIGHIT MUSIC", url: "https://ibighit.com/en/cortis/tour/", kind: "official" };
+const WEVERSE: Source = { name: "Weverse notice", url: "https://weverse.io/lesserafim/notice/35577", kind: "official" };
 
 export const events: StarEvent[] = [
   // --- North America ---
@@ -878,6 +1210,8 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "BLOOD SAGA World Tour",
     date: "2026-07-28",
+    endDate: "2026-07-29",
+    venue: "Oakland Arena",
     city: "Oakland",
     country: "United States",
     region: "north-america",
@@ -886,9 +1220,11 @@ export const events: StarEvent[] = [
   {
     slug: "ive-show-what-i-am-newark",
     headliner: "IVE",
+    artistSlugs: ["ive"],
     type: "concert",
     tour: "SHOW WHAT I AM World Tour",
     date: "2026-07-25",
+    venue: "Prudential Center",
     city: "Newark",
     country: "United States",
     region: "north-america",
@@ -900,6 +1236,7 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "2026 Reunion Tour",
     date: "2026-08-25",
+    venue: "Crypto.com Arena",
     city: "Los Angeles",
     country: "United States",
     region: "north-america",
@@ -908,13 +1245,44 @@ export const events: StarEvent[] = [
   {
     slug: "bts-arirang-los-angeles",
     headliner: "BTS",
+    artistSlugs: ["bts"],
     type: "concert",
     tour: "ARIRANG World Tour",
     date: "2026-09-01",
+    endDate: "2026-09-06",
+    venue: "SoFi Stadium",
     city: "Los Angeles",
     country: "United States",
     region: "north-america",
+    status: "sold-out",
     source: BILLBOARD,
+    note: "Four nights: September 1, 2, 5 and 6.",
+  },
+  {
+    slug: "cortis-lollapalooza-chicago",
+    headliner: "CORTIS",
+    artistSlugs: ["cortis"],
+    type: "concert",
+    date: "2026-08-01",
+    venue: "Grant Park",
+    city: "Chicago",
+    country: "United States",
+    region: "north-america",
+    source: BILLBOARD,
+    note: "Lollapalooza main-stage festival debut; official aftershow July 31 at House of Blues.",
+  },
+  {
+    slug: "iu-world-tour-newark",
+    headliner: "IU",
+    artistSlugs: ["iu"],
+    type: "concert",
+    date: "2026-07-15",
+    venue: "Prudential Center",
+    city: "Newark",
+    country: "United States",
+    region: "north-america",
+    source: TICKETMASTER,
+    note: "Opening night of the 2026 North American run, ahead of the late-summer album.",
   },
   {
     slug: "aespa-synk-complexity-new-york",
@@ -935,6 +1303,7 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "THE X : NEXUS World Tour",
     date: "2026-10-06",
+    venue: "Infosys Theater at Madison Square Garden",
     city: "New York",
     country: "United States",
     region: "north-america",
@@ -944,8 +1313,9 @@ export const events: StarEvent[] = [
     slug: "katseye-wildworld-new-york",
     headliner: "KATSEYE",
     type: "concert",
-    tour: "Wildworld Arena Tour",
+    tour: "THE WILDWORLD TOUR",
     date: "2026-10-24",
+    endDate: "2026-10-25",
     venue: "UBS Arena",
     city: "Belmont Park, NY",
     country: "United States",
@@ -956,14 +1326,15 @@ export const events: StarEvent[] = [
     slug: "lisa-las-vegas-residency",
     headliner: "LISA",
     type: "concert",
-    tour: "Las Vegas residency",
+    tour: "VIVA LA LISA",
     date: "2026-11-13",
+    endDate: "2026-11-28",
     venue: "The Colosseum at Caesars Palace",
     city: "Las Vegas",
     country: "United States",
     region: "north-america",
     source: BILLBOARD,
-    note: "Billed as the first solo Las Vegas residency by a K-pop artist.",
+    note: "First solo Las Vegas residency by a K-pop artist; four dates (November 13, 14, 27 and 28).",
   },
   {
     slug: "xg-the-core-newark",
@@ -971,6 +1342,7 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "THE CORE World Tour",
     date: "2026-11-14",
+    venue: "Prudential Center",
     city: "Newark",
     country: "United States",
     region: "north-america",
@@ -981,23 +1353,31 @@ export const events: StarEvent[] = [
   {
     slug: "bts-arirang-london",
     headliner: "BTS",
+    artistSlugs: ["bts"],
     type: "concert",
     tour: "ARIRANG World Tour",
     date: "2026-07-06",
+    endDate: "2026-07-07",
+    venue: "Tottenham Hotspur Stadium",
     city: "London",
     country: "United Kingdom",
     region: "europe",
+    status: "sold-out",
     source: BILLBOARD,
   },
   {
     slug: "bts-arirang-paris",
     headliner: "BTS",
+    artistSlugs: ["bts"],
     type: "concert",
     tour: "ARIRANG World Tour",
     date: "2026-07-17",
+    endDate: "2026-07-18",
+    venue: "Stade de France",
     city: "Paris",
     country: "France",
     region: "europe",
+    status: "sold-out",
     source: BILLBOARD,
   },
   {
@@ -1006,6 +1386,7 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "TUNNEL VISION World Tour",
     date: "2026-09-11",
+    venue: "OVO Arena Wembley",
     city: "London",
     country: "United Kingdom",
     region: "europe",
@@ -1017,6 +1398,7 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "TUNNEL VISION World Tour",
     date: "2026-09-15",
+    venue: "Zenith Paris, La Villette",
     city: "Paris",
     country: "France",
     region: "europe",
@@ -1041,24 +1423,45 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "EXO PLANET #6: EXhOrizon",
     date: "2026-07-11",
-    city: "Tokyo",
+    endDate: "2026-07-12",
+    venue: "LaLa arena TOKYO-BAY",
+    city: "Funabashi",
     country: "Japan",
     region: "asia",
     source: SOOMPI,
+    note: "Two nights at the Tokyo Bay arena.",
   },
   {
-    slug: "cha-eunwoo-the-royal-tokyo",
-    headliner: "Cha Eun-woo",
-    artistSlugs: ["cha-eunwoo"],
-    type: "fan-meeting",
-    tour: "THE ROYAL",
-    date: "2026-07-15",
-    venue: "Ariake Arena",
-    city: "Tokyo",
+    slug: "babymonster-choom-kyocera-osaka",
+    headliner: "BABYMONSTER",
+    artistSlugs: ["babymonster"],
+    type: "concert",
+    tour: "Choom World Tour",
+    date: "2026-09-22",
+    endDate: "2026-09-23",
+    venue: "Kyocera Dome Osaka",
+    city: "Osaka",
     country: "Japan",
     region: "asia",
-    source: SONGKICK,
+    source: SOOMPI,
+    note: "The group's first solo dome dates.",
   },
+  {
+    slug: "byeon-woo-seok-secret-library-singapore",
+    headliner: "Byeon Woo-seok",
+    artistSlugs: ["byeon-woo-seok"],
+    type: "fan-meeting",
+    tour: "The Secret Library",
+    date: "2026-09-18",
+    venue: "The Star Theatre",
+    city: "Singapore",
+    country: "Singapore",
+    region: "asia",
+    source: SOOMPI,
+  },
+  // (2026-07-05: removed a "THE ROYAL" Tokyo fan meeting once listed here for
+  // 2026-07-15 — verification showed it was his 2025-07-15 pre-enlistment
+  // farewell, a year off; he is enlisted through early 2027.)
   {
     slug: "aespa-synk-complexity-taipei",
     headliner: "aespa",
@@ -1076,7 +1479,9 @@ export const events: StarEvent[] = [
     headliner: "Stray Kids",
     artistSlugs: ["stray-kids"],
     type: "concert",
+    tour: "RUN IT World Tour",
     date: "2026-08-29",
+    endDate: "2026-08-30",
     city: "Tokyo",
     country: "Japan",
     region: "asia",
@@ -1113,7 +1518,9 @@ export const events: StarEvent[] = [
     headliner: "Stray Kids",
     artistSlugs: ["stray-kids"],
     type: "concert",
+    tour: "RUN IT World Tour",
     date: "2026-09-25",
+    endDate: "2026-09-26",
     venue: "Estadio GNP Seguros",
     city: "Mexico City",
     country: "Mexico",
@@ -1130,23 +1537,61 @@ export const events: StarEvent[] = [
     type: "concert",
     tour: "THIS IS FOR World Tour",
     date: "2026-07-10",
+    endDate: "2026-07-12",
+    venue: "KSPO Dome",
     city: "Seoul",
     country: "South Korea",
     region: "korea",
     source: TWICE_TOUR,
     ticketUrl: "https://twicetours.com",
+    note: "Three-night world tour finale.",
   },
   {
     slug: "stray-kids-world-tour-seoul",
     headliner: "Stray Kids",
     artistSlugs: ["stray-kids"],
     type: "concert",
+    tour: "RUN IT World Tour",
     date: "2026-07-25",
+    endDate: "2026-08-02",
+    venue: "KSPO Dome",
     city: "Seoul",
     country: "South Korea",
     region: "korea",
+    status: "sold-out",
     source: STRAY_KIDS_TOUR,
     ticketUrl: "https://straykidstour.org",
+    note: "Five nights: July 25, 26, 29 and August 1, 2.",
+  },
+  {
+    slug: "cortis-put-your-phone-down-incheon",
+    headliner: "CORTIS",
+    artistSlugs: ["cortis"],
+    type: "concert",
+    tour: "PUT YOUR PHONE DOWN",
+    date: "2026-07-18",
+    endDate: "2026-07-19",
+    venue: "Inspire Arena",
+    city: "Incheon",
+    country: "South Korea",
+    region: "korea",
+    source: IBIGHIT,
+    ticketUrl: "https://ibighit.com/en/cortis/tour/",
+    note: "First world tour opens at home.",
+  },
+  {
+    slug: "le-sserafim-pureflow-incheon",
+    headliner: "LE SSERAFIM",
+    artistSlugs: ["le-sserafim"],
+    type: "concert",
+    tour: "PUREFLOW",
+    date: "2026-07-11",
+    endDate: "2026-07-12",
+    city: "Incheon",
+    country: "South Korea",
+    region: "korea",
+    source: WEVERSE,
+    note: "Second world tour opens its 23-city run.",
   },
 ];
 
@@ -1158,8 +1603,9 @@ export const events: StarEvent[] = [
 // against an objective, public, dated source. Vote tallies are LIVE from Supabase
 // (see data.ts) and start at zero — real fan votes only. Broad roster coverage:
 // one question per featured artist across all four pillars. Anchored to NOW
-// (2026-06-29) and still spanning every lifecycle state — open questions, one
-// closed-awaiting-result (TWICE), and one already resolved (Park Chan-wook).
+// (2026-07-05) and still spanning every lifecycle state — open questions and
+// resolved ones (Park Chan-wook, Bong Joon-ho). Every premise below was
+// web-verified on 2026-07-05 per docs/roster-playbook.md.
 // Wording follows docs/forecast-playbook.md: hype within the editorial-noir voice.
 const MAMA_AWARDS: Source = { name: "MAMA Awards", url: "https://www.mnetplus.world", kind: "official" };
 const KOBIS: Source = { name: "KOBIS · Korean Film Council", url: "https://www.kobis.or.kr", kind: "official" };
@@ -1168,6 +1614,8 @@ const NETFLIX: Source = { name: "Netflix Top 10", url: "https://www.netflix.com/
 const LOUIS_VUITTON: Source = { name: "Louis Vuitton", url: "https://www.louisvuitton.com", kind: "official" };
 const ADOR: Source = { name: "ADOR (official)", url: "https://weverse.io/newjeans", kind: "official" };
 const FANTAGIO: Source = { name: "Fantagio (official)", url: "https://fantagio.kr", kind: "official" };
+const HANTEO: Source = { name: "Hanteo Chart", url: "https://www.hanteochart.com", kind: "official" };
+const CIRCLE: Source = { name: "Circle Chart", url: "https://circlechart.kr", kind: "official" };
 
 export const predictions: Prediction[] = [
   // ===================== K-POP =====================
@@ -1187,7 +1635,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the Billboard 200 chart covering *THIS & THAT*'s debut week.",
     resolutionSource: BILLBOARD,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
     slug: "aespa-daesang-mama-2026",
@@ -1205,7 +1653,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the official 2026 MAMA Awards winners announcement.",
     resolutionSource: MAMA_AWARDS,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
     slug: "blackpink-daesang-mama-2026",
@@ -1223,43 +1671,49 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the official 2026 MAMA Awards winners announcement.",
     resolutionSource: MAMA_AWARDS,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
-    slug: "twice-anniversary-album-billboard-top10",
-    pillar: "k-pop",
-    category: "chart",
-    question: "Will TWICE's 10th-anniversary album debut in the Billboard 200 Top 10?",
-    framing: "Ten years, nine voices: ONCE are betting the anniversary lands up top. Voting's closed; the chart will settle it.",
-    opensAt: "2026-06-10T00:00:00+09:00",
-    closesAt: "2026-06-27T23:59:00+09:00",
-    status: "open",
-    options: [
-      { id: "yes", label: "Yes, a Top 10 debut", artistSlug: "twice" },
-      { id: "no", label: "No, outside the Top 10" },
-    ],
-    resolutionSourceLabel: "Resolves on the Billboard 200 chart covering the anniversary album's debut week.",
-    resolutionSource: BILLBOARD,
-    tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
-  },
-  {
-    slug: "iu-goyang-stadium-sellout",
+    // 2026-07-05: replaced an anniversary-album question whose premise could not
+    // be verified (no such release exists); test votes reset per the playbook.
+    // The finale run is confirmed: three nights at KSPO Dome, July 10 to 12.
+    slug: "twice-this-is-for-finale-sellout",
     pillar: "k-pop",
     category: "tour",
-    question: "Will IU sell out Goyang Stadium for her first concert in two years?",
-    framing: "A stadium, a two-year wait: Uaena are ready to fill every seat.",
-    opensAt: "2026-06-20T00:00:00+09:00",
-    closesAt: "2026-09-01T00:00:00+09:00",
+    question: "Will TWICE close the *This Is For* world tour with all three Seoul finale nights sold out?",
+    framing: "Eighty-one shows come home to KSPO Dome. ONCE want the send-off standing-room only.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-07-10T18:00:00+09:00",
     status: "open",
     options: [
-      { id: "yes", label: "Yes, sold out", artistSlug: "iu" },
+      { id: "yes", label: "Yes, a triple sellout", artistSlug: "twice" },
       { id: "no", label: "No, seats remain" },
     ],
-    resolutionSourceLabel: "Resolves on the official on-sale / sold-out status for the Goyang Stadium date.",
+    resolutionSourceLabel: "Resolves on official JYP or ticketing confirmation for the three finale nights.",
     resolutionSource: STAR_NEWS,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    // 2026-07-05: replaced an unverifiable Goyang Stadium question (her verified
+    // 2026 dates are a North American run from July 15); test votes reset. IU has
+    // said the album is largely done and pointed at late August.
+    slug: "iu-new-album-august-2026",
+    pillar: "k-pop",
+    category: "comeback",
+    question: "Will IU's new album arrive by August 31, as teased?",
+    framing: "She calls the album mostly finished and points at late August. Uaena are counting the days out loud.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-08-31T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, out by August 31", artistSlug: "iu" },
+      { id: "no", label: "No, it slips past August" },
+    ],
+    resolutionSourceLabel: "Resolves on the official EDAM release announcement and the actual drop date.",
+    resolutionSource: STAR_NEWS,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
     slug: "cha-eunwoo-post-service-comeback-2026",
@@ -1277,14 +1731,14 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official Fantagio announcement of post-service plans.",
     resolutionSource: FANTAGIO,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
     slug: "newjeans-return-official-word-2026",
     pillar: "k-pop",
     category: "comeback",
     question: "Will 2026 bring official word on NewJeans' return?",
-    framing: "However long it takes, Bunnies are holding the door open. Pure anticipation.",
+    framing: "ADOR says the announcement will come 'at the best time.' Bunnies are holding the door open.",
     opensAt: "2026-06-29T00:00:00+09:00",
     closesAt: "2026-12-31T00:00:00+09:00",
     status: "open",
@@ -1295,7 +1749,136 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official ADOR announcement about NewJeans' return.",
     resolutionSource: ADOR,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+
+  // --- 2026-07-05 roster expansion: one question per new artist, premises
+  // web-verified same day (see docs/roster-playbook.md) ---
+  {
+    slug: "bts-arirang-global-top10-summer",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will an *Arirang* track re-enter the Billboard Global 200 top 10 during the summer stadium legs?",
+    framing: "London, Paris, then SoFi: ARMY believe the tour can push 'SWIM' right back up the chart.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-09-06T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, back in the top 10", artistSlug: "bts" },
+      { id: "no", label: "No, the chart holds firm" },
+    ],
+    resolutionSourceLabel: "Resolves on Billboard Global 200 charts published through the Los Angeles nights.",
+    resolutionSource: BILLBOARD,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "seventeen-v8-600k-july",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will V8's mini album pass 600,000 copies before July ends?",
+    framing: "Vernon and The8's unit stood at 559,904 on July 1. CARAT math says this is already done.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-07-31T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, 600k inside July", artistSlug: "seventeen" },
+      { id: "no", label: "No, it lands in August" },
+    ],
+    resolutionSourceLabel: "Resolves on Hanteo and Circle cumulative sales through July 31.",
+    resolutionSource: HANTEO,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "ive-seventh-all-kill-tour-window",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will IVE land a seventh perfect all-kill while the tour crosses North America?",
+    framing: "'Bang Bang' made it six in February. DIVE want number seven before the Vancouver closer.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-08-09T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, a seventh all-kill", artistSlug: "ive" },
+      { id: "no", label: "Not on this leg" },
+    ],
+    resolutionSourceLabel: "Resolves on Korean chart trackers' perfect all-kill records through August 9.",
+    resolutionSource: CIRCLE,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "cortis-greengreen-ten-weeks-billboard",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will *GREENGREEN* stretch its Billboard 200 run past ten weeks?",
+    framing: "Seven weeks and counting for the rookie class leaders, with a first world tour about to add fuel.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-09-08T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, past ten weeks", artistSlug: "cortis" },
+      { id: "no", label: "No, it exits earlier" },
+    ],
+    resolutionSourceLabel: "Resolves on weekly Billboard 200 charts through early September.",
+    resolutionSource: BILLBOARD,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "hearts2hearts-lemon-tang-circle-top10-august",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will a *Lemon Tang* track sit in a Circle weekly top 10 again before September?",
+    framing: "Their best first week yet deserves a summer-long chart tail. The fandom says it holds.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-08-31T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, back in the top 10", artistSlug: "hearts2hearts" },
+      { id: "no", label: "No, the moment passes" },
+    ],
+    resolutionSourceLabel: "Resolves on Circle Chart weekly digital rankings through August.",
+    resolutionSource: CIRCLE,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "babymonster-choom-first-week-record-q3",
+    pillar: "k-pop",
+    category: "chart",
+    question: "Will *Choom*'s 601,000 first week still lead the 2026 girl-group class at the end of September?",
+    framing: "MONSTIEZ set the bar in May. Every comeback this summer takes a swing at it.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-09-30T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, the record holds", artistSlug: "babymonster" },
+      { id: "no", label: "No, someone clears it" },
+    ],
+    resolutionSourceLabel: "Resolves on Hanteo first-week tallies for 2026 girl-group releases through Q3.",
+    resolutionSource: HANTEO,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "le-sserafim-pureflow-incheon-sellout",
+    pillar: "k-pop",
+    category: "tour",
+    question: "Will PUREFLOW's Incheon opener sell out both nights?",
+    framing: "The 23-city run opens at home. FEARNOT want the first stamp to read full house.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-07-11T18:00:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, both nights full", artistSlug: "le-sserafim" },
+      { id: "no", label: "No, seats remain" },
+    ],
+    resolutionSourceLabel: "Resolves on official Source Music or ticketing confirmation for the opening nights.",
+    resolutionSource: STAR_NEWS,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
   },
 
   // ===================== K-DRAMA =====================
@@ -1315,7 +1898,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Netflix's official global Top 10 for the premiere week.",
     resolutionSource: NETFLIX,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
     slug: "lee-min-ho-next-drama-confirmed-2026",
@@ -1333,7 +1916,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official network or agency casting announcement.",
     resolutionSource: YONHAP,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
     slug: "kim-tae-ri-next-role-announced-2026",
@@ -1351,7 +1934,25 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official agency announcement of her next role.",
     resolutionSource: YONHAP,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
+  },
+  {
+    slug: "byeon-woo-seok-netflix-top10-july",
+    pillar: "k-drama",
+    category: "chart",
+    question: "Will *Jae Seok's B&B Rules!* hold a Netflix Korea weekly top 10 spot through July?",
+    framing: "His first fixed variety role became a chart fixture in May. Fans say it stays put all month.",
+    opensAt: "2026-07-05T00:00:00+09:00",
+    closesAt: "2026-07-31T23:59:00+09:00",
+    status: "open",
+    options: [
+      { id: "yes", label: "Yes, top 10 all month", artistSlug: "byeon-woo-seok" },
+      { id: "no", label: "No, it slips out" },
+    ],
+    resolutionSourceLabel: "Resolves on Netflix's official weekly Top 10 for South Korea covering July.",
+    resolutionSource: NETFLIX,
+    tallyVisibleThreshold: 25,
+    asOf: "2026-07-05T00:00:00+09:00",
   },
 
   // ===================== K-MOVIE =====================
@@ -1377,25 +1978,33 @@ export const predictions: Prediction[] = [
       note: "Finished at ~2.94 million admissions, among 2025's biggest Korean releases, per KOBIS.",
     },
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
   {
+    // 2026-07-05: resolved. Bong confirmed at Cannes in May that *Ally* is
+    // tracking toward a 2027 worldwide release, settling the 2026 question.
     slug: "bong-joon-ho-ally-release-date-2026",
     pillar: "k-movie",
     category: "debut",
     question: "Will Bong Joon-ho's first animated film *Ally* land a confirmed 2026 release date?",
-    framing: "His first animated film is the most anticipated mystery in Korean cinema.",
-    opensAt: "2026-06-29T00:00:00+09:00",
-    closesAt: "2026-12-31T00:00:00+09:00",
-    status: "open",
+    framing: "Resolved: the director answered this one himself at Cannes.",
+    opensAt: "2026-04-20T00:00:00+09:00",
+    closesAt: "2026-06-30T00:00:00+09:00",
+    status: "resolved",
     options: [
       { id: "yes", label: "Yes, dated for 2026", artistSlug: "bong-joon-ho" },
       { id: "no", label: "No, 2027 or later" },
     ],
-    resolutionSourceLabel: "Resolves on the studio's official release-date announcement.",
+    resolutionSourceLabel: "Resolved on the director's own release-window confirmation.",
     resolutionSource: STUDIO,
+    resolution: {
+      winningOptionId: "no",
+      resolvedAt: "2026-05-22T00:00:00+09:00",
+      source: STAR_NEWS,
+      note: "At Cannes in May, Bong confirmed *Ally* is aiming for a 2027 worldwide release.",
+    },
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
 
   // ===================== FASHION & BEAUTY =====================
@@ -1415,32 +2024,39 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official Louis Vuitton campaign announcement.",
     resolutionSource: LOUIS_VUITTON,
     tallyVisibleThreshold: 25,
-    asOf: "2026-06-29T00:00:00+09:00",
+    asOf: "2026-07-05T00:00:00+09:00",
   },
 ];
 
 // ---------------------------------------------------------------------------
 // CLIPS — standalone short-form social posts for the home rails (see types.ts).
 // ---------------------------------------------------------------------------
-// REAL, verified embeds, not placeholders. Every YouTube video was confirmed live
-// via the oEmbed endpoint (official channels only, fan reuploads discarded). The
-// Instagram permalinks are official-account posts, confirmed by their account-path
-// where possible; Instagram blocks server-side verification, so a permalink that
-// ever 404s degrades to the link-out facade in LiveEmbed, never a broken frame.
-// Dates are each post's approximate publish date so a rail reads newest-first.
+// REAL, verified embeds, not placeholders. Full rebuild on 2026-07-05 under the
+// 90/180-day freshness rule (docs/roster-playbook.md, enforced by check:fresh):
+// - YouTube: every videoId re-confirmed same day via the oEmbed endpoint on the
+//   named official channel (two look-alike reuploads discarded in the process).
+// - Instagram: every permalink confirmed via the public /embed/captioned/ page
+//   (account name + caption) AND its shortcode-embedded timestamp decoded, so
+//   the date field below is the post's TRUE publish date, not a label. Several
+//   fan-account posts masquerading as official were rejected this way.
+// - X: status IDs snowflake-decoded to their true timestamps and cross-checked
+//   against same-day press; every X clip must also be eyeballed in a real
+//   browser after seeding (widgets.js failures are silent at build time).
+// A date must never be edited to look fresh; replace the post instead.
 // Captions follow house style: song titles in 'quotes', work titles in *asterisks*.
 const YT_CHANNEL = {
-  hybe: { name: "HYBE Labels", url: "https://www.youtube.com/@HYBELABELS", kind: "embed" } as Source,
+  hybeLabels: { name: "HYBE LABELS", url: "https://www.youtube.com/@HYBELABELS", kind: "embed" } as Source,
   blackpink: { name: "BLACKPINK", url: "https://www.youtube.com/@BLACKPINK", kind: "embed" } as Source,
-  iu: { name: "IU", url: "https://www.youtube.com/@dlwlrma", kind: "embed" } as Source,
-  straykids: { name: "Stray Kids", url: "https://www.youtube.com/@StrayKids", kind: "embed" } as Source,
-  aespa: { name: "aespa", url: "https://www.youtube.com/@aespa", kind: "embed" } as Source,
-  eunwoo: { name: "Cha Eun-woo", url: "https://www.youtube.com/@offclCHAEUNWOO", kind: "embed" } as Source,
-  fantagio: { name: "Fantagio", url: "https://www.youtube.com/@fantagio", kind: "embed" } as Source,
+  smtown: { name: "SMTOWN", url: "https://www.youtube.com/@SMTOWN", kind: "embed" } as Source,
+  starship: { name: "STARSHIP", url: "https://www.youtube.com/@STARSHIP_official", kind: "embed" } as Source,
+  babymonster: { name: "BABYMONSTER", url: "https://www.youtube.com/@BABYMONSTER", kind: "embed" } as Source,
+  jype: { name: "JYP Entertainment", url: "https://www.youtube.com/@JYPEntertainment", kind: "embed" } as Source,
   twice: { name: "TWICE", url: "https://www.youtube.com/@TWICE", kind: "embed" } as Source,
 };
 
 // YouTube clip (landscape player). videoId was oEmbed-verified on the named channel.
+// evergreenUntil (optional, ISO date): a dated exemption from the 90/180-day
+// freshness gate (npm run check:fresh) — see docs/roster-playbook.md before using.
 function yt(
   id: string,
   videoId: string,
@@ -1448,6 +2064,7 @@ function yt(
   date: string,
   caption: string,
   credit: Source,
+  evergreenUntil?: string,
 ): Clip {
   return {
     id,
@@ -1460,6 +2077,7 @@ function yt(
     caption,
     credit,
     orientation: "landscape",
+    ...(evergreenUntil ? { evergreenUntil } : {}),
   };
 }
 
@@ -1473,6 +2091,7 @@ function ig(
   caption: string,
   handle: string,
   account: string,
+  evergreenUntil?: string,
 ): Clip {
   const format: ClipFormat = permalink.includes("/reel/") ? "reel" : "post";
   return {
@@ -1486,6 +2105,7 @@ function ig(
     caption,
     credit: { name: handle, url: account, kind: "embed" },
     orientation: "portrait",
+    ...(evergreenUntil ? { evergreenUntil } : {}),
   };
 }
 
@@ -1501,6 +2121,7 @@ function x(
   caption: string,
   handle: string,
   account: string,
+  evergreenUntil?: string,
 ): Clip {
   return {
     id,
@@ -1513,42 +2134,34 @@ function x(
     caption,
     credit: { name: handle, url: account, kind: "embed" },
     orientation: "portrait",
+    ...(evergreenUntil ? { evergreenUntil } : {}),
   };
 }
 
 export const clips: Clip[] = [
-  // --- YouTube: official music videos and clips (oEmbed-verified) ---
-  yt("clip-yt-blackpink-go", "2GJfWMYCWY0", ["blackpink"], "2026-02-13T12:00:00+09:00", "BLACKPINK return with 'GO'", YT_CHANNEL.blackpink),
-  yt("clip-yt-twice-this-is-for", "eHHQaoEW30Q", ["twice"], "2025-07-11T18:00:00+09:00", "TWICE, the 'This Is For' music video", YT_CHANNEL.twice),
-  yt("clip-yt-iu-holssi", "mFbILexYSQg", ["iu"], "2025-09-19T18:00:00+09:00", "IU, the 'Holssi' music video", YT_CHANNEL.iu),
-  yt("clip-yt-blackpink-jump", "CgCVZdcKcqY", ["blackpink"], "2025-07-11T12:00:00+09:00", "BLACKPINK, the 'JUMP' music video", YT_CHANNEL.blackpink),
-  yt("clip-yt-aespa-dirty-work", "SKEnKaMI2nw", ["aespa"], "2025-06-15T18:00:00+09:00", "aespa take on the Dirty Work challenge", YT_CHANNEL.aespa),
-  yt("clip-yt-aespa-whiplash-ningning", "YBIS5NTtkNs", ["aespa"], "2024-10-21T18:00:00+09:00", "aespa, a 'Whiplash' universe clip", YT_CHANNEL.aespa),
-  yt("clip-yt-cha-eunwoo-choreo", "cSt6gkeF2Lk", ["cha-eunwoo"], "2024-05-30T18:00:00+09:00", "Cha Eun-woo, a choreography clip", YT_CHANNEL.eunwoo),
-  yt("clip-yt-cha-eunwoo-where-am-i", "1wuO7Lvkkok", ["cha-eunwoo"], "2024-02-26T18:00:00+09:00", "Cha Eun-woo, the 'Where Am I' music video", YT_CHANNEL.fantagio),
-  yt("clip-yt-stray-kids-chk-chk-boom", "0P0aQreFs8w", ["stray-kids"], "2024-07-19T18:00:00+09:00", "Stray Kids, 'Chk Chk Boom'", YT_CHANNEL.straykids),
-  yt("clip-yt-stray-kids-s-class", "JsOOis4bBFg", ["stray-kids"], "2023-06-02T18:00:00+09:00", "Stray Kids, 'S-Class'", YT_CHANNEL.straykids),
-  yt("clip-yt-newjeans-supernatural", "ZncbtRo7RXs", ["newjeans"], "2024-06-21T18:00:00+09:00", "NewJeans, the 'Supernatural' music video", YT_CHANNEL.hybe),
-  yt("clip-yt-twice-i-got-you", "haf67eKF0uo", ["twice"], "2024-02-02T18:00:00+09:00", "TWICE, 'I Got You'", YT_CHANNEL.twice),
-  yt("clip-yt-iu-love-wins-all", "JleoAppaxi0", ["iu"], "2024-01-24T18:00:00+09:00", "IU, 'Love wins all'", YT_CHANNEL.iu),
+  // --- YouTube: official music videos and clips (oEmbed re-verified 2026-07-05) ---
+  yt("clip-yt-seventeen-v8-singasong", "pBpr9TnhhkE", ["seventeen"], "2026-06-29T18:00:00+09:00", "V8, SEVENTEEN's new unit, drop 'singasong'", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-stray-kids-run-it", "Q7IFjVUUb_E", ["stray-kids"], "2026-06-24T13:00:00+09:00", "Stray Kids, the 'RUN IT' music video", YT_CHANNEL.jype),
+  yt("clip-yt-le-sserafim-boompala", "V1Lr-_AxeR8", ["le-sserafim"], "2026-05-22T13:00:00+09:00", "LE SSERAFIM, the 'BOOMPALA' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-aespa-wda", "iTJSbJtS8MU", ["aespa"], "2026-05-11T18:00:00+09:00", "aespa link up with G-Dragon for 'WDA'", YT_CHANNEL.smtown),
+  yt("clip-yt-cortis-tnt", "kRpaqR5sbf0", ["cortis"], "2026-05-04T18:00:00+09:00", "CORTIS, the 'TNT' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-babymonster-choom", "x3eqqoZPV_E", ["babymonster"], "2026-05-04T18:00:00+09:00", "BABYMONSTER, the 'CHOOM' music video", YT_CHANNEL.babymonster),
+  yt("clip-yt-bts-swim", "b4iVv91Z6lY", ["bts"], "2026-03-20T13:00:00+09:00", "BTS, the 'SWIM' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-blackpink-go", "2GJfWMYCWY0", ["blackpink"], "2026-02-27T13:30:00+09:00", "BLACKPINK return with 'GO'", YT_CHANNEL.blackpink),
+  yt("clip-yt-ive-blackhole", "1Lmy7qwmSMc", ["ive"], "2026-02-23T18:00:00+09:00", "IVE, the 'BLACKHOLE' music video", YT_CHANNEL.starship),
+  yt("clip-yt-hearts2hearts-rude", "F7sGJVUrkjQ", ["hearts2hearts"], "2026-02-20T18:00:00+09:00", "Hearts2Hearts, the 'RUDE!' music video", YT_CHANNEL.smtown),
+  // Dated evergreen: the tour's title track anchors the THIS IS FOR finale run at
+  // KSPO Dome and expires with it (July 12), forcing a fresh look next refresh.
+  yt("clip-yt-twice-this-is-for", "eHHQaoEW30Q", ["twice"], "2025-07-11T18:00:00+09:00", "TWICE, the *This Is For* title track", YT_CHANNEL.twice, "2026-07-12T23:59:00+09:00"),
 
-  // --- Instagram: official-account Reels and posts (links out if an embed 404s) ---
-  ig("clip-ig-twice-teaser", "https://www.instagram.com/twicetagram/reel/DL2dkruyX9Z/", ["twice"], "k-pop", "2026-06-20T12:00:00+09:00", "TWICE tease the 'This Is For' music video", "@twicetagram", "https://www.instagram.com/twicetagram/"),
-  ig("clip-ig-jung-hoyeon-post", "https://www.instagram.com/hoooooyeony/p/DMdiG54S0F1/", ["jung-hoyeon"], "fashion-beauty", "2026-06-10T12:00:00+09:00", "Jung Ho-yeon, a recent post", "@hoooooyeony", "https://www.instagram.com/hoooooyeony/"),
-  ig("clip-ig-newjeans-supernatural", "https://www.instagram.com/newjeans_official/reel/C8ZsjaDSczz/", ["newjeans"], "k-pop", "2026-05-30T12:00:00+09:00", "NewJeans, a 'Supernatural' reel", "@newjeans_official", "https://www.instagram.com/newjeans_official/"),
-  ig("clip-ig-blackpink-tour", "https://www.instagram.com/blackpinkofficial/reel/DJYACoiTQ9X/", ["blackpink"], "k-pop", "2026-05-09T12:00:00+09:00", "BLACKPINK, from the 2025 world tour", "@blackpinkofficial", "https://www.instagram.com/blackpinkofficial/"),
-  ig("clip-ig-blackpink-teaser", "https://www.instagram.com/blackpinkofficial/reel/DFsgXqbzKwR/", ["blackpink"], "k-pop", "2026-04-29T12:00:00+09:00", "BLACKPINK, a world-tour teaser", "@blackpinkofficial", "https://www.instagram.com/blackpinkofficial/"),
-  ig("clip-ig-iu-hereh", "https://www.instagram.com/dlwlrma/p/C5xzLk8S5LM/", ["iu"], "k-pop", "2026-04-20T12:00:00+09:00", "IU counts down to the Hereh tour", "@dlwlrma", "https://www.instagram.com/dlwlrma/"),
-  ig("clip-ig-stray-kids", "https://www.instagram.com/realstraykids/reel/DABOglRhTjN/", ["stray-kids"], "k-pop", "2026-03-15T12:00:00+09:00", "Stray Kids, a behind-the-scenes reel", "@realstraykids", "https://www.instagram.com/realstraykids/"),
-  ig("clip-ig-twice-behind", "https://www.instagram.com/twicetagram/reel/DGNAsYuvppl/", ["twice"], "k-pop", "2026-02-26T12:00:00+09:00", "TWICE go behind the scenes", "@twicetagram", "https://www.instagram.com/twicetagram/"),
-  ig("clip-ig-kim-tae-ri", "https://www.instagram.com/p/DVPYkB0DBaB/", ["kim-tae-ri"], "k-drama", "2026-02-26T12:00:00+09:00", "Kim Tae-ri shares a February photo set", "@kimtaeri_official", "https://www.instagram.com/kimtaeri_official/"),
-  ig("clip-ig-cha-eunwoo", "https://www.instagram.com/eunwo.o_c/reel/C34wWNWRF6w/", ["cha-eunwoo"], "k-pop", "2026-02-10T12:00:00+09:00", "Cha Eun-woo, the 'Just You and I' reel", "@eunwo.o_c", "https://www.instagram.com/eunwo.o_c/"),
-  ig("clip-ig-aespa-sion", "https://www.instagram.com/aespa_official/reel/DB1CorzvhrJ/", ["aespa"], "k-pop", "2025-11-20T12:00:00+09:00", "aespa set the tone with Sion", "@aespa_official", "https://www.instagram.com/aespa_official/"),
-  ig("clip-ig-aespa-whiplash", "https://www.instagram.com/aespa_official/reel/DBazjetvmv0/", ["aespa"], "k-pop", "2025-11-02T12:00:00+09:00", "aespa in their 'Whiplash' era", "@aespa_official", "https://www.instagram.com/aespa_official/"),
-  ig("clip-ig-jung-hoyeon-squidgame", "https://www.instagram.com/hoooooyeony/p/DD_0REbSZDP/", ["jung-hoyeon"], "fashion-beauty", "2025-12-22T12:00:00+09:00", "Jung Ho-yeon counts down to *Squid Game*", "@hoooooyeony", "https://www.instagram.com/hoooooyeony/"),
+  // --- Instagram: official-account posts, /embed/captioned/-verified with
+  //     shortcode-decoded true dates (links out if an embed 404s) ---
+  ig("clip-ig-seventeen-v8-teaser", "https://www.instagram.com/reel/DaFxmsuh3uR/", ["seventeen"], "k-pop", "2026-06-27T22:00:00+09:00", "V8 tease 'singasong', two days out", "@saythename_17", "https://www.instagram.com/saythename_17/"),
+  ig("clip-ig-byeon-woo-seok-bnb", "https://www.instagram.com/p/DZKrLSdmFBU/", ["byeon-woo-seok"], "k-drama", "2026-06-04T23:09:00+09:00", "Byeon Woo-seok checks back in from the *Jae Seok's B&B Rules!* set", "@byeonwooseok", "https://www.instagram.com/byeonwooseok/"),
+  ig("clip-ig-newjeans-haerin-day", "https://www.instagram.com/p/DYUsS_Lkr2Z/", ["newjeans"], "k-pop", "2026-05-15T00:00:00+09:00", "NewJeans mark Haerin's day, a third sign of life this spring", "@newjeans_official", "https://www.instagram.com/newjeans_official/"),
 
-  // --- X: official-account posts (links out if a tweet fails to embed) ---
-  x("clip-x-twice-thisisfor-boston", "https://x.com/JYPETWICE/status/2039854226680295782", ["twice"], "k-pop", "2026-04-03T12:00:00+09:00", "TWICE bring the *This Is For* world tour to Boston", "@JYPETWICE", "https://x.com/JYPETWICE"),
-  x("clip-x-iu-love-wins-all", "https://x.com/_IUofficial/status/1968704238642438407", ["iu"], "k-pop", "2025-09-19T12:00:00+09:00", "IU, a 'Love wins all' note", "@_IUofficial", "https://x.com/_IUofficial"),
-  x("clip-x-blackpink-2025-tour", "https://x.com/BLACKPINK/status/1920297633794691278", ["blackpink"], "k-pop", "2025-05-08T12:00:00+09:00", "BLACKPINK, a 2025 world tour announcement", "@BLACKPINK", "https://x.com/BLACKPINK"),
+  // --- X: official-account posts, snowflake-dated (links out if a tweet fails
+  //     to embed; eyeball each in a real browser after seeding) ---
+  x("clip-x-stray-kids-3000-days", "https://x.com/stray_kids/status/2064369435545358615", ["stray-kids"], "k-pop", "2026-06-10T00:30:00+09:00", "Stray Kids count 3,000 days with STAY", "@Stray_Kids", "https://x.com/Stray_Kids"),
+  x("clip-x-cortis-tour-sf", "https://x.com/cortis_bighit/status/2064497778043023427", ["cortis"], "k-pop", "2026-06-10T09:00:00+09:00", "CORTIS add a San Francisco night as North America sells out", "@cortis_bighit", "https://x.com/cortis_bighit"),
 ];

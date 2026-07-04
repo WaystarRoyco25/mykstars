@@ -61,7 +61,9 @@ export function eventDate(dateIso: string): string {
   }).format(new Date(`${dateIso.slice(0, 10)}T00:00:00Z`));
 }
 
-// "Aug 15-16, 2026" for a multi-night run; falls back to a single date.
+// "Aug 15 to 16, 2026" for a multi-night run; falls back to a single date. A
+// worded range, per house style (no dash fakery); it also avoids the ICU
+// fallback pattern that garbles a bare {day, year} format request.
 export function eventDateRange(startIso: string, endIso?: string): string {
   if (!endIso) return eventDate(startIso);
   const sameMonth = startIso.slice(0, 7) === endIso.slice(0, 7);
@@ -71,12 +73,8 @@ export function eventDateRange(startIso: string, endIso?: string): string {
       day: "numeric",
       timeZone: "UTC",
     }).format(new Date(`${startIso.slice(0, 10)}T00:00:00Z`));
-    const endDay = new Intl.DateTimeFormat("en-US", {
-      day: "numeric",
-      year: "numeric",
-      timeZone: "UTC",
-    }).format(new Date(`${endIso.slice(0, 10)}T00:00:00Z`));
-    return `${startDay}-${endDay}`;
+    const end = new Date(`${endIso.slice(0, 10)}T00:00:00Z`);
+    return `${startDay} to ${end.getUTCDate()}, ${end.getUTCFullYear()}`;
   }
   return `${eventDate(startIso)} to ${eventDate(endIso)}`;
 }

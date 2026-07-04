@@ -9,6 +9,7 @@ import {
   getRankings,
   getReels,
   getShorts,
+  hasFeaturedArtist,
   pillarFillEmbeds,
 } from "@/lib/data";
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
@@ -100,7 +101,7 @@ export default async function HomePage() {
       Promise.all(
         PILLAR_ORDER.map(async (pillar) => {
           const galleries = (await getGalleriesForPillar(pillar))
-            .filter((g) => g.slug !== featured.slug)
+            .filter((g) => g.slug !== featured.slug && hasFeaturedArtist(g))
             .slice(0, BAND_COUNT[pillar]);
           // Top up a thin band with the band artists' official-account tiles so it
           // never renders with empty columns (deficit only; a full band is unchanged).

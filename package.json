@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check:style": "node scripts/check-dashes.mjs"
+    "check:style": "node scripts/check-dashes.mjs",
+    "check:fresh": "node scripts/check-freshness.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

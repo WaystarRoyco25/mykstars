@@ -25,6 +25,7 @@ const COMPANIES: CompanyBrand[] = [
   { name: "Fantagio", logo: "/logos/companies/fantagio.svg" },
   { name: "Starship Entertainment", logo: "/logos/companies/starship.svg" },
   { name: "EDAM Entertainment", logo: "/logos/companies/edam.svg" },
+  { name: "Source Music", logo: "/logos/companies/source-music.png" },
   // K-drama broadcast networks
   { name: "tvN", logo: "/logos/companies/tvn.svg" },
   { name: "SBS", logo: "/logos/companies/sbs.svg" },

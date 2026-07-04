@@ -140,6 +140,9 @@ export interface MediaItem {
   embedUrl?: string; // when kind === "embed"
   platform?: EmbedPlatform; // when kind === "embed"
   tone?: number; // 0..3, decorative variety for placeholders
+  // The post's TRUE publish date (ISO). Required when kind === "embed" — enforced
+  // by npm run check:fresh (script-level, like check:style), not the type system.
+  date?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -163,6 +166,10 @@ export interface Clip {
   caption: string; // neutral, house-style (may carry *work titles*)
   credit: Source; // the real account / outlet, kind: "embed"
   orientation?: Orientation; // defaults to portrait (vertical) for reel/short
+  // ISO date. While >= NOW the clip is exempt from the 90/180-day freshness gate
+  // (npm run check:fresh) — a dated, reviewable exemption for durably-relevant era
+  // anchors, never a way to keep genuinely stale content. Expiry forces a re-review.
+  evergreenUntil?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -191,6 +198,11 @@ export interface Artist {
   knownFor?: string[]; // neutral, factual descriptors (reserved for CMS)
   bio: string;
   social?: SocialLink[]; // verified official accounts (used to top up sparse grids)
+  // Roster tier. Absent = "featured". A benched artist keeps their /artists hub,
+  // galleries and analysis links, but drops off the surfaces that actively promote
+  // the roster (home hero/bands/rails, People strips, ranking links, Fan Forecast) —
+  // see isFeatured() in data.ts and docs/roster-playbook.md for the bench/promote rules.
+  tier?: "featured" | "bench";
 }
 
 // ---------------------------------------------------------------------------

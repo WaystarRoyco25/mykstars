@@ -61,6 +61,35 @@ const FASHION_LENS_TAGS: CategoryTag[] = [
   "airport",
 ];
 
+// ---------------------------------------------------------------------------
+// Roster tiers (docs/roster-playbook.md). A benched artist keeps their
+// /artists/{slug} hub, galleries and analysis links, but drops off every surface
+// that actively promotes the roster: the home hero/bands/rails, the pillar-page
+// People strip, ranking links, the Fan Forecast, and clip/account grid fill.
+// Absent tier = "featured", so pre-existing records are unaffected.
+// ---------------------------------------------------------------------------
+function isFeatured(a: Artist): boolean {
+  return (a.tier ?? "featured") === "featured";
+}
+
+const BENCHED_SLUGS: ReadonlySet<string> = new Set(
+  artists.filter((a) => !isFeatured(a)).map((a) => a.slug),
+);
+
+// True when at least one slug belongs to a featured artist. Slugs that don't
+// resolve to a roster record count as featured — rankings, events and clips may
+// name people we don't cover, and those must keep rendering.
+function anyFeaturedSlug(slugs: string[]): boolean {
+  return slugs.length === 0 || slugs.some((s) => !BENCHED_SLUGS.has(s));
+}
+
+// Gallery-level view of the same rule, used by the home page to keep bench-only
+// galleries out of the hero and bands. The galleries themselves stay live in
+// /photos, the pillar grids and the artist hub — benching never unpublishes.
+export function hasFeaturedArtist(g: Gallery): boolean {
+  return anyFeaturedSlug(g.artistSlugs);
+}
+
 export async function getGalleries(opts?: { tag?: CategoryTag }): Promise<Gallery[]> {
   const list = byDateDesc(galleries);
   if (opts?.tag) return list.filter((g) => matchesTag(g, opts.tag!));
@@ -93,7 +122,10 @@ export async function getGallery(slug: string): Promise<Gallery | undefined> {
 }
 
 export async function getFeaturedGallery(): Promise<Gallery> {
-  return byDateDesc(galleries)[0];
+  // Newest gallery with a featured artist; falls back to newest overall so the
+  // hero never renders empty even if the whole roster were benched.
+  const list = byDateDesc(galleries);
+  return list.find(hasFeaturedArtist) ?? list[0];
 }
 
 export async function getGalleriesByArtist(artistSlug: string): Promise<Gallery[]> {
@@ -131,7 +163,11 @@ export async function getArtists(): Promise<Artist[]> {
 }
 
 export async function getArtistsByPillar(pillar: Pillar): Promise<Artist[]> {
-  return (await getArtists()).filter((a) => (a.pillars ?? ["k-pop"]).includes(pillar));
+  // Feeds the pillar-page People strip — a promotion surface, so benched artists
+  // are excluded (their hubs stay reachable via their galleries and articles).
+  return (await getArtists())
+    .filter(isFeatured)
+    .filter((a) => (a.pillars ?? ["k-pop"]).includes(pillar));
 }
 
 // People in focus on the home page: a pillar-spread teaser. Round-robins across
@@ -219,7 +255,8 @@ function artistPostEmbeds(slugs: string[], cap: number): MediaItem[] {
     .filter(
       (c) =>
         (c.platform === "x" || c.platform === "instagram") &&
-        c.artistSlugs.some((s) => slugs.includes(s)),
+        c.artistSlugs.some((s) => slugs.includes(s)) &&
+        anyFeaturedSlug(c.artistSlugs),
     )
     .sort((a, b) => {
       const pr = (rank[a.platform] ?? 9) - (rank[b.platform] ?? 9);
@@ -279,7 +316,7 @@ export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaIt
   }
   for (const slug of slugs) {
     const artist = artists.find((a) => a.slug === slug);
-    if (!artist) continue;
+    if (!artist || !isFeatured(artist)) continue;
     for (const m of artistEmbeds(artist)) {
       if (push(m)) return out;
     }
@@ -306,12 +343,29 @@ export async function getRelatedArticles(artistSlug: string): Promise<Article[]>
 // Rankings — scannable chart tables interleaved into the feed. Today there is one
 // per pillar (K-Pop brand reputation, K-Drama viewership); pillars without one
 // resolve to undefined so callers render nothing.
+// A benched artist's row keeps its place in the table (the chart is the chart),
+// but loses its hub link — RankingTable renders a link iff artistSlug is set.
+function stripBenchedLinks(r: Ranking): Ranking {
+  if (!r.rows.some((row) => row.artistSlug && BENCHED_SLUGS.has(row.artistSlug))) {
+    return r;
+  }
+  return {
+    ...r,
+    rows: r.rows.map((row) =>
+      row.artistSlug && BENCHED_SLUGS.has(row.artistSlug)
+        ? { ...row, artistSlug: undefined }
+        : row,
+    ),
+  };
+}
+
 export async function getRankings(): Promise<Ranking[]> {
-  return rankings;
+  return rankings.map(stripBenchedLinks);
 }
 
 export async function getRankingForPillar(pillar: Pillar): Promise<Ranking | undefined> {
-  return rankings.find((r) => r.pillar === pillar);
+  const ranking = rankings.find((r) => r.pillar === pillar);
+  return ranking && stripBenchedLinks(ranking);
 }
 
 // Schedule of upcoming concerts & fan meetings, soonest-first. `region` accepts a
@@ -357,13 +411,18 @@ export async function getClips(opts?: {
 }
 
 // The home "On the feed" rail: official Instagram Reels/posts, newest-first.
+// Bench-only clips are excluded — the home rails are promotion surfaces.
 export async function getReels(limit = 12): Promise<Clip[]> {
-  return (await getClips({ platform: "instagram" })).slice(0, limit);
+  return (await getClips({ platform: "instagram" }))
+    .filter((c) => anyFeaturedSlug(c.artistSlugs))
+    .slice(0, limit);
 }
 
 // The home "In motion" rail: official YouTube videos/Shorts, newest-first.
 export async function getShorts(limit = 12): Promise<Clip[]> {
-  return (await getClips({ platform: "youtube" })).slice(0, limit);
+  return (await getClips({ platform: "youtube" }))
+    .filter((c) => anyFeaturedSlug(c.artistSlugs))
+    .slice(0, limit);
 }
 
 export async function getClipsByArtist(artistSlug: string): Promise<Clip[]> {
@@ -457,9 +516,21 @@ export async function getPredictions(opts?: { pillar?: Pillar }): Promise<Predic
   });
 }
 
+// A question whose only artist-tagged options point at benched artists is a
+// bench-promotion surface — keep it off the open-forecast teasers. Content-side,
+// a roster refresh should retire such questions; this is the safety net.
+function promotesOnlyBenched(p: Prediction): boolean {
+  const tagged = p.options
+    .map((o) => o.artistSlug)
+    .filter((s): s is string => typeof s === "string");
+  return tagged.length > 0 && tagged.every((s) => BENCHED_SLUGS.has(s));
+}
+
 export async function getOpenPredictions(opts?: { pillar?: Pillar }): Promise<Prediction[]> {
   const now = new Date().toISOString();
-  return (await getPredictions(opts)).filter((p) => effectiveStatus(p, now) === "open");
+  return (await getPredictions(opts)).filter(
+    (p) => effectiveStatus(p, now) === "open" && !promotesOnlyBenched(p),
+  );
 }
 
 export async function getPrediction(slug: string): Promise<Prediction | undefined> {
