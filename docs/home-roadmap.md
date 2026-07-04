@@ -63,9 +63,29 @@ Forecast still carry the time-urgent inventory.
   Forecast, K-Drama band + ranking, In motion (Shorts), People in focus, Fashion & Beauty,
   K-Movie, Analysis. Roughly 3x the home page's visual items.
 
-## Next: Step 4 candidates
+### Step 4 (2026-07): Analysis interleaved and the Fan Forecast split
 
-Pick one; they are independent. (Step 3 shipped the live social rails.)
+- Both former quick wins, shipped together. The Analysis block no longer sits in one
+  lump at the bottom: each pillar chapter now carries a thin light interlude of its own
+  newest articles (`AnalysisInterlude` + `planHomeArticles` in `page.tsx`, cap 3 per
+  pillar). K-Pop's sits right after its ranking, K-Drama's after the In motion rail,
+  Fashion & Beauty's and K-Movie's right after their bands. A pillar with no articles
+  renders no band, and no article ever appears twice on the page.
+- The closing Analysis band stays but slims down to the site-wide standards pieces plus
+  any overflow past the interlude caps, keeping the page's single "All analysis" link.
+- Fan Forecast split 3 + 3: the three soonest-closing questions stay after the K-Pop
+  chapter and the next three close the K-Drama chapter, with twin "Fan Forecast"
+  headers. Cards print their own pillar kickers, so a mixed second cluster reads fine.
+- Result: the home page order is now Hero, Schedule rail, K-Pop band + ranking, K-Pop
+  analysis, On the feed (Reels), Fan Forecast (first three), K-Drama band + ranking,
+  In motion (Shorts), K-Drama analysis, Fan Forecast (next three), Fashion & Beauty
+  band + analysis, K-Movie band + analysis, Analysis closer. (People in focus was
+  retired separately with the People tab.) Still fully server-rendered; no new client
+  islands.
+
+## Next: Step 5 candidates
+
+Pick one; they are independent. (Step 4 interleaved Analysis and split the Forecast.)
 
 ### A. Forecast payoff loop (completes the engagement loop)
 
@@ -85,12 +105,6 @@ The ranking rows already carry rank deltas. A compact "biggest movers" strip rea
 
 - Data: `getRankings()` in `src/lib/data.ts`; rows have `change` / `isNew`. Keep
   `RankingTable.tsx` for the full view; add a small movers component.
-
-### Quick wins
-
-- Split Fan Forecast into two smaller clusters (for example 3 after K-Pop, 3 after
-  K-Drama) for more rhythm.
-- Drop one article between two photo bands instead of all of them at the bottom.
 
 ## Guardrails
 

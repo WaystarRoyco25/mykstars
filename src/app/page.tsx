@@ -12,7 +12,7 @@ import {
   pillarFillEmbeds,
 } from "@/lib/data";
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
-import type { Pillar } from "@/lib/types";
+import type { Article, Pillar } from "@/lib/types";
 import { relativeTime } from "@/lib/format";
 import { NOW } from "@/lib/seed";
 import PhotoMedia from "@/components/PhotoMedia";
@@ -33,6 +33,65 @@ const BAND_COUNT: Record<Pillar, number> = {
   "fashion-beauty": 8,
   "k-movie": 6,
 };
+
+// Up to this many of a pillar's articles interleave inside its chapter.
+const INTERLUDE_CAP = 3;
+
+// Distributes the newest-first article list across the page: up to INTERLUDE_CAP
+// per rendered pillar chapter, while site-wide (no-pillar) pieces, overflow past
+// a cap, and articles for unrendered pillars all fall through to the closing
+// Analysis band. Every article lands in exactly one place, nothing shows twice.
+function planHomeArticles(
+  articles: Article[],
+  renderedPillars: ReadonlySet<Pillar>,
+): { interludes: Map<Pillar, Article[]>; closer: Article[] } {
+  const interludes = new Map<Pillar, Article[]>();
+  const closer: Article[] = [];
+  for (const article of articles) {
+    if (article.pillar && renderedPillars.has(article.pillar)) {
+      const list = interludes.get(article.pillar) ?? [];
+      if (list.length < INTERLUDE_CAP) {
+        list.push(article);
+        interludes.set(article.pillar, list);
+        continue;
+      }
+    }
+    closer.push(article);
+  }
+  return { interludes, closer };
+}
+
+// A thin, light analysis interlude inside a pillar's chapter — the same bone
+// treatment as the closing Analysis band, slimmed down (kicker only; the
+// "All analysis" CTA lives once, on the closer). Renders nothing when the
+// pillar has no articles, so there is never an empty band.
+function AnalysisInterlude({
+  pillar,
+  articles,
+}: {
+  pillar: Pillar;
+  articles: Article[];
+}) {
+  if (articles.length === 0) return null;
+  return (
+    <section className="bg-bone text-ink mt-16">
+      <div className="mx-auto max-w-6xl px-5 py-10">
+        <div className="mb-6">
+          <Link href="/analysis" className="group inline-block">
+            <h2 className="kicker group-hover:text-ink transition-colors">
+              {PILLAR_LABELS[pillar]} analysis
+            </h2>
+          </Link>
+        </div>
+        <div className="flex flex-col gap-6">
+          {articles.map((a) => (
+            <ArticleListItem key={a.slug} article={a} on="light" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
@@ -61,11 +120,20 @@ export default async function HomePage() {
     ]);
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
-  // The Fan Forecast block, interleaved after the K-Pop band: six open questions
-  // (soonest-closing first) drive the return-visit loop from the home page.
-  const topForecasts = forecasts.slice(0, 6);
+  // The Fan Forecast, split for rhythm: the three soonest-closing questions land
+  // after the K-Pop chapter and the next three close the K-Drama chapter, so the
+  // return-visit hook recurs deeper in the scroll.
+  const leadForecasts = forecasts.slice(0, 3);
+  const nextForecasts = forecasts.slice(3, 6);
   // The soonest shows lead a horizontal D-Day rail under the hero, the urgency hook.
   const upcomingEvents = events.slice(0, 8);
+  const renderedBands = bands.filter((b) => b.galleries.length > 0);
+  // Pillar-matched analysis: each chapter gets up to three of its own articles as a
+  // light interlude; the site-wide standards pieces and any overflow close the page.
+  const { interludes, closer } = planHomeArticles(
+    articles,
+    new Set(renderedBands.map((b) => b.pillar)),
+  );
 
   return (
     <>
@@ -129,91 +197,122 @@ export default async function HomePage() {
       )}
 
       {/* One band per pillar, with its ranking table interleaved right after it */}
-      {bands
-        .filter((b) => b.galleries.length > 0)
-        .map((b) => {
-          const ranking = rankingByPillar.get(b.pillar);
-          return (
-            <Fragment key={b.pillar}>
-              <section className="mx-auto max-w-6xl px-5 mt-12">
+      {renderedBands.map((b) => {
+        const ranking = rankingByPillar.get(b.pillar);
+        return (
+          <Fragment key={b.pillar}>
+            <section className="mx-auto max-w-6xl px-5 mt-12">
+              <div className="mb-6">
+                <Link href={`/${pillarSlug(b.pillar)}`} className="group inline-block">
+                  <h2 className="kicker group-hover:text-bone transition-colors">
+                    {PILLAR_LABELS[b.pillar]}
+                  </h2>
+                </Link>
+              </div>
+              <GalleryGrid
+                galleries={b.galleries}
+                priorityCount={b.pillar === "k-pop" ? 3 : 0}
+                fillEmbeds={b.fillEmbeds}
+              />
+            </section>
+            {ranking && <RankingTable ranking={ranking} />}
+            {/* Analysis interlude — K-Pop reads best right after its ranking (it breaks
+                the chapter's long dark run); Fashion and K-Movie follow their bands
+                directly. K-Drama's interlude sits after the In motion rail below. */}
+            {b.pillar !== "k-drama" && (
+              <AnalysisInterlude pillar={b.pillar} articles={interludes.get(b.pillar) ?? []} />
+            )}
+            {/* On the feed — a live Instagram rail right after the K-Pop band */}
+            {b.pillar === "k-pop" && reels.length > 0 && (
+              <section className="mx-auto max-w-6xl px-5 mt-16">
                 <div className="mb-6">
-                  <Link href={`/${pillarSlug(b.pillar)}`} className="group inline-block">
-                    <h2 className="kicker group-hover:text-bone transition-colors">
-                      {PILLAR_LABELS[b.pillar]}
-                    </h2>
+                  <h2 className="kicker">On the feed</h2>
+                </div>
+                <div className="flex snap-x items-start gap-3 overflow-x-auto pb-2">
+                  {reels.map((c) => (
+                    <ClipCard key={c.id} clip={c} />
+                  ))}
+                </div>
+              </section>
+            )}
+            {/* Fan Forecast — the first three questions, right after the K-Pop chapter;
+                the next three run after the K-Drama chapter, the return-visit hook */}
+            {b.pillar === "k-pop" && leadForecasts.length > 0 && (
+              <section className="mx-auto max-w-6xl px-5 mt-16">
+                <div className="flex items-end justify-between mb-6">
+                  <Link href="/predictions" className="group inline-block">
+                    <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
+                  </Link>
+                  <Link href="/predictions" className="label hover:text-bone transition-colors">
+                    All forecasts →
                   </Link>
                 </div>
-                <GalleryGrid
-                  galleries={b.galleries}
-                  priorityCount={b.pillar === "k-pop" ? 3 : 0}
-                  fillEmbeds={b.fillEmbeds}
-                />
+                <div className="grid gap-5 sm:grid-cols-3">
+                  {leadForecasts.map((p) => (
+                    <PredictionCard key={p.slug} prediction={p} />
+                  ))}
+                </div>
               </section>
-              {ranking && <RankingTable ranking={ranking} />}
-              {/* On the feed — a live Instagram rail right after the K-Pop band */}
-              {b.pillar === "k-pop" && reels.length > 0 && (
-                <section className="mx-auto max-w-6xl px-5 mt-16">
-                  <div className="mb-6">
-                    <h2 className="kicker">On the feed</h2>
-                  </div>
-                  <div className="flex snap-x items-start gap-3 overflow-x-auto pb-2">
-                    {reels.map((c) => (
-                      <ClipCard key={c.id} clip={c} />
-                    ))}
-                  </div>
-                </section>
-              )}
-              {/* Fan Forecast — interleaved right after the K-Pop band, the return-visit hook */}
-              {b.pillar === "k-pop" && topForecasts.length > 0 && (
-                <section className="mx-auto max-w-6xl px-5 mt-16">
-                  <div className="flex items-end justify-between mb-6">
-                    <Link href="/predictions" className="group inline-block">
-                      <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
-                    </Link>
-                    <Link href="/predictions" className="label hover:text-bone transition-colors">
-                      All forecasts →
-                    </Link>
-                  </div>
-                  <div className="grid gap-5 sm:grid-cols-3">
-                    {topForecasts.map((p) => (
-                      <PredictionCard key={p.slug} prediction={p} />
-                    ))}
-                  </div>
-                </section>
-              )}
-              {/* In motion — a live YouTube rail right after the K-Drama band */}
-              {b.pillar === "k-drama" && shorts.length > 0 && (
-                <section className="mx-auto max-w-6xl px-5 mt-16">
-                  <div className="mb-6">
-                    <h2 className="kicker">In motion</h2>
-                  </div>
-                  <div className="flex snap-x gap-3 overflow-x-auto pb-2">
-                    {shorts.map((c) => (
-                      <ClipCard key={c.id} clip={c} />
-                    ))}
-                  </div>
-                </section>
-              )}
-            </Fragment>
-          );
-        })}
+            )}
+            {/* In motion — a live YouTube rail right after the K-Drama band */}
+            {b.pillar === "k-drama" && shorts.length > 0 && (
+              <section className="mx-auto max-w-6xl px-5 mt-16">
+                <div className="mb-6">
+                  <h2 className="kicker">In motion</h2>
+                </div>
+                <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+                  {shorts.map((c) => (
+                    <ClipCard key={c.id} clip={c} />
+                  ))}
+                </div>
+              </section>
+            )}
+            {/* Analysis interlude for K-Drama — right after the In motion rail */}
+            {b.pillar === "k-drama" && (
+              <AnalysisInterlude pillar={b.pillar} articles={interludes.get(b.pillar) ?? []} />
+            )}
+            {/* Fan Forecast, part two — the next three questions keep the vote hook
+                alive deeper in the scroll; each card carries its own pillar kicker,
+                so a mixed cluster reads fine here */}
+            {b.pillar === "k-drama" && nextForecasts.length > 0 && (
+              <section className="mx-auto max-w-6xl px-5 mt-16">
+                <div className="flex items-end justify-between mb-6">
+                  <Link href="/predictions" className="group inline-block">
+                    <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
+                  </Link>
+                  <Link href="/predictions" className="label hover:text-bone transition-colors">
+                    All forecasts →
+                  </Link>
+                </div>
+                <div className="grid gap-5 sm:grid-cols-3">
+                  {nextForecasts.map((p) => (
+                    <PredictionCard key={p.slug} prediction={p} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </Fragment>
+        );
+      })}
 
-      {/* Analysis — light editorial band */}
-      <section className="bg-bone text-ink mt-16">
-        <div className="mx-auto max-w-6xl px-5 py-14">
-          <div className="flex items-end justify-between mb-8">
-            <h2 className="kicker">Analysis</h2>
-            <Link href="/analysis" className="label text-muted-2 hover:text-ink transition-colors">
-              All analysis →
-            </Link>
+      {/* Analysis closer — the site-wide standards pieces plus anything past the interlude caps */}
+      {closer.length > 0 && (
+        <section className="bg-bone text-ink mt-16">
+          <div className="mx-auto max-w-6xl px-5 py-14">
+            <div className="flex items-end justify-between mb-8">
+              <h2 className="kicker">Analysis</h2>
+              <Link href="/analysis" className="label text-muted-2 hover:text-ink transition-colors">
+                All analysis →
+              </Link>
+            </div>
+            <div className="flex flex-col gap-6">
+              {closer.slice(0, 8).map((a) => (
+                <ArticleListItem key={a.slug} article={a} on="light" />
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-6">
-            {articles.slice(0, 8).map((a) => (
-              <ArticleListItem key={a.slug} article={a} on="light" />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }
