@@ -2,10 +2,11 @@ import TallyBar from "./TallyBar";
 import type { Prediction, PredictionStatus, PredictionTally } from "@/lib/types";
 import { renderEmphasis } from "@/lib/text";
 
-// Renders a prediction's options. Once the vote total clears the reveal threshold
-// (or the question is resolved) it shows the sentiment bars; below the threshold
-// it hides the counts and nudges participation — the cold-start guard that keeps
-// a "3 votes, 67%" from ever showing.
+// Renders a prediction's results. Once the vote total clears the reveal threshold
+// (or the question is resolved) it shows the sentiment bars. Below the threshold
+// the counts stay hidden (the cold-start guard that keeps a "3 votes, 67%" from
+// ever showing) and, while voting is open, we skip re-listing the options here
+// since the VoteForm already presents each one as a selectable button.
 export default function PredictionOptions({
   prediction,
   tally,
@@ -25,6 +26,21 @@ export default function PredictionOptions({
   }
 
   const hidden = !tally.revealed && status !== "resolved";
+
+  // The participation nudge shown while the breakdown is still under wraps.
+  const nudge =
+    tally.totalVotes === 0
+      ? "Be the first to call it."
+      : `${tally.totalVotes.toLocaleString("en-US")} ${
+          tally.totalVotes === 1 ? "fan has" : "fans have"
+        } weighed in. The breakdown reveals at ${prediction.tallyVisibleThreshold} votes.`;
+
+  // Open + below the reveal threshold: the VoteForm below already lists every
+  // option as a selectable button, so repeating them here would just be a
+  // second, non-interactive copy of the same choices. Show only the nudge.
+  if (hidden && status === "open") {
+    return <p className="text-muted text-sm leading-relaxed">{nudge}</p>;
+  }
 
   return (
     <div className="border-t border-line">
@@ -49,15 +65,7 @@ export default function PredictionOptions({
         ),
       )}
 
-      {hidden && (
-        <p className="text-muted text-sm mt-3 leading-relaxed">
-          {tally.totalVotes === 0
-            ? "Be the first to call it."
-            : `${tally.totalVotes.toLocaleString("en-US")} ${
-                tally.totalVotes === 1 ? "fan has" : "fans have"
-              } weighed in. The breakdown reveals at ${prediction.tallyVisibleThreshold} votes.`}
-        </p>
-      )}
+      {hidden && <p className="text-muted text-sm mt-3 leading-relaxed">{nudge}</p>}
     </div>
   );
 }
