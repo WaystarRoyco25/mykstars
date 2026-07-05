@@ -2,7 +2,6 @@ import type {
   Article,
   Artist,
   Clip,
-  ClipFormat,
   Gallery,
   MediaItem,
   Orientation,
@@ -60,8 +59,9 @@ function placeSet(
   );
 }
 
-// A portrait-leaning mixed set with ~1 landscape every 4 frames — the realistic
-// case (selca/full-body portrait, the occasional wide group/stage frame).
+// A portrait-leaning mixed set with ~1 landscape every 3 frames — the realistic
+// case (selca/full-body portrait, the recurring wide group/stage frame). The
+// cadence keeps portrait dominant while breaking the single-column monotony.
 function placeMixed(
   prefix: string,
   baseAlt: string,
@@ -69,7 +69,7 @@ function placeMixed(
   n: number,
 ): MediaItem[] {
   return Array.from({ length: n }, (_, i) => {
-    const orientation: Orientation = i % 4 === 2 ? "landscape" : "portrait";
+    const orientation: Orientation = i % 3 === 2 ? "landscape" : "portrait";
     return place(`${prefix}-${i + 1}`, `${baseAlt}, frame ${i + 1}`, credit, i % 4, orientation);
   });
 }
@@ -645,7 +645,7 @@ export const galleries: Gallery[] = [
     date: "2026-06-19T20:00:00+09:00",
     source: NEWS1,
     excerpt: "Behind-the-scenes frames from a variety-show guest spot.",
-    cover: place("skz-var-cover", "Stray Kids on a variety set", NEWS1, 2),
+    cover: place("skz-var-cover", "Stray Kids on a variety set", NEWS1, 2, "landscape"),
     media: placeMixed("skz-var", "Stray Kids variety appearance", NEWS1, 6),
   },
 
@@ -690,7 +690,7 @@ export const galleries: Gallery[] = [
     source: OSEN,
     excerpt:
       "The tenth-anniversary fan meeting fills Incheon Asiad Main Stadium across two nights.",
-    cover: place("svt-cl-cover", "SEVENTEEN greeting the crowd at CARAT LAND", OSEN, 1),
+    cover: place("svt-cl-cover", "SEVENTEEN greeting the crowd at CARAT LAND", OSEN, 1, "landscape"),
     media: placeMixed("svt-cl", "SEVENTEEN in CARAT LAND fan meeting", OSEN, 8),
   },
   {
@@ -704,7 +704,7 @@ export const galleries: Gallery[] = [
     source: NEWSEN,
     excerpt:
       "Comeback-week performance frames from the *REVIVE+* title track's first stages.",
-    cover: place("ive-bh-cover", "IVE on the 'BLACKHOLE' comeback stage", NEWSEN, 2),
+    cover: place("ive-bh-cover", "IVE on the 'BLACKHOLE' comeback stage", NEWSEN, 2, "landscape"),
     media: placeMixed("ive-bh", "IVE 'BLACKHOLE' comeback stage", NEWSEN, 7),
   },
   {
@@ -747,7 +747,7 @@ export const galleries: Gallery[] = [
     source: NEWSEN,
     excerpt:
       "Release-week stage and fan-event frames as the mini album posts the group's best first week yet.",
-    cover: place("h2h-lt-cover", "Hearts2Hearts on the *Lemon Tang* comeback stage", NEWSEN, 2),
+    cover: place("h2h-lt-cover", "Hearts2Hearts on the *Lemon Tang* comeback stage", NEWSEN, 2, "landscape"),
     media: placeMixed("h2h-lt", "Hearts2Hearts *Lemon Tang* comeback week", NEWSEN, 8),
   },
   {
@@ -761,7 +761,7 @@ export const galleries: Gallery[] = [
     source: OSEN,
     excerpt:
       "Opening-night frames from Jamsil as the second world tour gets moving.",
-    cover: place("bm-choom-cover", "BABYMONSTER opening the Choom world tour in Seoul", OSEN, 3),
+    cover: place("bm-choom-cover", "BABYMONSTER opening the Choom world tour in Seoul", OSEN, 3, "landscape"),
     media: placeMixed("bm-choom", "BABYMONSTER Choom tour opener", OSEN, 8),
   },
   {
@@ -775,7 +775,7 @@ export const galleries: Gallery[] = [
     source: NEWSEN,
     excerpt:
       "First-week performance frames from the single that set up the PUREFLOW tour.",
-    cover: place("lsf-bp-cover", "LE SSERAFIM on the 'BOOMPALA' stage", NEWSEN, 1),
+    cover: place("lsf-bp-cover", "LE SSERAFIM on the 'BOOMPALA' stage", NEWSEN, 1, "landscape"),
     media: placeMixed("lsf-bp", "LE SSERAFIM 'BOOMPALA' comeback stage", NEWSEN, 7),
   },
 
@@ -817,7 +817,7 @@ export const galleries: Gallery[] = [
     source: STAR_NEWS,
     excerpt:
       "Step-and-repeat and stage frames from the Seoul press conference, four days before the premiere.",
-    cover: place("bws-pc-cover", "Byeon Woo-seok and IU at the Perfect Crown press conference", STAR_NEWS, 2),
+    cover: place("bws-pc-cover", "Byeon Woo-seok and IU at the Perfect Crown press conference", STAR_NEWS, 2, "landscape"),
     media: placeMixed("bws-pc", "Perfect Crown press conference", STAR_NEWS, 8),
   },
   {
@@ -913,7 +913,7 @@ export const galleries: Gallery[] = [
     date: "2026-06-19T16:00:00+09:00",
     source: FESTIVAL,
     excerpt: "Stage and step-and-repeat frames from a festival press conference.",
-    cover: place("bjh-press-cover", "Bong Joon-ho at a festival press conference", FESTIVAL, 0),
+    cover: place("bjh-press-cover", "Bong Joon-ho at a festival press conference", FESTIVAL, 0, "landscape"),
     media: placeSet("bjh-press", "Festival press conference", FESTIVAL, 6),
   },
   {
@@ -941,6 +941,47 @@ export const galleries: Gallery[] = [
     excerpt: "Portraits and stage frames from an independent-film spotlight.",
     cover: place("indie-cover", "Kim Tae-ri at an indie film spotlight", FESTIVAL, 1),
     media: placeMixed("indie", "Indie film spotlight", FESTIVAL, 6),
+  },
+  // --- 2026-07-05 mosaic widening: landscape-led sets so the bands stop reading
+  //     as a single portrait column (see docs/roster-playbook.md) ---
+  {
+    slug: "park-eun-bin-talk-show-taping",
+    title: "Park Eun-bin, wide frames from a talk-show taping",
+    pillar: "k-drama",
+    category: "press",
+    artistSlugs: ["park-eun-bin"],
+    event: "Broadcast promo circuit",
+    date: "2026-06-26T20:00:00+09:00",
+    source: STUDIO,
+    excerpt: "Studio wides from a broadcast taping stop on the promo circuit.",
+    cover: place("peb-taping-cover", "Park Eun-bin on a talk-show set", STUDIO, 1, "landscape"),
+    media: placeSet("peb-taping", "Park Eun-bin talk-show taping", STUDIO, 7, "landscape"),
+  },
+  {
+    slug: "festival-main-stage-wides",
+    title: "Festival season from the pit, shot wide",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["ive"],
+    event: "University festival circuit",
+    date: "2026-05-23T21:00:00+09:00",
+    source: NEWSEN,
+    excerpt: "Main-stage wides from the May festival run: full-stage frames with the crowd and lights in.",
+    cover: place("fest-wides-cover", "IVE on a festival main stage", NEWSEN, 0, "landscape"),
+    media: placeMixed("fest-wides", "Festival main stage", NEWSEN, 8),
+  },
+  {
+    slug: "premiere-photocall-row",
+    title: "The premiere photocall, in a row",
+    pillar: "k-movie",
+    category: "festival",
+    artistSlugs: ["park-chan-wook"],
+    event: "Summer premiere circuit",
+    date: "2026-06-30T19:30:00+09:00",
+    source: FESTIVAL,
+    excerpt: "Director and cast line up for the photocall row, the classic wide of premiere season.",
+    cover: place("premiere-row-cover", "Park Chan-wook at a premiere photocall", FESTIVAL, 2, "landscape"),
+    media: placeSet("premiere-row", "Premiere photocall row", FESTIVAL, 6, "landscape"),
   },
 ];
 
@@ -2029,19 +2070,15 @@ export const predictions: Prediction[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// CLIPS — standalone short-form social posts for the home rails (see types.ts).
+// CLIPS — standalone official YouTube videos for the home rails (see types.ts).
 // ---------------------------------------------------------------------------
-// REAL, verified embeds, not placeholders. Full rebuild on 2026-07-05 under the
-// 90/180-day freshness rule (docs/roster-playbook.md, enforced by check:fresh):
-// - YouTube: every videoId re-confirmed same day via the oEmbed endpoint on the
-//   named official channel (two look-alike reuploads discarded in the process).
-// - Instagram: every permalink confirmed via the public /embed/captioned/ page
-//   (account name + caption) AND its shortcode-embedded timestamp decoded, so
-//   the date field below is the post's TRUE publish date, not a label. Several
-//   fan-account posts masquerading as official were rejected this way.
-// - X: status IDs snowflake-decoded to their true timestamps and cross-checked
-//   against same-day press; every X clip must also be eyeballed in a real
-//   browser after seeding (widgets.js failures are silent at build time).
+// REAL, verified embeds, not placeholders, under the 180-day freshness rule
+// (docs/roster-playbook.md, enforced by check:fresh). Every videoId is confirmed
+// via the oEmbed endpoint on the named official channel at authoring time, and
+// the date field is the video's TRUE upload date, not a label (look-alike
+// reuploads get discarded in that check). Music clips come from the artist's or
+// label's channel; variety clips come from the program's / broadcaster's
+// official channel, and the roster artist must actually appear in the video.
 // A date must never be edited to look fresh; replace the post instead.
 // Captions follow house style: song titles in 'quotes', work titles in *asterisks*.
 const YT_CHANNEL = {
@@ -2054,9 +2091,28 @@ const YT_CHANNEL = {
   twice: { name: "TWICE", url: "https://www.youtube.com/@TWICE", kind: "embed" } as Source,
 };
 
-// YouTube clip (landscape player). videoId was oEmbed-verified on the named channel.
-// evergreenUntil (optional, ISO date): a dated exemption from the 90/180-day
-// freshness gate (npm run check:fresh) — see docs/roster-playbook.md before using.
+// Official program / broadcaster / publisher channels for the On air rail (tv()
+// clips). Names match the channel's oEmbed author_name exactly, verified at
+// authoring time; a roster artist must actually appear in any video credited here.
+const PROGRAM_CHANNEL = {
+  ddeunddeun: { name: "뜬뜬 DdeunDdeun", url: "https://www.youtube.com/@ddeunddeun", kind: "embed" } as Source,
+  mmtg: { name: "MMTG 문명특급", url: "https://www.youtube.com/@mmtg_official", kind: "embed" } as Source,
+  tvnJoy: { name: "tvN Joy", url: "https://www.youtube.com/@tvNJoy_official", kind: "embed" } as Source,
+  dailyShow: { name: "The Daily Show", url: "https://www.youtube.com/@TheDailyShow", kind: "embed" } as Source,
+  gkids: { name: "GKIDS Films", url: "https://www.youtube.com/@GKIDStv", kind: "embed" } as Source,
+  netflixKorea: { name: "Netflix Korea 넷플릭스 코리아", url: "https://www.youtube.com/@NetflixKorea", kind: "embed" } as Source,
+  bangtantv: { name: "BANGTANTV", url: "https://www.youtube.com/@BTS", kind: "embed" } as Source,
+  muply: { name: "MUPLY 뮤플리", url: "https://www.youtube.com/@muply", kind: "embed" } as Source,
+  strayKids: { name: "Stray Kids", url: "https://www.youtube.com/@StrayKids", kind: "embed" } as Source,
+  aespa: { name: "aespa", url: "https://www.youtube.com/@aespa", kind: "embed" } as Source,
+  hearts2hearts: { name: "Hearts2Hearts", url: "https://www.youtube.com/@hearts2hearts.official", kind: "embed" } as Source,
+  seventeen: { name: "SEVENTEEN", url: "https://www.youtube.com/@pledis17", kind: "embed" } as Source,
+};
+
+// Music clip (landscape player, k-pop pillar). videoId was oEmbed-verified on the
+// named artist/label channel. evergreenUntil (optional, ISO date): a dated
+// exemption from the 180-day freshness gate (npm run check:fresh) — see
+// docs/roster-playbook.md before using.
 function yt(
   id: string,
   videoId: string,
@@ -2069,7 +2125,7 @@ function yt(
   return {
     id,
     platform: "youtube",
-    format: "post",
+    genre: "music",
     embedUrl: `https://www.youtube.com/watch?v=${videoId}`,
     pillar: "k-pop",
     artistSlugs,
@@ -2081,65 +2137,37 @@ function yt(
   };
 }
 
-// Instagram clip (vertical card). `permalink` is the official-account post/Reel URL.
-function ig(
+// Variety clip (landscape player): a comedy / variety / talk-show appearance on
+// the program's or broadcaster's official channel. `pillar` is a parameter
+// because the guests span the roster (actors → k-drama/k-movie, idols → k-pop).
+// videoId was oEmbed-verified on the named channel, like yt().
+function tv(
   id: string,
-  permalink: string,
+  videoId: string,
   artistSlugs: string[],
   pillar: Pillar,
   date: string,
   caption: string,
-  handle: string,
-  account: string,
-  evergreenUntil?: string,
-): Clip {
-  const format: ClipFormat = permalink.includes("/reel/") ? "reel" : "post";
-  return {
-    id,
-    platform: "instagram",
-    format,
-    embedUrl: permalink,
-    pillar,
-    artistSlugs,
-    date,
-    caption,
-    credit: { name: handle, url: account, kind: "embed" },
-    orientation: "portrait",
-    ...(evergreenUntil ? { evergreenUntil } : {}),
-  };
-}
-
-// X clip (tweet card, dark-themed embed). `permalink` is the official-account
-// status URL. Tweets are variable height and scroll inside the portrait cell; if a
-// tweet fails to embed (deleted, protected, widget blocked) the UI links out.
-function x(
-  id: string,
-  permalink: string,
-  artistSlugs: string[],
-  pillar: Pillar,
-  date: string,
-  caption: string,
-  handle: string,
-  account: string,
+  credit: Source,
   evergreenUntil?: string,
 ): Clip {
   return {
     id,
-    platform: "x",
-    format: "post",
-    embedUrl: permalink,
+    platform: "youtube",
+    genre: "variety",
+    embedUrl: `https://www.youtube.com/watch?v=${videoId}`,
     pillar,
     artistSlugs,
     date,
     caption,
-    credit: { name: handle, url: account, kind: "embed" },
-    orientation: "portrait",
+    credit,
+    orientation: "landscape",
     ...(evergreenUntil ? { evergreenUntil } : {}),
   };
 }
 
 export const clips: Clip[] = [
-  // --- YouTube: official music videos and clips (oEmbed re-verified 2026-07-05) ---
+  // --- Music: official music videos and clips (oEmbed re-verified 2026-07-05) ---
   yt("clip-yt-seventeen-v8-singasong", "pBpr9TnhhkE", ["seventeen"], "2026-06-29T18:00:00+09:00", "V8, SEVENTEEN's new unit, drop 'singasong'", YT_CHANNEL.hybeLabels),
   yt("clip-yt-stray-kids-run-it", "Q7IFjVUUb_E", ["stray-kids"], "2026-06-24T13:00:00+09:00", "Stray Kids, the 'RUN IT' music video", YT_CHANNEL.jype),
   yt("clip-yt-le-sserafim-boompala", "V1Lr-_AxeR8", ["le-sserafim"], "2026-05-22T13:00:00+09:00", "LE SSERAFIM, the 'BOOMPALA' music video", YT_CHANNEL.hybeLabels),
@@ -2154,14 +2182,24 @@ export const clips: Clip[] = [
   // KSPO Dome and expires with it (July 12), forcing a fresh look next refresh.
   yt("clip-yt-twice-this-is-for", "eHHQaoEW30Q", ["twice"], "2025-07-11T18:00:00+09:00", "TWICE, the *This Is For* title track", YT_CHANNEL.twice, "2026-07-12T23:59:00+09:00"),
 
-  // --- Instagram: official-account posts, /embed/captioned/-verified with
-  //     shortcode-decoded true dates (links out if an embed 404s) ---
-  ig("clip-ig-seventeen-v8-teaser", "https://www.instagram.com/reel/DaFxmsuh3uR/", ["seventeen"], "k-pop", "2026-06-27T22:00:00+09:00", "V8 tease 'singasong', two days out", "@saythename_17", "https://www.instagram.com/saythename_17/"),
-  ig("clip-ig-byeon-woo-seok-bnb", "https://www.instagram.com/p/DZKrLSdmFBU/", ["byeon-woo-seok"], "k-drama", "2026-06-04T23:09:00+09:00", "Byeon Woo-seok checks back in from the *Jae Seok's B&B Rules!* set", "@byeonwooseok", "https://www.instagram.com/byeonwooseok/"),
-  ig("clip-ig-newjeans-haerin-day", "https://www.instagram.com/p/DYUsS_Lkr2Z/", ["newjeans"], "k-pop", "2026-05-15T00:00:00+09:00", "NewJeans mark Haerin's day, a third sign of life this spring", "@newjeans_official", "https://www.instagram.com/newjeans_official/"),
-
-  // --- X: official-account posts, snowflake-dated (links out if a tweet fails
-  //     to embed; eyeball each in a real browser after seeding) ---
-  x("clip-x-stray-kids-3000-days", "https://x.com/stray_kids/status/2064369435545358615", ["stray-kids"], "k-pop", "2026-06-10T00:30:00+09:00", "Stray Kids count 3,000 days with STAY", "@Stray_Kids", "https://x.com/Stray_Kids"),
-  x("clip-x-cortis-tour-sf", "https://x.com/cortis_bighit/status/2064497778043023427", ["cortis"], "k-pop", "2026-06-10T09:00:00+09:00", "CORTIS add a San Francisco night as North America sells out", "@cortis_bighit", "https://x.com/cortis_bighit"),
+  // --- Variety: comedy / variety / talk appearances on official program channels
+  //     (On air rail; oEmbed-verified 2026-07-05, upload dates from watch-page
+  //     metadata cross-checked against dated press). Honest gaps this pass:
+  //     Lee Min-ho had no qualifying in-window appearance (only 2026 re-cuts of a
+  //     2024 You Quiz visit, which would fake freshness), and NewJeans are skipped
+  //     under the red-flag rule. The Daily Show clip sits a day inside the 180-day
+  //     window; the next NOW bump replaces it. ---
+  tv("clip-tv-jung-hoyeon-pinggyego", "vXiBTHJI1SY", ["jung-hoyeon"], "k-movie", "2026-07-04T09:00:00+09:00", "Jung Ho-yeon joins the *Hope* cast on Yoo Jae-suk's *Pinggyego*", PROGRAM_CHANNEL.ddeunddeun),
+  tv("clip-tv-aespa-aesparty", "yZlQYtzAjPc", ["aespa"], "k-pop", "2026-06-26T20:00:00+09:00", "aespa reopen *aesParty* with the 'Dopamine Party' special", PROGRAM_CHANNEL.aespa),
+  tv("clip-tv-park-eun-bin-mmtg", "B0xsyiT5Du4", ["park-eun-bin"], "k-drama", "2026-05-21T18:30:00+09:00", "Park Eun-bin fields JaeJae's rapid questions on *MMTG*, honors degree included", PROGRAM_CHANNEL.mmtg),
+  tv("clip-tv-cha-eunwoo-wonderfools", "4bFm34ojMfQ", ["cha-eunwoo", "park-eun-bin"], "k-drama", "2026-05-18T18:00:00+09:00", "Cha Eun-woo and Park Eun-bin react to *The Wonderfools* highlights for Netflix Korea", PROGRAM_CHANNEL.netflixKorea),
+  tv("clip-tv-cortis-muply", "IAS8BhLdpZc", ["cortis"], "k-pop", "2026-04-30T20:00:00+09:00", "CORTIS fight the giggles through *Silence of the Idols* pajama drills", PROGRAM_CHANNEL.muply),
+  tv("clip-tv-bts-run-bts", "wu6bA3zK_us", ["bts"], "k-pop", "2026-04-23T21:00:00+09:00", "BTS reopen *Run BTS* 2.0 with a full-group trip special", PROGRAM_CHANNEL.bangtantv),
+  tv("clip-tv-byeon-woo-seok-iu-pinggyego", "UV1P4a8_dz4", ["byeon-woo-seok", "iu"], "k-drama", "2026-04-04T09:00:00+09:00", "Byeon Woo-seok makes his *Pinggyego* debut alongside IU, ten years after *Moon Lovers*", PROGRAM_CHANNEL.ddeunddeun),
+  tv("clip-tv-stray-kids-skz-code", "uB-XPe1K7SU", ["stray-kids"], "k-pop", "2026-03-12T19:59:00+09:00", "Stray Kids open a community center class on *SKZ CODE*", PROGRAM_CHANNEL.strayKids),
+  tv("clip-tv-seventeen-going", "TJWUc875kpU", ["seventeen"], "k-pop", "2026-03-11T21:00:00+09:00", "SEVENTEEN set the 2026 *Going Seventeen* agenda in an emergency meeting", PROGRAM_CHANNEL.seventeen),
+  tv("clip-tv-hearts2hearts-chase", "rQjzc2FMov4", ["hearts2hearts"], "k-pop", "2026-03-02T20:01:00+09:00", "Hearts2Hearts turn sauna day into a comedy battle on *Hearts Chase*", PROGRAM_CHANNEL.hearts2hearts),
+  tv("clip-tv-kim-tae-ri-taerissaem", "1ZMfNReuu-U", ["kim-tae-ri"], "k-drama", "2026-02-11T10:00:00+09:00", "Kim Tae-ri turns rookie teacher in *After School Taeri-ssaem*, her first fixed variety show", PROGRAM_CHANNEL.tvnJoy),
+  tv("clip-tv-bong-joon-ho-gkids", "ehfEBUheNQI", ["bong-joon-ho"], "k-movie", "2026-01-14T04:00:00+09:00", "Bong Joon-ho sits with Lee Sang-il to champion *Kokuho* for GKIDS", PROGRAM_CHANNEL.gkids),
+  tv("clip-tv-park-chan-wook-daily-show", "Jj0N63qglbI", ["park-chan-wook"], "k-movie", "2026-01-07T13:33:00+09:00", "Park Chan-wook takes *No Other Choice* to *The Daily Show* couch", PROGRAM_CHANNEL.dailyShow),
 ];

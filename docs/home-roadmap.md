@@ -10,11 +10,11 @@ Bring time-urgent, *live* content to the front page and interleave it between th
 bands for a varied, hard-to-stop scroll. The engine of return visits is live motion
 (D-Day countdowns, vote tallies), not an endless feed.
 
-The constraint that shapes everything: the catalog is finite and credited. As of Step 3
-the lever for "more visual content" is curated, official social embeds (Instagram
-Reels/posts, YouTube videos), which need no rehosting and no CMS. The photo galleries
-(about 30 now) plus those embeds feed the bands and two new live rails; Schedule and
-Forecast still carry the time-urgent inventory.
+The constraint that shapes everything: the catalog is finite and credited. As of Step 5
+the lever for "more visual content" is curated, official YouTube embeds (music videos
+plus variety/talk appearances), which need no rehosting and no CMS. The photo galleries
+(43 now) plus those embeds feed the bands and two video rails; Schedule and Forecast
+still carry the time-urgent inventory. (Instagram and X embeds were retired in Step 5.)
 
 ## Shipped
 
@@ -83,9 +83,45 @@ Forecast still carry the time-urgent inventory.
   retired separately with the People tab.) Still fully server-rendered; no new client
   islands.
 
-## Next: Step 5 candidates
+### Step 5 (2026-07): The video split (Instagram and X retired)
 
-Pick one; they are independent. (Step 4 interleaved Analysis and split the Forecast.)
+- Instagram and X embeds removed site-wide: they were the messiest third-party surfaces
+  (white-corner cross-origin iframes patched in CSS, silent widget failures needing a
+  real-browser eyeball, a paywalled X oEmbed, and the tightest freshness treadmill at 90
+  days). `LiveEmbed` is now a YouTube-only no-cookie lite-embed; `embeds.ts` lost both
+  script loaders and `useInView` went with them; the `twitter-widget` CSS patch is gone.
+  The official IG/X handles stay in seed as unrendered `SocialLink` records (the type
+  split is `SocialPlatform` vs `EmbedPlatform`).
+- `Clip.format` (never meaningful) replaced by `Clip.genre` (`"music" | "variety"`), with
+  a second seed factory `tv()` for variety clips (program/broadcaster official channels,
+  pillar as a parameter). Accessors `getMusicClips()` / `getVarietyClips()` replace
+  `getReels()` / `getShorts()`; `check-freshness.mjs` scans `yt()`/`tv()` under a single
+  180-day rule.
+- The rails: "In motion" (music) moved up into the freed slot after the K-Pop band, its
+  home genre; the new "On air" rail (comedy / variety / talk-show appearances, Korean and
+  international, re-picked for buzz on every refresh per docs/roster-playbook.md) sits
+  after the K-Drama band, where the roster's actors and directors live. Both reuse
+  `ClipCard`, now a single 16:9 shape, each with a one-line dek under the kicker.
+- Grid fill re-sourced: `artistClipEmbeds()` (the artists' YouTube clips as click-to-play
+  landscape tiles) replaces the IG/X post fill, then official-channel link-outs, then
+  related galleries. `LiveEmbed`'s flow box is orientation-aware, so a clip tile packs
+  into the masonry as a wide brick.
+- The mosaic widened alongside: `placeMixed` lands a landscape frame every 3rd (was every
+  4th), 8 wide-subject covers flipped to landscape, and 3 new landscape-led galleries
+  (talk-show taping wides, festival main stage, premiere photocall row). Landscape share
+  roughly 19% to 29%, portrait still dominant.
+- Result order: Hero, Schedule rail, K-Pop band + ranking, K-Pop analysis, In motion
+  (music), Fan Forecast (first three), K-Drama band + ranking, On air (variety), K-Drama
+  analysis, Fan Forecast (next three), Fashion & Beauty band + analysis, K-Movie band +
+  analysis, Analysis closer. Net content is up vs the IG/X era: 24 clips vs 16
+  (11 music + 13 variety), 43 galleries vs 40, ~330 photos vs 308, and 19 of 21
+  featured artists carry video (Lee Min-ho had no qualifying in-window
+  appearance and NewJeans sit under the red-flag rule; both are re-check items
+  for the next refresh).
+
+## Next: Step 6 candidates
+
+Pick one; they are independent. (Step 5 retired IG/X and split the video rails.)
 
 ### A. Forecast payoff loop (completes the engagement loop)
 
@@ -115,8 +151,8 @@ The ranking rows already carry rank deltas. A compact "biggest movers" strip rea
   `*asterisks*` via `renderEmphasis()`. Run `node scripts/check-dashes.mjs <files>` on
   anything carrying new copy.
 - Server-first: keep `page.tsx` a server component. Client islands are the live countdown
-  chips and now `LiveEmbed` (the social players); the latter stays cheap via facade-first,
-  in-view hydration. Avoid adding client JS without a clear reason.
+  chips and `LiveEmbed` (the YouTube lite-embed); the latter stays cheap as a
+  thumbnail-first, click-to-play facade. Avoid adding client JS without a clear reason.
 - Determinism: the site freezes "now" at `NOW` in `src/lib/seed.ts` for SSR and
   reconciles to the real clock client-side. Reuse that pattern; do not read the live
   clock during server render.

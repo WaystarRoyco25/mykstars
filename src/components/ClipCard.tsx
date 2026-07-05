@@ -4,21 +4,14 @@ import LiveEmbed from "./LiveEmbed";
 import { clipMedia } from "@/lib/media";
 import { renderEmphasis } from "@/lib/text";
 
-// A fixed-width card for the home rails (Reels / Shorts), the live-video sibling
-// of EventCard. YouTube gets a fixed landscape 16:9 tile (its thumbnails are 16:9)
-// that swaps to the player on click. Instagram loads the real reel in place as it
-// scrolls into view and grows the card to the reel's natural height (layout="flow"),
-// so the rail reflows as tiles lazy-load.
+// A fixed-width card for the home video rails (In motion / On air), the
+// live-video sibling of EventCard: a landscape 16:9 tile (YouTube thumbnails are
+// 16:9) that swaps to the real player on click.
 export default function ClipCard({ clip }: { clip: Clip }) {
-  const isIg = clip.platform === "instagram";
   return (
-    <div
-      className={`group flex shrink-0 snap-start flex-col overflow-hidden rounded-tile border border-line transition-colors hover:border-crimson ${
-        isIg ? "w-[21rem]" : "w-[22rem]"
-      }`}
-    >
-      <div className={`relative bg-ink-2 ${isIg ? "" : "aspect-video overflow-hidden"}`}>
-        <LiveEmbed item={clipMedia(clip)} layout={isIg ? "flow" : "fill"} />
+    <div className="group flex w-[22rem] shrink-0 snap-start flex-col overflow-hidden rounded-tile border border-line transition-colors hover:border-crimson">
+      <div className="relative aspect-video overflow-hidden bg-ink-2">
+        <LiveEmbed item={clipMedia(clip)} layout="fill" />
       </div>
       <div className="flex flex-col gap-1.5 p-3">
         <p className="line-clamp-2 text-sm leading-snug text-bone">{renderEmphasis(clip.caption)}</p>

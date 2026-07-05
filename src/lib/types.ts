@@ -111,7 +111,7 @@ export type SourceKind =
   | "wire" // wire service (Yonhap, News1, AP, Reuters)
   | "official" // agency / label / studio press kit
   | "licensed" // paid stock (Getty incl. imazins, etc.)
-  | "embed" // official social embed (IG / X / TikTok / YouTube)
+  | "embed" // official social embed (YouTube / TikTok)
   | "magazine"; // publisher pictorial
 
 export interface Source {
@@ -121,7 +121,10 @@ export interface Source {
 }
 
 export type MediaKind = "placeholder" | "image" | "embed";
-export type EmbedPlatform = "instagram" | "x" | "tiktok" | "youtube";
+// Platforms the site still renders as live embeds — YouTube today, TikTok
+// reserved. Instagram and X embeds were retired in July 2026 (messy third-party
+// widgets); their official-account records live on as SocialLink data only.
+export type EmbedPlatform = "tiktok" | "youtube";
 
 // Orientation drives the vertical-leaning masonry. Portrait dominates the grid;
 // landscape breaks out wide; nothing is force-cropped. For real images this is
@@ -146,19 +149,22 @@ export interface MediaItem {
 }
 
 // ---------------------------------------------------------------------------
-// Clips — standalone short-form social posts (Instagram Reels/posts, YouTube
-// Shorts) that render as live, lazy-hydrated embeds in the home rails. Unlike a
-// Gallery, a clip has no detail page and no rehosted media: it links out to the
-// source platform and the real player only mounts when scrolled into view (see
-// LiveEmbed). Every clip is credited (kind: "embed") and dated like a gallery so
-// a rail reads newest-first. Real, verified permalinks only — never fabricated.
+// Clips — standalone official YouTube videos that render as live, click-to-play
+// embeds in the home rails. Unlike a Gallery, a clip has no detail page and no
+// rehosted media: it links out to the source platform and the real player only
+// mounts on click (see LiveEmbed). Every clip is credited (kind: "embed") and
+// dated like a gallery so a rail reads newest-first. Real, verified permalinks
+// only — never fabricated.
 // ---------------------------------------------------------------------------
-export type ClipFormat = "reel" | "short" | "post";
+// Editorial genre, one home rail each: "music" (official MVs and performance
+// videos, the In motion rail) vs "variety" (comedy / variety / talk-show
+// appearances on official program channels, the On air rail).
+export type ClipGenre = "music" | "variety";
 
 export interface Clip {
   id: string;
-  platform: EmbedPlatform; // "instagram" | "youtube" | "x" (tiktok reserved)
-  format: ClipFormat; // vertical reel, YouTube Short, or feed post
+  platform: EmbedPlatform; // "youtube" (tiktok reserved)
+  genre: ClipGenre; // which home rail the clip belongs to
   embedUrl: string; // canonical, verified post / Reel / Short URL
   pillar: Pillar;
   artistSlugs: string[];
@@ -166,7 +172,7 @@ export interface Clip {
   caption: string; // neutral, house-style (may carry *work titles*)
   credit: Source; // the real account / outlet, kind: "embed"
   orientation?: Orientation; // defaults to portrait (vertical) for reel/short
-  // ISO date. While >= NOW the clip is exempt from the 90/180-day freshness gate
+  // ISO date. While >= NOW the clip is exempt from the 180-day freshness gate
   // (npm run check:fresh) — a dated, reviewable exemption for durably-relevant era
   // anchors, never a way to keep genuinely stale content. Expiry forces a re-review.
   evergreenUntil?: string;
@@ -178,10 +184,14 @@ export interface Clip {
 // ---------------------------------------------------------------------------
 export type Discipline = "idol" | "actor" | "director" | "model";
 
-// A verified official account. Used to credit/link out (never rehost) and to top
-// up a sparse grid with official-channel tiles.
+// A verified official account. Wider than EmbedPlatform on purpose: the retired
+// embed platforms (Instagram, X) keep their verified-handle records here as
+// documentation for the refresh/verification rituals, but only EmbedPlatform
+// accounts ever render (as sparse-grid link-out tiles).
+export type SocialPlatform = "instagram" | "x" | "tiktok" | "youtube";
+
 export interface SocialLink {
-  platform: EmbedPlatform;
+  platform: SocialPlatform;
   url: string; // the verified official account URL
   handle: string; // e.g. "@newjeans_official"
 }
@@ -197,7 +207,7 @@ export interface Artist {
   debutYear?: number;
   knownFor?: string[]; // neutral, factual descriptors (reserved for CMS)
   bio: string;
-  social?: SocialLink[]; // verified official accounts (used to top up sparse grids)
+  social?: SocialLink[]; // verified official accounts (embeddable ones top up sparse grids)
   // Roster tier. Absent = "featured". A benched artist keeps their /artists hub,
   // galleries and analysis links, but drops off the surfaces that actively promote
   // the roster (home hero/bands/rails, People strips, ranking links, Fan Forecast) —

@@ -87,16 +87,6 @@ a {
   }
 }
 
-/* X (Twitter) embeds render a rounded tweet card inside a cross-origin iframe whose
-   corner cut-outs paint white. Clip the widget to the card's curve so the dark frame
-   shows through instead, and drop widgets.js's default 10px margins so it sits flush. */
-twitter-widget,
-.twitter-tweet-rendered {
-  margin: 0 !important;
-  border-radius: var(--radius-tile);
-  overflow: hidden;
-}
-
 :where(a, button, input, textarea, select, [tabindex]):focus-visible {
   outline: 2px solid var(--color-crimson);
   outline-offset: 2px;

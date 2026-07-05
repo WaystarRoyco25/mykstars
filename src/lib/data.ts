@@ -6,7 +6,7 @@ import type {
   Artist,
   CategoryTag,
   Clip,
-  ClipFormat,
+  ClipGenre,
   EmbedPlatform,
   EventRegion,
   EventType,
@@ -18,6 +18,7 @@ import type {
   PredictionStatus,
   PredictionTally,
   Ranking,
+  SocialLink,
   StarEvent,
 } from "./types";
 import { PILLAR_ORDER } from "./types";
@@ -207,25 +208,30 @@ export async function getArtist(slug: string): Promise<Artist | undefined> {
 }
 
 const PLATFORM_NAMES: Record<EmbedPlatform, string> = {
-  instagram: "Instagram",
-  x: "X",
   tiktok: "TikTok",
   youtube: "YouTube",
 };
 
-// Official-account tiles for an artist. We only link out (the photo stays on the
+// Official-account tiles for an artist. We only link out (the media stays on the
 // source platform, always credited) — the embed-first, legally-safe pattern.
+// Restricted to platforms the site still embeds: the retired Instagram/X handles
+// stay in the seed as verification records and never render.
 export function artistEmbeds(artist: Artist): MediaItem[] {
-  return (artist.social ?? []).map(
-    (s): MediaItem => ({
-      id: `${artist.slug}-${s.platform}`,
-      kind: "embed",
-      platform: s.platform,
-      embedUrl: s.url,
-      alt: `${artist.name} on ${PLATFORM_NAMES[s.platform]}`,
-      credit: { name: s.handle, url: s.url, kind: "embed" },
-    }),
-  );
+  return (artist.social ?? [])
+    .filter(
+      (s): s is SocialLink & { platform: EmbedPlatform } =>
+        s.platform === "youtube" || s.platform === "tiktok",
+    )
+    .map(
+      (s): MediaItem => ({
+        id: `${artist.slug}-${s.platform}`,
+        kind: "embed",
+        platform: s.platform,
+        embedUrl: s.url,
+        alt: `${artist.name} on ${PLATFORM_NAMES[s.platform]}`,
+        credit: { name: s.handle, url: s.url, kind: "embed" },
+      }),
+    );
 }
 
 // Distinct artist slugs across a set of galleries, in first-seen order.
@@ -243,34 +249,29 @@ function distinctArtistSlugs(galleries: Gallery[]): string[] {
   return slugs;
 }
 
-// Curated Instagram/X posts for a set of artists, as grid-ready MediaItems. These
-// upgrade grid fill from a plain account link-out to a real, click-to-view embed
-// (see EmbedCard). X leads, then Instagram, each newest-first: X carries no rail of
-// its own, so it never duplicates one, while Instagram already has the "On the
-// feed" rail. Deduped to the cap. Sync — reads the already-loaded seed arrays.
-function artistPostEmbeds(slugs: string[], cap: number): MediaItem[] {
+// Curated clips for a set of artists, as grid-ready MediaItems. These upgrade
+// grid fill from a plain account link-out to a real, click-to-play player (see
+// EmbedCard), and their landscape 16:9 frames double as the horizontal bricks
+// that break up the portrait masonry. Newest-first across genres, deduped to the
+// cap. Sync — reads the already-loaded seed arrays.
+function artistClipEmbeds(slugs: string[], cap: number): MediaItem[] {
   if (cap <= 0) return [];
-  const rank: Record<string, number> = { x: 0, instagram: 1 };
   return clips
     .filter(
       (c) =>
-        (c.platform === "x" || c.platform === "instagram") &&
         c.artistSlugs.some((s) => slugs.includes(s)) &&
         anyFeaturedSlug(c.artistSlugs),
     )
-    .sort((a, b) => {
-      const pr = (rank[a.platform] ?? 9) - (rank[b.platform] ?? 9);
-      return pr !== 0 ? pr : a.date < b.date ? 1 : -1;
-    })
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, cap)
     .map(clipMedia);
 }
 
 // Ground rule: a grid never renders sparse. When a page has fewer than `minTiles`
 // galleries (a full desktop row is 3), top it up to fill the empty columns: first
-// with the artist's curated posts (real, click-to-view embeds), then their
-// official-account link-outs, then related galleries from the same pillar (e.g.
-// directors with no posts or accounts). Everything links out and stays credited;
+// with the artist's curated clips (real, click-to-play players), then their
+// official-channel link-outs, then related galleries from the same pillar (e.g.
+// directors with no clips or channels). Everything links out and stays credited;
 // nothing is rehosted or fabricated. Each list is capped so a full grid never grows.
 export async function sparseFill(
   artist: Artist,
@@ -279,7 +280,7 @@ export async function sparseFill(
 ): Promise<{ embeds: MediaItem[]; galleries: Gallery[] }> {
   const deficit = minTiles - ownGalleries.length;
   if (deficit <= 0) return { embeds: [], galleries: [] };
-  const posts = artistPostEmbeds([artist.slug], deficit);
+  const posts = artistClipEmbeds([artist.slug], deficit);
   const postIds = new Set(posts.map((m) => m.id));
   const accounts = artistEmbeds(artist).filter((m) => !postIds.has(m.id));
   const embeds = [...posts, ...accounts].slice(0, deficit);
@@ -294,10 +295,11 @@ export async function sparseFill(
 }
 
 // Top up a whole pillar band on the home page so a thin band (K-Movie, Fashion)
-// never renders with empty columns. Posts first: curated Instagram/X embeds for the
-// band's artists (real, click-to-view tiles). Then official-account link-outs as a
-// backstop for artists with no curated posts. Deduped by id and capped at `cap`
-// (the band's deficit) so a full band never grows. Sync — reads the loaded seed.
+// never renders with empty columns. Clips first: the band artists' curated
+// YouTube players (landscape tiles that also loosen the portrait masonry). Then
+// official-channel link-outs as a backstop for artists with no curated clips.
+// Deduped by id and capped at `cap` (the band's deficit) so a full band never
+// grows. Sync — reads the loaded seed.
 export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaItem[] {
   if (cap <= 0) return [];
   const slugs = distinctArtistSlugs(bandGalleries);
@@ -311,7 +313,7 @@ export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaIt
     }
     return out.length >= cap;
   };
-  for (const m of artistPostEmbeds(slugs, cap)) {
+  for (const m of artistClipEmbeds(slugs, cap)) {
     if (push(m)) return out;
   }
   for (const slug of slugs) {
@@ -392,35 +394,37 @@ export async function getEvents(opts?: {
 }
 
 // ---------------------------------------------------------------------------
-// Clips — standalone short-form posts (Instagram Reels/posts, YouTube videos)
-// that power the home rails. Newest-first like galleries; clips never enter the
-// photo archive and generate no route.
+// Clips — standalone official YouTube videos that power the home rails.
+// Newest-first like galleries; clips never enter the photo archive and generate
+// no route.
 // ---------------------------------------------------------------------------
 export async function getClips(opts?: {
   platform?: EmbedPlatform;
-  format?: ClipFormat;
+  genre?: ClipGenre;
   pillar?: Pillar;
   artist?: string;
 }): Promise<Clip[]> {
   let list = byDateDesc(clips);
   if (opts?.platform) list = list.filter((c) => c.platform === opts.platform);
-  if (opts?.format) list = list.filter((c) => c.format === opts.format);
+  if (opts?.genre) list = list.filter((c) => c.genre === opts.genre);
   if (opts?.pillar) list = list.filter((c) => c.pillar === opts.pillar);
   if (opts?.artist) list = list.filter((c) => c.artistSlugs.includes(opts.artist!));
   return list;
 }
 
-// The home "On the feed" rail: official Instagram Reels/posts, newest-first.
-// Bench-only clips are excluded — the home rails are promotion surfaces.
-export async function getReels(limit = 12): Promise<Clip[]> {
-  return (await getClips({ platform: "instagram" }))
+// The home "In motion" rail: official music videos and performance clips,
+// newest-first. Bench-only clips are excluded — the home rails are promotion
+// surfaces.
+export async function getMusicClips(limit = 12): Promise<Clip[]> {
+  return (await getClips({ genre: "music" }))
     .filter((c) => anyFeaturedSlug(c.artistSlugs))
     .slice(0, limit);
 }
 
-// The home "In motion" rail: official YouTube videos/Shorts, newest-first.
-export async function getShorts(limit = 12): Promise<Clip[]> {
-  return (await getClips({ platform: "youtube" }))
+// The home "On air" rail: the roster's comedy, variety and talk-show
+// appearances on official program channels, newest-first.
+export async function getVarietyClips(limit = 12): Promise<Clip[]> {
+  return (await getClips({ genre: "variety" }))
     .filter((c) => anyFeaturedSlug(c.artistSlugs))
     .slice(0, limit);
 }

@@ -1,43 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { MediaItem } from "@/lib/types";
 import { stripEmphasis } from "@/lib/text";
-import {
-  instagramEmbedPermalink,
-  instagramPermalink,
-  isInstagramRendered,
-  loadInstagram,
-  loadTwitter,
-  processInstagram,
-  processTwitter,
-  tweetId,
-  xPermalink,
-  youtubeEmbedSrc,
-  youtubeId,
-  youtubeThumbnail,
-} from "@/lib/embeds";
-import { useInView } from "@/lib/useInView";
+import { youtubeEmbedSrc, youtubeId, youtubeThumbnail } from "@/lib/embeds";
 import EmbedFacade from "./EmbedFacade";
-import { IconArrowUpRight, IconCamera, IconPlay } from "./icons";
+import { IconPlay } from "./icons";
 
 // How a live embed fills its slot:
 //  - "fill" (default): absolute inset-0, sized by a fixed-size parent (the home
-//    rails and gallery covers), with any overflow scrolling inside the box.
-//  - "flow": normal flow at the post's natural height, so the iframe grows the tile
-//    (the photo grid). Nothing is cropped; the masonry reflows as tiles lazy-load.
+//    rails and gallery covers).
+//  - "flow": normal flow in a self-sized box (the photo grid). The box follows the
+//    item's orientation — 16:9 for landscape video tiles, 3:4 otherwise — so a clip
+//    reads as a horizontal brick among the portrait photos.
 export type EmbedLayout = "fill" | "flow";
 
-// A live social embed that upgrades a cheap, crawlable link-out into the real player
-// as it scrolls into view (no click needed):
-//  - YouTube: a no-cookie lite-embed — a real thumbnail (already content) that swaps
-//    to the player on click. No autoplay-on-scroll, so it keeps click-to-play.
-//  - Instagram: the official blockquote + embed.js. embed.js hydration is flaky, so
-//    we feed it the canonical (username-less) permalink, retry process() on a backoff
-//    and detect a real render, falling back to the link-out facade if it never lands.
-//  - X: the official blockquote + widgets.js (dark theme), scoped to its container.
-// On the server (and pre-scroll) every platform renders the link-out facade, so the
-// page is light and crawlable; the client upgrades it in place when near the viewport.
+// A live embed that upgrades a cheap, crawlable link-out into the real player.
+// YouTube is a no-cookie lite-embed: a real thumbnail (already content) that swaps
+// to the player on click. No autoplay-on-scroll, so it keeps click-to-play.
+// Anything else (tiktok reserved, bare account URLs) renders the link-out facade.
+// The server renders every platform light and crawlable; the client upgrades
+// YouTube in place.
 export default function LiveEmbed({
   item,
   layout = "fill",
@@ -46,21 +29,25 @@ export default function LiveEmbed({
   layout?: EmbedLayout;
 }) {
   if (item.platform === "youtube") {
-    // Untouched click-to-play thumbnail; in flow mode it needs a sized box of its own.
+    // Click-to-play thumbnail; in flow mode it needs a sized box of its own.
     const yt = <YouTubeEmbed item={item} />;
-    return layout === "flow" ? <div className="relative aspect-[3/4]">{yt}</div> : yt;
+    return layout === "flow" ? <div className={`relative ${flowAspect(item)}`}>{yt}</div> : yt;
   }
-  if (item.platform === "instagram") return <InstagramEmbed item={item} layout={layout} />;
-  if (item.platform === "x") return <XEmbed item={item} layout={layout} />;
   return <FacadeFallback item={item} layout={layout} />;
 }
 
-// The link-out tile we degrade to (no post id, or the embed failed to render). In
+// The flow-mode box follows the item's orientation so landscape video tiles keep
+// their 16:9 frame inside the vertical-leaning masonry.
+function flowAspect(item: MediaItem): string {
+  return item.orientation === "landscape" ? "aspect-video" : "aspect-[3/4]";
+}
+
+// The link-out tile we degrade to (no video id, or a reserved platform). In
 // flow mode it needs its own sized box since EmbedFacade fills its parent.
 function FacadeFallback({ item, layout }: { item: MediaItem; layout: EmbedLayout }) {
   if (layout === "flow") {
     return (
-      <div className="relative aspect-[3/4]">
+      <div className={`relative ${flowAspect(item)}`}>
         <EmbedFacade item={item} className="absolute inset-0" />
       </div>
     );
@@ -110,226 +97,5 @@ function YouTubeEmbed({ item }: { item: MediaItem }) {
         <IconPlay size={24} className="ml-1" />
       </span>
     </a>
-  );
-}
-
-// The idle, pre-activation tile: a real link-out anchor (crawlable, works JS-off)
-// that also watches for scroll-in (inViewRef) and activates on click as a fallback.
-function EmbedFacadeTile({
-  inViewRef,
-  href,
-  platform,
-  layout,
-  onActivate,
-}: {
-  inViewRef: (node: HTMLAnchorElement | null) => void;
-  href: string;
-  platform: string;
-  layout: EmbedLayout;
-  onActivate: () => void;
-}) {
-  return (
-    <a
-      ref={inViewRef}
-      href={href}
-      target="_blank"
-      rel="nofollow noopener noreferrer"
-      onClick={(e) => {
-        e.preventDefault();
-        onActivate();
-      }}
-      className={`group flex flex-col items-center justify-center gap-3 bg-ink-2 text-bone ${
-        layout === "flow" ? "relative aspect-[3/4]" : "absolute inset-0"
-      }`}
-    >
-      <IconCamera size={26} className="text-muted-2" />
-      <span className="label">{platform}</span>
-      <span className="label inline-flex items-center gap-1 text-crimson">
-        View post
-        <IconArrowUpRight size={12} />
-      </span>
-    </a>
-  );
-}
-
-function InstagramEmbed({ item, layout }: { item: MediaItem; layout: EmbedLayout }) {
-  const [inViewRef, inView] = useInView<HTMLAnchorElement>();
-  const [active, setActive] = useState(false);
-  const [failed, setFailed] = useState(false);
-  // Set once a real render lands, so the flow-mode loading reservation can be released.
-  const [rendered, setRendered] = useState(false);
-  // The ref goes on the stable wrapper, NOT the blockquote: embed.js replaces the
-  // blockquote with an iframe on success, which would detach a blockquote ref.
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  // Scroll-in OR a click upgrades the facade to the real embed.
-  const activate = active || inView;
-
-  // Once the blockquote is mounted (after activation), load embed.js (once) and ask
-  // Instagram to upgrade it. embed.js hydration is unreliable, so we re-run process()
-  // on a bounded backoff and confirm a real render before giving up to the facade.
-  useEffect(() => {
-    if (!activate || failed) return;
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const delays = [200, 500, 1000, 2000];
-
-    const attempt = (i: number) => {
-      if (cancelled) return;
-      processInstagram(); // global; idempotent for already-rendered blockquotes
-      timers.push(
-        setTimeout(() => {
-          if (cancelled) return;
-          if (isInstagramRendered(wrapRef.current)) {
-            setRendered(true); // real render landed, release the loading reservation
-            return; // success, stop retrying
-          }
-          if (i + 1 < delays.length) attempt(i + 1);
-          else setFailed(true); // never rendered (login wall, removed post) → facade
-        }, delays[i]),
-      );
-    };
-
-    loadInstagram()
-      .then(() => {
-        if (!cancelled) attempt(0);
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
-
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [activate, failed]);
-
-  // Canonical, username-less URL hydrates reliably; null → not an embeddable post.
-  const embedPermalink = instagramEmbedPermalink(item.embedUrl ?? item.credit.url);
-  if (!embedPermalink || failed) return <FacadeFallback item={item} layout={layout} />;
-
-  // The prettier username URL for the human-facing link-out.
-  const linkPermalink = instagramPermalink(item.embedUrl ?? item.credit.url);
-
-  if (!activate) {
-    return (
-      <EmbedFacadeTile
-        inViewRef={inViewRef}
-        href={linkPermalink}
-        platform="Instagram"
-        layout={layout}
-        onActivate={() => setActive(true)}
-      />
-    );
-  }
-
-  return (
-    <div
-      ref={wrapRef}
-      className={
-        layout === "flow"
-          ? `relative w-full bg-bone ${rendered ? "" : "min-h-[24rem]"}`
-          : "absolute inset-0 overflow-y-auto bg-bone"
-      }
-    >
-      <blockquote
-        className="instagram-media"
-        data-instgrm-permalink={embedPermalink}
-        data-instgrm-version="14"
-        style={{ margin: 0, width: "100%", minWidth: 0 }}
-      >
-        <a href={linkPermalink} target="_blank" rel="nofollow noopener noreferrer">
-          {stripEmphasis(item.alt)}
-        </a>
-      </blockquote>
-    </div>
-  );
-}
-
-function XEmbed({ item, layout }: { item: MediaItem; layout: EmbedLayout }) {
-  const [inViewRef, inView] = useInView<HTMLAnchorElement>();
-  const [active, setActive] = useState(false);
-  const [failed, setFailed] = useState(false);
-  // Set once a real render lands, so the flow-mode loading reservation can be released.
-  const [rendered, setRendered] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const activate = active || inView;
-
-  // Once the blockquote is mounted, load widgets.js (once) and ask X to upgrade just
-  // this container. X is reliable, but a light render check mirrors the IG path so a
-  // deleted/blocked tweet degrades to the facade instead of a blank dark box.
-  useEffect(() => {
-    if (!activate || failed) return;
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const delays = [300, 1200];
-
-    const attempt = (i: number) => {
-      if (cancelled) return;
-      processTwitter(containerRef.current ?? undefined);
-      timers.push(
-        setTimeout(() => {
-          if (cancelled) return;
-          if (containerRef.current?.querySelector("twitter-widget, iframe")) {
-            setRendered(true); // real render landed, release the loading reservation
-            return; // success
-          }
-          if (i + 1 < delays.length) attempt(i + 1);
-          else setFailed(true);
-        }, delays[i]),
-      );
-    };
-
-    loadTwitter()
-      .then(() => {
-        if (!cancelled) attempt(0);
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
-
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [activate, failed]);
-
-  // A bare profile / unparseable URL can't be embedded as a tweet — link out instead.
-  if (!tweetId(item.embedUrl) || failed) return <FacadeFallback item={item} layout={layout} />;
-
-  const permalink = xPermalink(item.embedUrl ?? item.credit.url);
-
-  if (!activate) {
-    return (
-      <EmbedFacadeTile
-        inViewRef={inViewRef}
-        href={permalink}
-        platform="X"
-        layout={layout}
-        onActivate={() => setActive(true)}
-      />
-    );
-  }
-
-  return (
-    <div
-      ref={containerRef}
-      className={
-        layout === "flow" ? `relative w-full bg-ink ${rendered ? "" : "min-h-[24rem]"}` : "absolute inset-0 overflow-y-auto bg-ink"
-      }
-    >
-      <blockquote
-        className="twitter-tweet"
-        data-theme="dark"
-        data-dnt="true"
-        data-conversation="none"
-        style={{ margin: 0, width: "100%" }}
-      >
-        <a href={permalink} target="_blank" rel="nofollow noopener noreferrer">
-          {stripEmphasis(item.alt)}
-        </a>
-      </blockquote>
-    </div>
   );
 }

@@ -48,28 +48,35 @@ iconic **right now**, and never let an embed's date be stale or, worse, a lie.
      citing the source. No silent flips.
    - Retire a benched artist's open forecast questions in the same refresh (the
      `getOpenPredictions` filter is only a safety net).
-6. **The embed rules.**
-   - **90-day rule:** X and Instagram feed clips must be at most 90 days old vs `NOW`.
-   - **180-day rule:** YouTube clips at most 180 days old vs `NOW`.
-   - **True-date integrity:** a clip's `date` is the post's real publish date, verified at
+6. **The embed rules.** (Embeds are YouTube-only since July 2026: Instagram and X embeds were
+   retired. The official IG/X handles stay on each `Artist.social` as verification records and
+   never render.)
+   - **180-day rule:** every clip must be at most 180 days old vs `NOW`.
+   - **True-date integrity:** a clip's `date` is the video's real upload date, verified at
      authoring time. Never edit a date to make an old post look current; find a genuinely new
      post or ship fewer clips. Fewer verified embeds always beat more plausible ones.
-   - **Official accounts only.** Every embed comes from the artist's or agency's verified
-     account; never fan accounts, never reuploads, never scraping. Two look-alike traps caught in
-     July 2026: a "BLACKHOLE" MV reupload and fan-account tour posts styled as official.
+   - **Official channels only.** A music clip (`yt()`, the In motion rail) comes from the
+     artist's or label's verified channel. A variety clip (`tv()`, the On air rail) comes from
+     the program's, broadcaster's or publisher's official channel (the show's own channel, a
+     network's entertainment/clip channel, a magazine's interview channel), and the roster
+     artist must actually appear in the video. Never fan accounts, never reuploads, never
+     scraping. Two look-alike traps caught in July 2026: a "BLACKHOLE" MV reupload and
+     fan-account tour posts styled as official.
+   - **The On air rail re-picks on every refresh.** Per featured artist, find the most
+     sensational current comedy / variety / talk-show appearance on YouTube, Korean or
+     international, whichever is hotter right now. One clip per artist where a qualifying fresh
+     appearance exists; skip artists with none, and replace rather than re-date what aged out.
    - `evergreenUntil` is a dated, reviewable exemption for a canonical era anchor (e.g. a tour's
-     title track through the finale). Set a real, near expiry; never use it to keep stale content.
+     title track through the finale). Set a real, near expiry; never use it to keep stale
+     content, and avoid it on the On air rail entirely (that rail is a currency surface).
    - Gallery-embedded media (`kind: "embed"`) is archival and not age-gated, but must carry its
      true `date`, and that date can never sit in the site's future.
 7. **Verification methods that work here** (no logins, no paid APIs):
    - YouTube: `https://www.youtube.com/oembed?url=<watch-url>&format=json` proves existence and
      the exact channel name. Reject anything not on the named official channel.
-   - Instagram: `https://www.instagram.com/p/<shortcode>/embed/captioned/` renders the username
-     and caption without login; the shortcode itself decodes to the true post timestamp
-     (base64 media id, `timestamp_ms = (id >> 23) + 1314220021721`).
-   - X: the status id decodes to the true timestamp (`timestamp_ms = (id >> 22) + 1288834974657`);
-     cross-check content against same-day press. publish.x.com oEmbed is paywalled, so every X
-     clip must also be eyeballed in a real browser after seeding (widgets.js failures are silent).
+   - The true upload date comes from the watch page's own metadata (`datePublished` /
+     `uploadDate`) or a dated press article that corroborates it; never from a search snippet
+     alone (see Red flags).
 8. **Run the checks before calling a refresh done** (see Check commands below).
 
 ## Roster reference (as of 2026-07-05)
@@ -105,14 +112,16 @@ activity, reason, and the promote-back trigger to watch.
    retire anything stale; add questions for any new artists (one per featured artist).
 4. Re-check every `StarEvent`: anything now past drops off `/schedule` automatically (multi-night
    runs live until `endDate`), but verify nothing upcoming silently changed dates or venues.
-5. Audit clips against the 90/180 rule (the check below does this) and replace what expired.
-6. Run the check commands, then a preview pass (home order, artist hubs, one X embed in a real
-   browser).
+5. Audit clips against the 180-day rule (the check below does this), replace what expired, and
+   re-pick the On air rail per rule 6 (the most sensational current variety/talk appearance per
+   featured artist).
+6. Run the check commands, then a preview pass (home order, both video rails render and play,
+   artist hubs).
 
 ## Check commands (run after every seed edit)
 
 - `npm run check:style` (house style: no em/en dashes in content strings; docs/style-guide.md)
-- `npm run check:fresh` (this playbook's 90/180 + true-date gates; scripts/check-freshness.mjs)
+- `npm run check:fresh` (this playbook's 180-day + true-date gates; scripts/check-freshness.mjs)
 - `npm run lint`
 - `npx tsc --noEmit`
 - `npm run build` before shipping a roster change (catches dangling slugs that nothing else does)
@@ -125,11 +134,11 @@ their vote rows; never leave them counting toward a different question.
 
 ## Enforcement
 
-`check:fresh` machine-checks what a script can see: every clip's age vs `NOW` (90/180 by
-platform), missing or future dates on embeds, malformed clip entries, expired or garbage
+`check:fresh` machine-checks what a script can see: every clip's age vs `NOW` (180 days),
+missing or future dates on embeds, malformed clip entries, expired or garbage
 `evergreenUntil` values, and it warns when `NOW` drifts more than 14 days from the real clock.
-It reads the `yt()`/`ig()`/`x()` factory calls positionally, so a new clip factory (TikTok, say)
-needs a matching entry in the script's `FACTORIES` map.
+It reads the `yt()`/`tv()` factory calls positionally, so a new clip factory (TikTok, say)
+needs a matching entry in the script's `FACTORIES` map and its `callRe` regex.
 
 Everything else in this playbook is editorial judgment a script cannot make: the iconicity bar,
 pillar balance, rookie graduation, account-authenticity checks, and premise verification. That is

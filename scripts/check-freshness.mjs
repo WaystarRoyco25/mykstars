@@ -1,35 +1,32 @@
 #!/usr/bin/env node
-// Embed-freshness guard (see docs/roster-playbook.md): MyKStars social embeds
-// carry a freshness obligation measured against the site clock NOW in
-// src/lib/seed.ts — Instagram/X feed clips must be at most 90 days old and
-// YouTube clips at most 180, unless a clip carries a dated, still-future
-// evergreenUntil exemption. Gallery-embedded media (kind: "embed") is archival,
-// so it is not age-gated, but its date must exist, parse, and not sit in the
-// future — a post dated after NOW is the fabricated-date failure mode this
-// guard exists to catch.
+// Embed-freshness guard (see docs/roster-playbook.md): MyKStars embeds are
+// YouTube-only and carry a freshness obligation measured against the site clock
+// NOW in src/lib/seed.ts — every clip must be at most 180 days old, unless it
+// carries a dated, still-future evergreenUntil exemption. Gallery-embedded
+// media (kind: "embed") is archival, so it is not age-gated, but its date must
+// exist, parse, and not sit in the future — a post dated after NOW is the
+// fabricated-date failure mode this guard exists to catch.
 //
 // Like check-dashes.mjs, this is a hand-rolled scanner, not an AST parser: the
-// clip factories yt()/ig()/x() take positional string arguments whose order is
+// clip factories yt()/tv() take positional string arguments whose order is
 // already enforced by TypeScript (tsc --noEmit), so the scanner only needs to
 // find the calls, split their top-level arguments, and read the date slots.
 // A call it cannot parse is a loud failure, never a silent skip. Known
 // limitation: a new clip factory (e.g. TikTok) needs a matching entry in
-// FACTORIES below.
+// FACTORIES below AND in the callRe regex.
 //
 // Usage:  node scripts/check-freshness.mjs [file ...]   (defaults to src/lib/seed.ts)
 
 import { readFileSync } from "node:fs";
 
-const FEED_MAX_AGE_DAYS = 90; // instagram + x
-const YOUTUBE_MAX_AGE_DAYS = 180;
+const MAX_AGE_DAYS = 180; // all clips are YouTube
 const NOW_DRIFT_WARN_DAYS = 14;
 const DAY_MS = 86_400_000;
 
 // factory name -> { platform, dateArg (0-based), arity, evergreenArg }
 const FACTORIES = {
   yt: { platform: "youtube", dateArg: 3, arity: 6, evergreenArg: 6 },
-  ig: { platform: "instagram", dateArg: 4, arity: 8, evergreenArg: 8 },
-  x: { platform: "x", dateArg: 4, arity: 8, evergreenArg: 8 },
+  tv: { platform: "youtube", dateArg: 4, arity: 7, evergreenArg: 7 },
 };
 
 const CODE = 0;
@@ -198,7 +195,7 @@ function scanFile(file) {
 
   // --- clip factory calls ---
   let clipCount = 0;
-  const callRe = /\b(yt|ig|x)\(/g;
+  const callRe = /\b(yt|tv)\(/g;
   let m;
   while ((m = callRe.exec(src)) !== null) {
     const nameIdx = m.index;
@@ -261,13 +258,11 @@ function scanFile(file) {
       if (evMs >= nowMs) continue; // valid, still-future exemption
       // expired exemptions fall through to the normal age gate
     }
-    const limit = spec.platform === "youtube" ? YOUTUBE_MAX_AGE_DAYS : FEED_MAX_AGE_DAYS;
-    if (age > limit) {
-      const kind = spec.platform === "youtube" ? "stale youtube clip" : `stale feed clip (${spec.platform})`;
+    if (age > MAX_AGE_DAYS) {
       fail(
         nameIdx,
-        kind,
-        `${id} is ${Math.floor(age)} days old (max ${limit}${evergreen ? "; evergreenUntil expired" : ""})`,
+        "stale clip",
+        `${id} is ${Math.floor(age)} days old (max ${MAX_AGE_DAYS}${evergreen ? "; evergreenUntil expired" : ""})`,
       );
     }
   }
@@ -356,9 +351,8 @@ for (const w of allWarnings) console.warn(`⚠ ${w}`);
 if (total > 0) {
   console.error(
     `\n✖ Found ${total} freshness issue${total > 1 ? "s" : ""}. ` +
-      `Feed embeds (Instagram/X) may be at most ${FEED_MAX_AGE_DAYS} days old and YouTube ` +
-      `clips ${YOUTUBE_MAX_AGE_DAYS} vs NOW; replace with real, currently-verified official ` +
-      `posts (see docs/roster-playbook.md).`,
+      `Clips may be at most ${MAX_AGE_DAYS} days old vs NOW; replace with real, ` +
+      `currently-verified official posts (see docs/roster-playbook.md).`,
   );
   process.exit(1);
 }

@@ -3,8 +3,6 @@ import { IconArrowUpRight, IconCamera } from "./icons";
 import { stripEmphasis } from "@/lib/text";
 
 const PLATFORM_LABEL: Record<string, string> = {
-  instagram: "Instagram",
-  x: "X",
   tiktok: "TikTok",
   youtube: "YouTube",
 };

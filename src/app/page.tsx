@@ -5,10 +5,10 @@ import {
   getEvents,
   getFeaturedGallery,
   getGalleriesForPillar,
+  getMusicClips,
   getOpenPredictions,
   getRankings,
-  getReels,
-  getShorts,
+  getVarietyClips,
   hasFeaturedArtist,
   pillarFillEmbeds,
 } from "@/lib/data";
@@ -96,7 +96,7 @@ function AnalysisInterlude({
 
 export default async function HomePage() {
   const featured = await getFeaturedGallery();
-  const [bands, articles, rankings, forecasts, events, reels, shorts] =
+  const [bands, articles, rankings, forecasts, events, musicClips, varietyClips] =
     await Promise.all([
       Promise.all(
         PILLAR_ORDER.map(async (pillar) => {
@@ -116,8 +116,8 @@ export default async function HomePage() {
       getRankings(),
       getOpenPredictions(),
       getEvents({ upcomingFrom: NOW }),
-      getReels(14),
-      getShorts(14),
+      getMusicClips(14),
+      getVarietyClips(14),
     ]);
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
@@ -219,18 +219,21 @@ export default async function HomePage() {
             {ranking && <RankingTable ranking={ranking} />}
             {/* Analysis interlude — K-Pop reads best right after its ranking (it breaks
                 the chapter's long dark run); Fashion and K-Movie follow their bands
-                directly. K-Drama's interlude sits after the In motion rail below. */}
+                directly. K-Drama's interlude sits after the On air rail below. */}
             {b.pillar !== "k-drama" && (
               <AnalysisInterlude pillar={b.pillar} articles={interludes.get(b.pillar) ?? []} />
             )}
-            {/* On the feed — a live Instagram rail right after the K-Pop band */}
-            {b.pillar === "k-pop" && reels.length > 0 && (
+            {/* In motion — the music-video rail right after the K-Pop band, its home genre */}
+            {b.pillar === "k-pop" && musicClips.length > 0 && (
               <section className="mx-auto max-w-6xl px-5 mt-16">
                 <div className="mb-6">
-                  <h2 className="kicker">On the feed</h2>
+                  <h2 className="kicker">In motion</h2>
+                  <p className="text-muted mt-3 max-w-2xl leading-relaxed">
+                    The music videos of the moment, straight from the official channels.
+                  </p>
                 </div>
-                <div className="flex snap-x items-start gap-3 overflow-x-auto pb-2">
-                  {reels.map((c) => (
+                <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+                  {musicClips.map((c) => (
                     <ClipCard key={c.id} clip={c} />
                   ))}
                 </div>
@@ -255,20 +258,24 @@ export default async function HomePage() {
                 </div>
               </section>
             )}
-            {/* In motion — a live YouTube rail right after the K-Drama band */}
-            {b.pillar === "k-drama" && shorts.length > 0 && (
+            {/* On air — the comedy / variety / talk-show rail right after the K-Drama
+                band, where the roster's actors and directors live */}
+            {b.pillar === "k-drama" && varietyClips.length > 0 && (
               <section className="mx-auto max-w-6xl px-5 mt-16">
                 <div className="mb-6">
-                  <h2 className="kicker">In motion</h2>
+                  <h2 className="kicker">On air</h2>
+                  <p className="text-muted mt-3 max-w-2xl leading-relaxed">
+                    The roster on the talk and variety circuit, in Korea and abroad.
+                  </p>
                 </div>
                 <div className="flex snap-x gap-3 overflow-x-auto pb-2">
-                  {shorts.map((c) => (
+                  {varietyClips.map((c) => (
                     <ClipCard key={c.id} clip={c} />
                   ))}
                 </div>
               </section>
             )}
-            {/* Analysis interlude for K-Drama — right after the In motion rail */}
+            {/* Analysis interlude for K-Drama — right after the On air rail */}
             {b.pillar === "k-drama" && (
               <AnalysisInterlude pillar={b.pillar} articles={interludes.get(b.pillar) ?? []} />
             )}

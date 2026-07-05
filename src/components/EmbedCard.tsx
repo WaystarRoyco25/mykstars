@@ -5,25 +5,23 @@ import { isEmbeddablePost } from "@/lib/embeds";
 import LiveEmbed from "./LiveEmbed";
 
 const PLATFORM_LABEL: Record<string, string> = {
-  instagram: "Instagram",
-  x: "X",
   tiktok: "TikTok",
   youtube: "YouTube",
 };
 
-// A masonry tile for a social embed used to top up a sparse grid so it never
-// renders with empty columns. When the item is a specific, embeddable post
-// (Instagram / X / YouTube permalink) it hydrates into a real player in place as it
-// scrolls into view (LiveEmbed), the same on-site experience as the home rails.
-// When it is only an official-account link (a profile URL, the backstop fill), it
-// stays a lightweight link-out tile. Either way the photo is never rehosted: it
-// lives on the source platform and is always credited.
+// A masonry tile for a video embed used to top up a sparse grid so it never
+// renders with empty columns. When the item is a specific, embeddable post (a
+// YouTube permalink) it renders as a click-to-play player in place (LiveEmbed),
+// the same on-site experience as the home rails. When it is only an
+// official-account link (a channel URL, the backstop fill), it stays a
+// lightweight link-out tile. Either way the media is never rehosted: it lives on
+// the source platform and is always credited.
 export default function EmbedCard({ item }: { item: MediaItem }) {
   const platform = item.platform ? PLATFORM_LABEL[item.platform] ?? "source" : "source";
 
-  // Real post → live embed that auto-loads in view and grows to the post's natural
-  // height inside the masonry cell (layout="flow"); the pre-load facade reserves a
-  // 3:4 box so the column never collapses while it hydrates.
+  // Real post → live player in an orientation-sized box (layout="flow"): 16:9 for
+  // landscape clips, 3:4 otherwise, so a video tile packs into the masonry like a
+  // wide brick without collapsing the column.
   if (isEmbeddablePost(item)) {
     return (
       <div className="relative mb-2 break-inside-avoid overflow-hidden rounded-tile border border-line bg-ink-2 md:mb-3">
