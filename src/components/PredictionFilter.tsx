@@ -3,7 +3,7 @@ import { PILLAR_LABELS, PILLAR_ORDER, pillarSlug } from "@/lib/types";
 import type { Pillar } from "@/lib/types";
 
 // Pillar filter for the Fan Forecast — pure <Link>s (no client JS), mirroring
-// ScheduleFilter / CategoryFilter. "All" is the default; the active pillar drives
+// ScheduleFilter. "All" is the default; the active pillar drives
 // the page's ?pillar param.
 const BASE = "/predictions";
 

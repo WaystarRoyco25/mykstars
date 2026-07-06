@@ -1,23 +1,16 @@
 import Link from "next/link";
-import type { CategoryTag, GallerySort, Pillar } from "@/lib/types";
-import {
-  PILLAR_LABELS,
-  PILLAR_ORDER,
-  PILLAR_TAGS,
-  TAG_LABELS,
-  pillarSlug,
-} from "@/lib/types";
+import type { GallerySort, Pillar } from "@/lib/types";
+import { PILLAR_LABELS, PILLAR_ORDER, pillarSlug } from "@/lib/types";
 import { IconClose } from "./icons";
 
 // Typographic filter for the photo archive (/photos) — red active underline,
-// pure <Link>s (no client JS), mirroring ScheduleFilter / CategoryFilter. Three
-// stacked rows (pillar, then tag, then sort) plus a removable artist pill. The
-// active state is driven by the page's ?pillar / ?tag / ?artist / ?sort params;
-// "All" and "Latest" are the defaults and are never serialized, so the bare
-// /photos is the canonical "everything, newest" view.
+// pure <Link>s (no client JS), mirroring ScheduleFilter. Two stacked rows
+// (pillar, then sort) plus a removable artist pill. The active state is driven
+// by the page's ?pillar / ?artist / ?sort params; "All" and "Latest" are the
+// defaults and are never serialized, so the bare /photos is the canonical
+// "everything, newest" view.
 type Props = {
   activePillar: Pillar | null;
-  activeTag: CategoryTag | null;
   activeArtist: string | null; // slug; null when not filtering by artist
   activeArtistName?: string; // resolved page-side, for the removable pill label
   activeSort: GallerySort;
@@ -30,13 +23,11 @@ const BASE = "/photos";
 // URL slug; sort omits "latest".
 function buildHref(p: {
   pillar?: Pillar | null;
-  tag?: CategoryTag | null;
   artist?: string | null;
   sort?: GallerySort;
 }): string {
   const params = new URLSearchParams();
   if (p.pillar) params.set("pillar", pillarSlug(p.pillar));
-  if (p.tag) params.set("tag", p.tag);
   if (p.artist) params.set("artist", p.artist);
   if (p.sort && p.sort !== "latest") params.set("sort", p.sort);
   const qs = params.toString();
@@ -57,20 +48,19 @@ const SORTS: { key: GallerySort; label: string }[] = [
 
 export default function ArchiveFilters({
   activePillar,
-  activeTag,
   activeArtist,
   activeArtistName,
   activeSort,
 }: Props) {
   return (
     <div className="flex flex-col gap-3">
-      {/* Pillar — the primary axis. Switching pillar drops the now-invalid tag. */}
+      {/* Pillar — the primary axis. */}
       <nav
         aria-label="Filter by pillar"
         className="flex items-center gap-5 sm:gap-7 overflow-x-auto"
       >
         <Link
-          href={buildHref({ pillar: null, tag: null, artist: activeArtist, sort: activeSort })}
+          href={buildHref({ pillar: null, artist: activeArtist, sort: activeSort })}
           aria-current={activePillar === null ? "page" : undefined}
           className={chipClass(activePillar === null)}
         >
@@ -79,7 +69,7 @@ export default function ArchiveFilters({
         {PILLAR_ORDER.map((p) => (
           <Link
             key={p}
-            href={buildHref({ pillar: p, tag: null, artist: activeArtist, sort: activeSort })}
+            href={buildHref({ pillar: p, artist: activeArtist, sort: activeSort })}
             aria-current={activePillar === p ? "page" : undefined}
             className={chipClass(activePillar === p)}
           >
@@ -87,32 +77,6 @@ export default function ArchiveFilters({
           </Link>
         ))}
       </nav>
-
-      {/* Tag — only within an active pillar (tag is a within-pillar refinement). */}
-      {activePillar && (
-        <nav
-          aria-label="Filter by tag"
-          className="flex items-center gap-5 sm:gap-7 overflow-x-auto text-muted-2"
-        >
-          <Link
-            href={buildHref({ pillar: activePillar, tag: null, artist: activeArtist, sort: activeSort })}
-            aria-current={activeTag === null ? "page" : undefined}
-            className={chipClass(activeTag === null)}
-          >
-            All
-          </Link>
-          {PILLAR_TAGS[activePillar].map((t) => (
-            <Link
-              key={t}
-              href={buildHref({ pillar: activePillar, tag: t, artist: activeArtist, sort: activeSort })}
-              aria-current={activeTag === t ? "page" : undefined}
-              className={chipClass(activeTag === t)}
-            >
-              {TAG_LABELS[t]}
-            </Link>
-          ))}
-        </nav>
-      )}
 
       {/* Sort */}
       <nav
@@ -122,7 +86,7 @@ export default function ArchiveFilters({
         {SORTS.map(({ key, label }) => (
           <Link
             key={key}
-            href={buildHref({ pillar: activePillar, tag: activeTag, artist: activeArtist, sort: key })}
+            href={buildHref({ pillar: activePillar, artist: activeArtist, sort: key })}
             aria-current={activeSort === key ? "page" : undefined}
             className={chipClass(activeSort === key)}
           >
@@ -135,7 +99,7 @@ export default function ArchiveFilters({
       {activeArtist && (
         <div>
           <Link
-            href={buildHref({ pillar: activePillar, tag: activeTag, artist: null, sort: activeSort })}
+            href={buildHref({ pillar: activePillar, artist: null, sort: activeSort })}
             className="label inline-flex items-center gap-1.5 border border-line px-3 py-1.5 hover:border-crimson hover:text-bone transition-colors"
           >
             <span>Artist: {activeArtistName ?? activeArtist}</span>

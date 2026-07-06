@@ -48,10 +48,6 @@ function byPhotoCountDesc(items: Gallery[]): Gallery[] {
   );
 }
 
-function matchesTag(g: Gallery, tag: CategoryTag): boolean {
-  return g.category === tag || (g.tags?.includes(tag) ?? false);
-}
-
 // Fashion & Beauty is a lens as well as a pillar: idol pictorials and airport
 // fashion live in K-Pop but should also surface under /fashion.
 const FASHION_LENS_TAGS: CategoryTag[] = [
@@ -91,18 +87,13 @@ export function hasFeaturedArtist(g: Gallery): boolean {
   return anyFeaturedSlug(g.artistSlugs);
 }
 
-export async function getGalleries(opts?: { tag?: CategoryTag }): Promise<Gallery[]> {
-  const list = byDateDesc(galleries);
-  if (opts?.tag) return list.filter((g) => matchesTag(g, opts.tag!));
-  return list;
+export async function getGalleries(): Promise<Gallery[]> {
+  return byDateDesc(galleries);
 }
 
 // Galleries for a pillar landing page. For fashion-beauty this applies the lens
 // (native fashion galleries OR any gallery carrying a fashion tag).
-export async function getGalleriesForPillar(
-  pillar: Pillar,
-  tag?: CategoryTag,
-): Promise<Gallery[]> {
+export async function getGalleriesForPillar(pillar: Pillar): Promise<Gallery[]> {
   let list = byDateDesc(galleries);
   if (pillar === "fashion-beauty") {
     list = list.filter(
@@ -114,7 +105,6 @@ export async function getGalleriesForPillar(
   } else {
     list = list.filter((g) => g.pillar === pillar);
   }
-  if (tag) list = list.filter((g) => matchesTag(g, tag));
   return list;
 }
 
@@ -134,20 +124,18 @@ export async function getGalleriesByArtist(artistSlug: string): Promise<Gallery[
 }
 
 // The photo archive (/photos): the full library, narrowed by any combination of
-// pillar, tag and artist, then ordered. Tag filtering is delegated to the
-// existing helpers so matchesTag stays the single source of truth: the pillar
-// branch reuses getGalleriesForPillar (incl. the Fashion & Beauty lens); the
-// no-pillar branch reuses getGalleries({ tag }). Sort adds the one order those
-// helpers don't (most photos); latest/oldest reuse the date sorters.
+// pillar and artist, then ordered. The pillar branch reuses getGalleriesForPillar
+// (incl. the Fashion & Beauty lens); the no-pillar branch reuses getGalleries.
+// Sort adds the one order those helpers don't (most photos); latest/oldest reuse
+// the date sorters.
 export async function getArchiveGalleries(opts?: {
   pillar?: Pillar;
-  tag?: CategoryTag;
   artist?: string;
   sort?: GallerySort;
 }): Promise<Gallery[]> {
   let list = opts?.pillar
-    ? await getGalleriesForPillar(opts.pillar, opts.tag)
-    : await getGalleries({ tag: opts?.tag });
+    ? await getGalleriesForPillar(opts.pillar)
+    : await getGalleries();
   if (opts?.artist) list = list.filter((g) => g.artistSlugs.includes(opts.artist!));
   switch (opts?.sort) {
     case "oldest":

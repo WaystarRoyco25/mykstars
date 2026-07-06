@@ -10,17 +10,14 @@ import {
 import {
   PILLAR_LABELS,
   PILLAR_ORDER,
-  PILLAR_TAGS,
   pillarFromSlug,
   pillarSlug,
 } from "@/lib/types";
-import type { CategoryTag } from "@/lib/types";
 import { orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
 import { roleLabel } from "@/lib/people";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
-import CategoryFilter from "@/components/CategoryFilter";
 import GalleryGrid from "@/components/GalleryGrid";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
@@ -60,23 +57,15 @@ export async function generateMetadata({
 
 export default async function PillarPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ pillar: string }>;
-  searchParams: Promise<{ tag?: string }>;
 }) {
   const { pillar: slug } = await params;
   const pillar = pillarFromSlug(slug);
   if (!pillar) notFound();
 
-  const { tag: tagParam } = await searchParams;
-  const validTags = PILLAR_TAGS[pillar];
-  const activeTag = validTags.includes(tagParam as CategoryTag)
-    ? (tagParam as CategoryTag)
-    : null;
-
   const [galleries, people, analysis, ranking] = await Promise.all([
-    getGalleriesForPillar(pillar, activeTag ?? undefined),
+    getGalleriesForPillar(pillar),
     getArtistsByPillar(pillar),
     getArticles({ pillar }),
     getRankingForPillar(pillar),
@@ -145,11 +134,6 @@ export default async function PillarPage({
             <div>{heroContent}</div>
           </Link>
         ))}
-
-      {/* Tag filter */}
-      <div className="mb-10 border-b border-line pb-3">
-        <CategoryFilter pillar={pillar} activeTag={activeTag} />
-      </div>
 
       {/* Masonry */}
       {galleries.length > 0 ? (

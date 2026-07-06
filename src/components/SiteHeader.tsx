@@ -19,11 +19,10 @@ const UTILITY_NAV = [
 export default function SiteHeader() {
   return (
     <>
-      {/* Masthead: centered logo + tagline, scrolls away with the page. */}
+      {/* Masthead: centered logo, scrolls away with the page. */}
       <header>
         <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8 flex flex-col items-center text-center">
-          <LogoLockup className="h-14 sm:h-20 w-auto" />
-          <p className="label mt-2 sm:mt-3">K-stars, in focus</p>
+          <LogoLockup className="h-16 sm:h-24 w-auto" />
         </div>
       </header>
 

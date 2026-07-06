@@ -41,8 +41,9 @@ export function pillarFromSlug(slug: string): Pillar | undefined {
 
 // ---------------------------------------------------------------------------
 // Tags — the secondary axis (occasion / topic within a pillar).
-// One flat union keeps the data layer simple; PILLAR_TAGS scopes which tags a
-// given pillar offers. A few tags (pictorial, review) are intentionally shared.
+// One flat union keeps the data layer simple; tags classify galleries (kicker
+// labels, the Fashion & Beauty lens) rather than driving navigation. A few tags
+// (pictorial, review) are intentionally shared.
 // ---------------------------------------------------------------------------
 export type CategoryTag =
   // K-Pop (the original occasion categories)
@@ -86,16 +87,6 @@ export const TAG_LABELS: Record<CategoryTag, string> = {
   beauty: "Beauty",
   "fashion-week": "Fashion week",
 };
-
-// Which tags each pillar offers in its filter row.
-export const PILLAR_TAGS: Record<Pillar, CategoryTag[]> = {
-  "k-pop": ["airport", "red-carpet", "comeback", "event", "pictorial"],
-  "k-drama": ["stills", "casting", "press", "review", "ost", "calendar"],
-  "k-movie": ["festival", "director", "review", "crossover"],
-  "fashion-beauty": ["pictorial", "campaign", "beauty", "fashion-week"],
-};
-
-export const ALL_TAGS = Object.keys(TAG_LABELS) as CategoryTag[];
 
 // Sort order for the photo archive (/photos): newest, oldest, or densest set.
 export type GallerySort = "latest" | "oldest" | "photos";

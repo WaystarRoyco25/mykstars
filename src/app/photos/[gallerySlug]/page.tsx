@@ -62,13 +62,6 @@ export default async function GalleryPage({
         <Link href={`/${pillarSlug(gallery.pillar)}`} className="hover:text-bone">
           {PILLAR_LABELS[gallery.pillar]}
         </Link>
-        <span className="mx-2">/</span>
-        <Link
-          href={`/${pillarSlug(gallery.pillar)}?tag=${gallery.category}`}
-          className="hover:text-bone"
-        >
-          {TAG_LABELS[gallery.category]}
-        </Link>
       </nav>
 
       <header className="mb-7">

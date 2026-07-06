@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { allArticleSlugs, allArtistSlugs, allGallerySlugs } from "@/lib/data";
-import { PILLAR_ORDER, PILLAR_SLUGS, PILLAR_TAGS, REGION_ORDER, pillarSlug } from "@/lib/types";
+import { PILLAR_ORDER, PILLAR_SLUGS, REGION_ORDER, pillarSlug } from "@/lib/types";
 
 const BASE = "https://mykstars.com";
 
@@ -14,11 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/schedule",
     "/legal/dmca",
     "/about/editorial-standards",
-    // Pillar landings + each pillar's tag-filtered views.
+    // Pillar landings.
     ...PILLAR_ORDER.map((p) => `/${pillarSlug(p)}`),
-    ...PILLAR_ORDER.flatMap((p) =>
-      PILLAR_TAGS[p].map((t) => `/${pillarSlug(p)}?tag=${t}`),
-    ),
     // Schedule region-filtered views.
     ...REGION_ORDER.map((r) => `/schedule?region=${r}`),
     ...allGallerySlugs().map((s) => `/photos/${s}`),
