@@ -54,7 +54,7 @@ export default async function ArticlePage({
           headline: stripEmphasis(article.title),
           description: stripEmphasis(article.dek),
           datePublished: article.date,
-          author: { "@type": "Person", name: article.author },
+          author: { "@type": "Organization", name: article.author },
           publisher: { "@type": "Organization", name: "MyKStars" },
         }}
       />

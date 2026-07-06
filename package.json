@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "npm run check:style && npm run check:articles && npm run check:fresh",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check:style": "node scripts/check-dashes.mjs",
+    "check:style": "node scripts/check-style.mjs",
+    "check:articles": "node scripts/check-articles.mjs",
     "check:fresh": "node scripts/check-freshness.mjs"
   },
   "dependencies": {

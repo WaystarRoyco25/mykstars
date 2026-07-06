@@ -1,6 +1,6 @@
 # MyKStars house style
 
-Two standing rules for every caption, title, dek, article, ranking, prediction and
+Four standing rules for every caption, title, dek, article, ranking, prediction and
 event line on MyKStars, plus the chrome around them (nav, taglines, meta/OG text).
 They apply to all user-visible copy, going forward and to anything edited from now
 on. Code comments are exempt: they are developer notes, not published copy.
@@ -58,10 +58,57 @@ Notes:
 - A possessive after a title sits outside the markers: `*THIS & THAT*'s debut week`.
 - Content carries no other asterisks, so there is nothing to escape.
 
+## Rule 3 — No negation-reveal constructions
+
+Never the negative-parallelism clause (`It's not X, it's Y` and its cousins: `that's
+not X; it's Y`, `isn't just X; it's Y`), and never the stacked-negation reveal
+(`Not X. Not Y. Just Z.`). Both read as machine-written cadence, the exact tell this
+site's voice exists to avoid. Recast:
+
+- **State the positive claim directly:** `that work is a pillar of K-pop coverage`
+  (instead of `that's not adjacent to K-pop; it's a pillar of it`)
+- **A positive-first trailing contrast stays legal:** `a floor, not a ceiling` ·
+  `a promise, not a flourish` (the affirmative leads, so there is no reveal)
+- **Split into plain statements:** `The tour is not sold out yet. It is close.`
+  (the period form is fine; the comma splice is what reads as a reveal)
+
+What the check flags mechanically: a negation (`not` / `n't`) joined by a comma or
+semicolon to a reveal beginning with a pronoun and copula (`, it's` / `; they're` /
+`, that is`), the `not about X. It's about Y` echo, and consecutive sentence-initial
+`Not ...` fragments capped by a `Just` / `Only` reveal. A flagged sentence is usually
+a comma splice on top of the cliché: recast with a period and it passes.
+
+## Rule 4 — No AI-tell phrases
+
+A short list of stock phrases is banned outright in content strings. They are filler
+that substitutes for a specific claim, and they read as generated copy:
+
+| Banned                                 | Write instead                                |
+|----------------------------------------|----------------------------------------------|
+| `delve` (any form)                     | say what the piece does: examine, trace, price |
+| `testament to`                         | state the causal claim: X shows Y            |
+| `ever-evolving`, `ever-changing`       | name the specific change and its date        |
+| `remains to be seen`, `only time will tell` | name the checkpoint and when it lands   |
+| `rich tapestry`, `tapestry of`         | name the actual components                   |
+| `in the world of`                      | just name the domain: `in K-pop`             |
+| `cannot be overstated`                 | state it, at its true size                   |
+| `worth noting`                         | if it is worth noting, note it               |
+| `deep dive`                            | `analysis`, `breakdown`, or nothing          |
+| `game-changer`, `game changing`        | say what specifically changed                |
+| `in conclusion`                        | just conclude                                |
+| `at the end of the day`                | delete; the sentence survives                |
+
+The canonical machine-checked list is the `BANNED_PHRASES` table in
+`scripts/check-style.mjs`; grow it there when a new tell shows up. Deliberate
+exclusions, which stay legal: bare `landscape` (a real orientation value in seed
+data) and native fashion-desk vocabulary like `iconic` or `elevated`. Hedges like
+`arguably` are discouraged in Analysis (take a side) but not machine-banned.
+
 ## Enforcement
 
-`npm run check:style` scans the string literals in `src/lib/seed.ts` and fails on
-any em/en dash. It is comment-aware, so developer comments are not flagged. Run it
-after editing seed content — it is the same surface the Fan Forecast refresh
-touches. The italics and quote/roman distinctions are editorial judgment and are
-not machine-checked.
+`npm run check:style` (`scripts/check-style.mjs`) scans the string literals in
+`src/lib/seed.ts` and fails on any em/en dash (Rule 1), negation-reveal construction
+(Rule 3), or banned phrase (Rule 4). It is comment-aware, so developer comments are
+not flagged. Run it after editing seed content — it is the same surface the Fan
+Forecast and Analysis refreshes touch. The italics and quote/roman distinctions
+(Rule 2) are editorial judgment and are not machine-checked.

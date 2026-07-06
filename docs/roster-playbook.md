@@ -120,7 +120,10 @@ activity, reason, and the promote-back trigger to watch.
 
 ## Check commands (run after every seed edit)
 
-- `npm run check:style` (house style: no em/en dashes in content strings; docs/style-guide.md)
+- `npm run check:style` (house style: no em/en dashes, negation-reveal constructions, or AI-tell
+  phrases in content strings; docs/style-guide.md)
+- `npm run check:articles` (analysis bylines, article dates vs `NOW`, related slugs;
+  docs/analysis-playbook.md)
 - `npm run check:fresh` (this playbook's 180-day + true-date gates; scripts/check-freshness.mjs)
 - `npm run lint`
 - `npx tsc --noEmit`

@@ -7,7 +7,7 @@
 // exist, parse, and not sit in the future — a post dated after NOW is the
 // fabricated-date failure mode this guard exists to catch.
 //
-// Like check-dashes.mjs, this is a hand-rolled scanner, not an AST parser: the
+// Like check-style.mjs, this is a hand-rolled scanner, not an AST parser: the
 // clip factories yt()/tv() take positional string arguments whose order is
 // already enforced by TypeScript (tsc --noEmit), so the scanner only needs to
 // find the calls, split their top-level arguments, and read the date slots.
@@ -34,7 +34,7 @@ const COMMENT = 1;
 const STRING = 2;
 
 // One pass over the source classifying every index as code / comment / string,
-// with the same string- and template-expression awareness as check-dashes.mjs.
+// with the same string- and template-expression awareness as check-style.mjs.
 function contextMap(src) {
   const map = new Uint8Array(src.length);
   let ctx = "code";

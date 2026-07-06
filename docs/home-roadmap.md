@@ -148,7 +148,7 @@ The ranking rows already carry rank deltas. A compact "biggest movers" strip rea
   with curated embeds, but the inventory is finite and would still loop or run dry; a
   paginated feed waits for a real CMS.
 - House style (`docs/style-guide.md`): no em or en dashes; italicize work titles with
-  `*asterisks*` via `renderEmphasis()`. Run `node scripts/check-dashes.mjs <files>` on
+  `*asterisks*` via `renderEmphasis()`. Run `node scripts/check-style.mjs <files>` on
   anything carrying new copy.
 - Server-first: keep `page.tsx` a server component. Client islands are the live countdown
   chips and `LiveEmbed` (the YouTube lite-embed); the latter stays cheap as a
@@ -161,7 +161,7 @@ The ranking rows already carry rank deltas. A compact "biggest movers" strip rea
 
 ## Verification
 
-1. `npm run check:style` and `node scripts/check-dashes.mjs <new files>`.
+1. `npm run check:style` and `node scripts/check-style.mjs <new files>`.
 2. `npm run check:fresh` (embed freshness and true-date gates; see docs/roster-playbook.md).
 3. `npm run lint` and `npx tsc --noEmit`.
 4. Preview the home page: confirm the section order and the new module, check for

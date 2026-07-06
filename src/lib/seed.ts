@@ -996,7 +996,7 @@ export const articles: Article[] = [
     dek: "A No. 1 debut, a free show at Gwanghwamun, a sold-out stadium run: BTS's comeback is best understood as three different records at once.",
     status: "analysis",
     pillar: "k-pop",
-    author: "Min-seo Park",
+    author: "MyKStars",
     date: "2026-07-03T09:00:00+09:00",
     body: [
       "Comebacks after a service gap usually restart an engine. *Arirang* skipped the warmup: a Billboard 200 No. 1, the biggest Korean first week of the year, and a tour that sold through its London, Paris and Los Angeles stadium legs before the first night.",
@@ -1012,7 +1012,7 @@ export const articles: Article[] = [
     dek: "CORTIS and Hearts2Hearts turned respectable debuts into record sophomore weeks. The old rookie math no longer holds.",
     status: "analysis",
     pillar: "k-pop",
-    author: "Daniel Cho",
+    author: "MyKStars",
     date: "2026-07-02T09:00:00+09:00",
     body: [
       "For years the informal bar for a strong rookie debut sat around two hundred thousand first-week copies. The 2026 class made that a floor, not a ceiling: CORTIS moved over 2.3 million copies of *GREENGREEN* in a week, and Hearts2Hearts set a personal best just short of six hundred thousand with *Lemon Tang*.",
@@ -1031,7 +1031,7 @@ export const articles: Article[] = [
     dek: "IVE hold the top, BLACKPINK surge on the *Deadline* era, and LE SSERAFIM turn a Macarena sample into a tour setup.",
     status: "analysis",
     pillar: "k-pop",
-    author: "Soo-ah Yun",
+    author: "MyKStars",
     date: "2026-06-30T09:00:00+09:00",
     body: [
       "Brand reputation indexes are a blunt instrument, but they move on real events. IVE's hold on first place tracks a comeback cycle that never quite cooled; BLACKPINK's climb follows the *Deadline* records; LE SSERAFIM's rise maps almost exactly onto the week 'BOOMPALA' landed.",
@@ -1049,7 +1049,7 @@ export const articles: Article[] = [
     dek: "Black-and-white sets read as 'premium' and travel well across platforms. A look at why agencies keep reaching for them.",
     status: "analysis",
     pillar: "k-pop",
-    author: "Min-seo Park",
+    author: "MyKStars",
     date: "2026-06-21T13:00:00+09:00",
     body: [
       "Strip the color out of a concept set and two things happen at once: the styling reads as more expensive, and the images survive the journey through dozens of feeds, reposts and compression passes without falling apart. That durability matters when a comeback lives or dies in the first six hours of sharing.",
@@ -1065,7 +1065,7 @@ export const articles: Article[] = [
     dek: "Incheon's press line is now a styled event in its own right. We trace how 'airport fashion' became a genre.",
     status: "analysis",
     pillar: "k-pop",
-    author: "Daniel Cho",
+    author: "MyKStars",
     date: "2026-06-21T10:30:00+09:00",
     body: [
       "There is nothing accidental about an airport look. Outfits are planned, sometimes pulled from a brand the artist represents, and timed to a press line that everyone in the room knows is coming.",
@@ -1080,7 +1080,7 @@ export const articles: Article[] = [
     dek: "Korean series are now a standing fixture on the world's streaming charts. We look at what that changes for how they're covered.",
     status: "analysis",
     pillar: "k-drama",
-    author: "Hae-won Lim",
+    author: "MyKStars",
     date: "2026-06-21T08:00:00+09:00",
     body: [
       "A decade ago, finding a Korean drama with reliable English subtitles took effort. Now a new title can open simultaneously in dozens of countries and sit on a global top-ten chart by the weekend. The discovery problem has inverted from scarcity to overload.",
@@ -1095,7 +1095,7 @@ export const articles: Article[] = [
     dek: "A casting announcement is the first marketing beat of a drama. Here's what the portrait drop is really telling you.",
     status: "analysis",
     pillar: "k-drama",
-    author: "Hae-won Lim",
+    author: "MyKStars",
     date: "2026-06-20T12:00:00+09:00",
     body: [
       "The character-portrait drop that accompanies a casting confirmation is a genre of its own: styled, lit, and released on a schedule designed to seed months of anticipation before a single scene airs.",
@@ -1107,14 +1107,14 @@ export const articles: Article[] = [
   {
     slug: "idol-ambassador-economy",
     title: "The idol-as-ambassador economy",
-    dek: "Pictorials and house campaigns aren't a side hustle anymore; for many artists they're the main visual output. A look at the loop.",
+    dek: "Pictorials and house campaigns have become many artists' main visual output between comebacks. A look at the loop.",
     status: "analysis",
     pillar: "fashion-beauty",
-    author: "Soo-ah Yun",
+    author: "MyKStars",
     date: "2026-06-21T07:00:00+09:00",
     body: [
-      "Between comebacks, the steady drumbeat of an artist's visual presence is increasingly fashion and beauty work: a magazine cover, a house campaign, a front-row appearance. For a photo-first publication, that's not adjacent to K-pop; it's a pillar of it.",
-      "The mechanics are a loop. A campaign produces editorial imagery; the imagery travels through fan accounts; the reach justifies the next ambassadorship. Crediting the photographer, stylist and glam team isn't just courtesy here; it's the part of the story everyone else leaves out.",
+      "Between comebacks, the steady drumbeat of an artist's visual presence is increasingly fashion and beauty work: a magazine cover, a house campaign, a front-row appearance. For a photo-first publication, that work is a pillar of K-pop coverage in its own right.",
+      "The mechanics are a loop. A campaign produces editorial imagery; the imagery travels through fan accounts; the reach justifies the next ambassadorship. Crediting the photographer, stylist and glam team is the part of the story everyone else leaves out, and we treat that credit line as reporting.",
     ],
     source: VOGUE_KOREA,
     related: { artistSlugs: ["jung-hoyeon", "cha-eunwoo"], gallerySlugs: ["vogue-korea-editorial"] },
@@ -1125,7 +1125,7 @@ export const articles: Article[] = [
     dek: "Busan, Cannes, Berlin: why the photocall still matters in a streaming-first world, and what it signals for Korean film.",
     status: "analysis",
     pillar: "k-movie",
-    author: "Jae-ho Seo",
+    author: "MyKStars",
     date: "2026-06-20T19:00:00+09:00",
     body: [
       "Theatrical admissions have softened, but the festival photocall has, if anything, grown in importance: it's the moment a film's images enter the global conversation, and where a director's standing is publicly recognized.",
@@ -1139,7 +1139,7 @@ export const articles: Article[] = [
     title: "Confirmed: what this label means on MyKStars",
     dek: "We attach 'Confirmed' only to facts an official source has stated on the record, and we link that source every time.",
     status: "confirmed",
-    author: "MyKStars Desk",
+    author: "MyKStars",
     date: "2026-06-20T17:00:00+09:00",
     body: [
       "A 'Confirmed' label is a promise, not a flourish. We apply it only when a primary source (an agency notice, an official account, a venue, or the artist) has stated something on the record, and we link directly to that source so you can check it yourself.",
@@ -1152,7 +1152,7 @@ export const articles: Article[] = [
     title: "Unverified: a report is circulating, and here's what we will and won't publish",
     dek: "When an unconfirmed personal claim spreads, our default is restraint. We explain the standard rather than amplify the rumor.",
     status: "unverified",
-    author: "MyKStars Desk",
+    author: "MyKStars",
     date: "2026-06-20T16:00:00+09:00",
     body: [
       "Unverified reports, especially about anyone's private life, travel faster than the facts behind them. Our policy is simple: we do not repeat an unconfirmed personal claim as if it were established, and we never build a gallery whose only purpose is to capitalize on one.",

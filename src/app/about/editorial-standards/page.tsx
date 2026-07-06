@@ -25,6 +25,10 @@ const SECTIONS = [
     p: "We state achievements and events plainly, without clickbait, fan-war framing, or sensationalism. Translations show enough context to be understood fairly.",
   },
   {
+    h: "How our articles are made",
+    p: "MyKStars articles are researched, written and updated by our AI newsroom, working under the standing editorial rules on this page: sourcing, labels, tone and balance. Every claim is checked against a dated public source before it publishes. The byline on every article is MyKStars, the publication itself; we do not invent reporter names, and when a piece argues a position, that position is ours. When we get something wrong, the corrections policy below applies.",
+  },
+  {
     h: "Corrections",
     p: "When we get something wrong, we fix it and say so. Significant corrections are noted on the article. Email corrections@mykstars.com.",
   },
