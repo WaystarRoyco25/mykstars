@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { EventRegion, EventType } from "@/lib/types";
 import {
   EVENT_TYPE_LABELS,
@@ -6,6 +5,7 @@ import {
   REGION_LABELS,
   REGION_ORDER,
 } from "@/lib/types";
+import FilterLink from "./FilterLink";
 
 // Typographic filter for the schedule — red active underline, pure <Link>s (no
 // client JS), mirroring ArchiveFilters. Two rows: region (the international
@@ -20,6 +20,11 @@ type Props = {
 
 const BASE = "/schedule";
 
+const REGION_CHIPS: { key: RegionKey; label: string }[] = [
+  { key: "international", label: "International" },
+  ...REGION_ORDER.map((region) => ({ key: region, label: REGION_LABELS[region] })),
+];
+
 function buildHref(region: RegionKey, type: EventType | null): string {
   const params = new URLSearchParams();
   if (region !== "international") params.set("region", region);
@@ -28,33 +33,21 @@ function buildHref(region: RegionKey, type: EventType | null): string {
   return qs ? `${BASE}?${qs}` : BASE;
 }
 
-function chipClass(isActive: boolean): string {
-  return `label whitespace-nowrap pb-1.5 border-b-2 transition-colors ${
-    isActive ? "text-bone border-crimson" : "border-transparent hover:text-bone"
-  }`;
-}
-
 export default function ScheduleFilter({ activeRegion, activeType }: Props) {
-  const regionChips: { key: RegionKey; label: string }[] = [
-    { key: "international", label: "International" },
-    ...REGION_ORDER.map((r) => ({ key: r, label: REGION_LABELS[r] })),
-  ];
-
   return (
     <div className="flex flex-col gap-3">
       <nav
         aria-label="Filter by region"
         className="flex items-center gap-5 sm:gap-7 overflow-x-auto"
       >
-        {regionChips.map(({ key, label }) => (
-          <Link
+        {REGION_CHIPS.map(({ key, label }) => (
+          <FilterLink
             key={key}
             href={buildHref(key, activeType)}
-            aria-current={key === activeRegion ? "page" : undefined}
-            className={chipClass(key === activeRegion)}
+            active={key === activeRegion}
           >
             {label}
-          </Link>
+          </FilterLink>
         ))}
       </nav>
 
@@ -62,22 +55,20 @@ export default function ScheduleFilter({ activeRegion, activeType }: Props) {
         aria-label="Filter by type"
         className="flex items-center gap-5 sm:gap-7 overflow-x-auto text-muted-2"
       >
-        <Link
+        <FilterLink
           href={buildHref(activeRegion, null)}
-          aria-current={activeType === null ? "page" : undefined}
-          className={chipClass(activeType === null)}
+          active={activeType === null}
         >
           All
-        </Link>
+        </FilterLink>
         {EVENT_TYPE_ORDER.map((t) => (
-          <Link
+          <FilterLink
             key={t}
             href={buildHref(activeRegion, t)}
-            aria-current={activeType === t ? "page" : undefined}
-            className={chipClass(activeType === t)}
+            active={activeType === t}
           >
             {EVENT_TYPE_LABELS[t]}s
-          </Link>
+          </FilterLink>
         ))}
       </nav>
     </div>

@@ -13,7 +13,7 @@ import { IconPlay } from "./icons";
 //  - "flow": normal flow in a self-sized box (the photo grid). The box follows the
 //    item's orientation — 16:9 for landscape video tiles, 3:4 otherwise — so a clip
 //    reads as a horizontal brick among the portrait photos.
-export type EmbedLayout = "fill" | "flow";
+type EmbedLayout = "fill" | "flow";
 
 // A live embed that upgrades a cheap, crawlable link-out into the real player.
 // YouTube is a no-cookie lite-embed: a real thumbnail (already content) that swaps

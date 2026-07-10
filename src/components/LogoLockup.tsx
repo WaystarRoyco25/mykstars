@@ -5,9 +5,9 @@ import { LOCKUP_INNER, LOCKUP_VIEWBOX } from "@/lib/brand";
 // Artwork (crimson glyph + bone wordmark) is generated into src/lib/brand.ts
 // from /brand by scripts/generate-icons.mjs. Size it with `className`.
 export default function LogoLockup({
-  className = "h-9 w-auto",
+  className,
 }: {
-  className?: string;
+  className: string;
 }) {
   return (
     <Link href="/" aria-label="MyKStars home" className="inline-flex items-center">

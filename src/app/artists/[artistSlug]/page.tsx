@@ -13,7 +13,6 @@ import ArticleListItem from "@/components/ArticleListItem";
 import JsonLd from "@/components/JsonLd";
 import { roleLabel } from "@/lib/people";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
-import { getCompany } from "@/lib/companies";
 import CompanyLogo from "@/components/CompanyLogo";
 
 export function generateStaticParams() {
@@ -22,9 +21,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ artistSlug: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/artists/[artistSlug]">): Promise<Metadata> {
   const { artistSlug } = await params;
   const artist = await getArtist(artistSlug);
   if (!artist) return { title: "Artist not found" };
@@ -36,9 +33,7 @@ export async function generateMetadata({
 
 export default async function ArtistPage({
   params,
-}: {
-  params: Promise<{ artistSlug: string }>;
-}) {
+}: PageProps<"/artists/[artistSlug]">) {
   const { artistSlug } = await params;
   const artist = await getArtist(artistSlug);
   if (!artist) notFound();
@@ -85,11 +80,7 @@ export default async function ArtistPage({
           {artist.agency && (
             <>
               <span aria-hidden>·</span>
-              {getCompany(artist.agency) ? (
-                <CompanyLogo name={artist.agency} />
-              ) : (
-                <span>{artist.agency}</span>
-              )}
+              <CompanyLogo name={artist.agency} fallback={<span>{artist.agency}</span>} />
             </>
           )}
           {artist.debutYear && (
@@ -117,7 +108,7 @@ export default async function ArtistPage({
         {galleries.length > 0 ? (
           <GalleryGrid
             galleries={galleries}
-            priorityCount={3}
+            preloadCount={3}
             fillEmbeds={fillEmbeds}
             fillGalleries={fillGalleries}
           />

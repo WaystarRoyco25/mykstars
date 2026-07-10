@@ -10,19 +10,19 @@ import EmbedCard from "./EmbedCard";
 // default, so a full grid is unchanged.
 export default function GalleryGrid({
   galleries,
-  priorityCount = 0,
+  preloadCount = 0,
   fillEmbeds = [],
   fillGalleries = [],
 }: {
   galleries: Gallery[];
-  priorityCount?: number;
+  preloadCount?: number;
   fillEmbeds?: MediaItem[];
   fillGalleries?: Gallery[];
 }) {
   return (
     <div className="columns-1 sm:columns-2 md:columns-3 gap-2 md:gap-3">
       {galleries.map((g, i) => (
-        <PhotoCard key={g.slug} gallery={g} priority={i < priorityCount} />
+        <PhotoCard key={g.slug} gallery={g} preload={i < preloadCount} />
       ))}
       {fillEmbeds.map((m) => (
         <EmbedCard key={m.id} item={m} />

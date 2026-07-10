@@ -3,7 +3,7 @@
 // up here and renders a logo chip; anything without an entry falls back to text.
 // To add a company: drop its file in public/logos/companies and add one line.
 
-export interface CompanyBrand {
+interface CompanyBrand {
   /** Canonical name, used as the logo's alt text. */
   name: string;
   /** Public path to the logo asset (svg or png). */

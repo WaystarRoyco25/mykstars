@@ -11,6 +11,7 @@ import ScheduleFilter from "@/components/ScheduleFilter";
 import JsonLd from "@/components/JsonLd";
 import { IconArrowUpRight } from "@/components/icons";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
+import { singleParam } from "@/lib/params";
 
 export const metadata: Metadata = {
   title: "Schedule",
@@ -27,7 +28,7 @@ function EventRow({ event }: { event: StarEvent }) {
       <article className="flex items-start gap-4 sm:gap-6 py-5 px-3 -mx-3 hover:bg-ink-2 transition-colors">
         {/* D-Day + date */}
         <div className="w-14 sm:w-20 shrink-0 pt-1">
-          <DDayBadge date={event.date} initialLabel={dDayLabel(event.date)} />
+          <DDayBadge date={event.date} initialLabel={dDayLabel(event.date, NOW)} />
           <div className="text-xs text-muted tabular-nums mt-1.5 leading-tight">
             {eventDateRange(event.date, event.endDate)}
           </div>
@@ -80,10 +81,10 @@ function EventRow({ event }: { event: StarEvent }) {
 
 export default async function SchedulePage({
   searchParams,
-}: {
-  searchParams: Promise<{ region?: string; type?: string }>;
-}) {
-  const { region: regionParam, type: typeParam } = await searchParams;
+}: PageProps<"/schedule">) {
+  const query = await searchParams;
+  const regionParam = singleParam(query.region);
+  const typeParam = singleParam(query.type);
 
   const activeRegion: EventRegion | "international" =
     regionParam && VALID_REGIONS.has(regionParam)

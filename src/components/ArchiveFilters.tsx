@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { GallerySort, Pillar } from "@/lib/types";
 import { PILLAR_LABELS, PILLAR_ORDER, pillarSlug } from "@/lib/types";
 import { IconClose } from "./icons";
+import FilterLink from "./FilterLink";
 
 // Typographic filter for the photo archive (/photos) — red active underline,
 // pure <Link>s (no client JS), mirroring ScheduleFilter. Two stacked rows
@@ -34,12 +35,6 @@ function buildHref(p: {
   return qs ? `${BASE}?${qs}` : BASE;
 }
 
-function chipClass(isActive: boolean): string {
-  return `label whitespace-nowrap pb-1.5 border-b-2 transition-colors ${
-    isActive ? "text-bone border-crimson" : "border-transparent hover:text-bone"
-  }`;
-}
-
 const SORTS: { key: GallerySort; label: string }[] = [
   { key: "latest", label: "Latest" },
   { key: "oldest", label: "Oldest" },
@@ -59,22 +54,20 @@ export default function ArchiveFilters({
         aria-label="Filter by pillar"
         className="flex items-center gap-5 sm:gap-7 overflow-x-auto"
       >
-        <Link
+        <FilterLink
           href={buildHref({ pillar: null, artist: activeArtist, sort: activeSort })}
-          aria-current={activePillar === null ? "page" : undefined}
-          className={chipClass(activePillar === null)}
+          active={activePillar === null}
         >
           All
-        </Link>
+        </FilterLink>
         {PILLAR_ORDER.map((p) => (
-          <Link
+          <FilterLink
             key={p}
             href={buildHref({ pillar: p, artist: activeArtist, sort: activeSort })}
-            aria-current={activePillar === p ? "page" : undefined}
-            className={chipClass(activePillar === p)}
+            active={activePillar === p}
           >
             {PILLAR_LABELS[p]}
-          </Link>
+          </FilterLink>
         ))}
       </nav>
 
@@ -84,14 +77,13 @@ export default function ArchiveFilters({
         className="flex items-center gap-5 sm:gap-7 overflow-x-auto text-muted-2"
       >
         {SORTS.map(({ key, label }) => (
-          <Link
+          <FilterLink
             key={key}
             href={buildHref({ pillar: activePillar, artist: activeArtist, sort: key })}
-            aria-current={activeSort === key ? "page" : undefined}
-            className={chipClass(activeSort === key)}
+            active={activeSort === key}
           >
             {label}
-          </Link>
+          </FilterLink>
         ))}
       </nav>
 

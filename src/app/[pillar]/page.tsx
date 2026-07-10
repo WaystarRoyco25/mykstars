@@ -13,8 +13,10 @@ import {
   pillarFromSlug,
   pillarSlug,
 } from "@/lib/types";
+import type { Pillar } from "@/lib/types";
 import { orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
+import { NOW } from "@/lib/seed";
 import { roleLabel } from "@/lib/people";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
@@ -31,7 +33,7 @@ export function generateStaticParams() {
   return PILLAR_ORDER.map((p) => ({ pillar: pillarSlug(p) }));
 }
 
-const PILLAR_BLURBS: Record<string, string> = {
+const PILLAR_BLURBS: Record<Pillar, string> = {
   "k-pop": "Comebacks, stages, airport fashion and pictorials, organized and credited.",
   "k-drama": "Stills, casting, press lines and where to watch: the K-drama desk.",
   "k-movie": "Festivals, directors and the films travelling the international circuit.",
@@ -40,9 +42,7 @@ const PILLAR_BLURBS: Record<string, string> = {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ pillar: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/[pillar]">): Promise<Metadata> {
   const { pillar: slug } = await params;
   const pillar = pillarFromSlug(slug);
   if (!pillar) return { title: "Not found" };
@@ -57,9 +57,7 @@ export async function generateMetadata({
 
 export default async function PillarPage({
   params,
-}: {
-  params: Promise<{ pillar: string }>;
-}) {
+}: PageProps<"/[pillar]">) {
   const { pillar: slug } = await params;
   const pillar = pillarFromSlug(slug);
   if (!pillar) notFound();
@@ -72,7 +70,7 @@ export default async function PillarPage({
   ]);
 
   const featured = galleries[0];
-  const rest = featured ? galleries.slice(1) : galleries;
+  const rest = galleries.slice(1);
   const heroOrientation = featured ? orientationOf(featured.cover) : "landscape";
 
   const heroContent = featured ? (
@@ -84,7 +82,7 @@ export default async function PillarPage({
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-bone">
         <span className="label text-bone">{featured.media.length} photos</span>
         <span className="text-muted">·</span>
-        <span className="label text-muted">{relativeTime(featured.date)}</span>
+        <span className="label text-muted">{relativeTime(featured.date, NOW)}</span>
         <span className="text-muted">·</span>
         <AttributionBadge source={featured.source} asLink={false} className="text-muted" />
       </div>
@@ -113,7 +111,7 @@ export default async function PillarPage({
         (heroOrientation === "landscape" ? (
           <Link href={`/photos/${featured.slug}`} className="group block mb-10">
             <div className="relative h-[52vw] max-h-[520px] min-h-[320px] overflow-hidden border border-line">
-              <PhotoMedia item={featured.cover} sizes="100vw" priority />
+              <PhotoMedia item={featured.cover} sizes="100vw" preload />
               <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
               <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">{heroContent}</div>
             </div>
@@ -127,7 +125,7 @@ export default async function PillarPage({
               <PhotoMedia
                 item={featured.cover}
                 sizes="(max-width: 640px) 100vw, 300px"
-                priority
+                preload
                 position="50% 30%"
               />
             </div>
@@ -137,7 +135,7 @@ export default async function PillarPage({
 
       {/* Masonry */}
       {galleries.length > 0 ? (
-        <GalleryGrid galleries={featured ? rest : galleries} priorityCount={3} />
+        <GalleryGrid galleries={rest} preloadCount={3} />
       ) : (
         <p className="text-muted">No photo sets here yet.</p>
       )}

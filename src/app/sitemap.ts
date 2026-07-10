@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { allArticleSlugs, allArtistSlugs, allGallerySlugs } from "@/lib/data";
-import { PILLAR_ORDER, PILLAR_SLUGS, REGION_ORDER, pillarSlug } from "@/lib/types";
+import { PILLAR_ORDER, REGION_ORDER, pillarSlug } from "@/lib/types";
 
 const BASE = "https://mykstars.com";
 
-const PILLAR_ROOTS = new Set(PILLAR_ORDER.map((p) => `/${PILLAR_SLUGS[p]}`));
+const PILLAR_ROOTS = new Set(PILLAR_ORDER.map((p) => `/${pillarSlug(p)}`));
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths: string[] = [

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import type { MediaItem } from "@/lib/types";
 import EmbedFacade from "./EmbedFacade";
-import LiveEmbed from "./LiveEmbed";
 import { stripEmphasis } from "@/lib/text";
 import { IconCamera } from "./icons";
 
@@ -15,29 +14,21 @@ const TONES = ["#141414", "#171717", "#1b1b1b", "#191617"];
 export default function PhotoMedia({
   item,
   sizes = "(max-width: 768px) 100vw, 33vw",
-  priority = false,
+  preload = false,
   showCredit = false,
   fit = "cover",
   position,
-  live = false,
 }: {
   item: MediaItem;
   sizes?: string;
-  priority?: boolean;
+  preload?: boolean;
   showCredit?: boolean;
   fit?: "cover" | "contain";
   // object-position override (e.g. "50% 30%" to keep portrait faces in frame)
   position?: string;
-  // When true, an embed hydrates into a real in-view player (LiveEmbed) instead
-  // of the lightweight link-out facade. Off by default (the cheap path).
-  live?: boolean;
 }) {
   if (item.kind === "embed") {
-    return live ? (
-      <LiveEmbed item={item} />
-    ) : (
-      <EmbedFacade item={item} className="absolute inset-0" />
-    );
+    return <EmbedFacade item={item} className="absolute inset-0" />;
   }
 
   if (item.kind === "image" && item.src) {
@@ -47,7 +38,7 @@ export default function PhotoMedia({
         alt={stripEmphasis(item.alt)}
         fill
         sizes={sizes}
-        priority={priority}
+        preload={preload}
         className={fit === "contain" ? "object-contain" : "object-cover"}
         style={position ? { objectPosition: position } : undefined}
       />

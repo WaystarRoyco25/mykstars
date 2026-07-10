@@ -5,6 +5,7 @@ import { dDayLabel, eventDateRange } from "@/lib/format";
 import DDayBadge from "@/components/DDayBadge";
 import AttributionBadge from "@/components/AttributionBadge";
 import { renderEmphasis } from "@/lib/text";
+import { NOW } from "@/lib/seed";
 
 // A compact, fixed-width countdown card for the home-page schedule rail. The rail
 // scrolls horizontally, so this is a denser sibling of the schedule page's EventRow
@@ -17,7 +18,7 @@ export default function EventCard({ event }: { event: StarEvent }) {
       className="group flex w-60 shrink-0 snap-start flex-col gap-2 rounded-tile border border-line p-4 transition-colors hover:border-crimson hover:bg-ink-2"
     >
       <div className="flex items-center justify-between gap-2">
-        <DDayBadge date={event.date} initialLabel={dDayLabel(event.date)} />
+        <DDayBadge date={event.date} initialLabel={dDayLabel(event.date, NOW)} />
         <span className="text-xs text-muted tabular-nums">
           {eventDateRange(event.date, event.endDate)}
         </span>

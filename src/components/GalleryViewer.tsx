@@ -14,19 +14,18 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
   const total = media.length;
   const touchX = useRef<number | null>(null);
 
-  const go = useCallback(
-    (n: number) => setIndex(((n % total) + total) % total),
-    [total],
-  );
+  const go = useCallback((delta: number) => {
+    setIndex((current) => (((current + delta) % total) + total) % total);
+  }, [total]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") go(index + 1);
-      if (e.key === "ArrowLeft") go(index - 1);
+      if (e.key === "ArrowRight") go(1);
+      if (e.key === "ArrowLeft") go(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [index, go]);
+  }, [go]);
 
   const current = media[index];
 
@@ -38,15 +37,15 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
         onTouchEnd={(e) => {
           if (touchX.current === null) return;
           const dx = e.changedTouches[0].clientX - touchX.current;
-          if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+          if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
           touchX.current = null;
         }}
       >
-        <PhotoMedia item={current} sizes="(max-width: 1024px) 100vw, 960px" priority showCredit fit="contain" />
+        <PhotoMedia item={current} sizes="(max-width: 1024px) 100vw, 960px" preload showCredit fit="contain" />
 
         <button
           type="button"
-          onClick={() => go(index - 1)}
+          onClick={() => go(-1)}
           aria-label="Previous photo"
           className="absolute left-0 top-0 h-full w-14 flex items-center justify-center text-bone bg-ink/30 hover:bg-ink/60 transition-colors"
         >
@@ -54,7 +53,7 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
         </button>
         <button
           type="button"
-          onClick={() => go(index + 1)}
+          onClick={() => go(1)}
           aria-label="Next photo"
           className="absolute right-0 top-0 h-full w-14 flex items-center justify-center text-bone bg-ink/30 hover:bg-ink/60 transition-colors"
         >

@@ -2082,32 +2082,32 @@ export const predictions: Prediction[] = [
 // A date must never be edited to look fresh; replace the post instead.
 // Captions follow house style: song titles in 'quotes', work titles in *asterisks*.
 const YT_CHANNEL = {
-  hybeLabels: { name: "HYBE LABELS", url: "https://www.youtube.com/@HYBELABELS", kind: "embed" } as Source,
-  blackpink: { name: "BLACKPINK", url: "https://www.youtube.com/@BLACKPINK", kind: "embed" } as Source,
-  smtown: { name: "SMTOWN", url: "https://www.youtube.com/@SMTOWN", kind: "embed" } as Source,
-  starship: { name: "STARSHIP", url: "https://www.youtube.com/@STARSHIP_official", kind: "embed" } as Source,
-  babymonster: { name: "BABYMONSTER", url: "https://www.youtube.com/@BABYMONSTER", kind: "embed" } as Source,
-  jype: { name: "JYP Entertainment", url: "https://www.youtube.com/@JYPEntertainment", kind: "embed" } as Source,
-  twice: { name: "TWICE", url: "https://www.youtube.com/@TWICE", kind: "embed" } as Source,
-};
+  hybeLabels: { name: "HYBE LABELS", url: "https://www.youtube.com/@HYBELABELS", kind: "embed" },
+  blackpink: { name: "BLACKPINK", url: "https://www.youtube.com/@BLACKPINK", kind: "embed" },
+  smtown: { name: "SMTOWN", url: "https://www.youtube.com/@SMTOWN", kind: "embed" },
+  starship: { name: "STARSHIP", url: "https://www.youtube.com/@STARSHIP_official", kind: "embed" },
+  babymonster: { name: "BABYMONSTER", url: "https://www.youtube.com/@BABYMONSTER", kind: "embed" },
+  jype: { name: "JYP Entertainment", url: "https://www.youtube.com/@JYPEntertainment", kind: "embed" },
+  twice: { name: "TWICE", url: "https://www.youtube.com/@TWICE", kind: "embed" },
+} satisfies Record<string, Source>;
 
 // Official program / broadcaster / publisher channels for the On air rail (tv()
 // clips). Names match the channel's oEmbed author_name exactly, verified at
 // authoring time; a roster artist must actually appear in any video credited here.
 const PROGRAM_CHANNEL = {
-  ddeunddeun: { name: "뜬뜬 DdeunDdeun", url: "https://www.youtube.com/@ddeunddeun", kind: "embed" } as Source,
-  mmtg: { name: "MMTG 문명특급", url: "https://www.youtube.com/@mmtg_official", kind: "embed" } as Source,
-  tvnJoy: { name: "tvN Joy", url: "https://www.youtube.com/@tvNJoy_official", kind: "embed" } as Source,
-  dailyShow: { name: "The Daily Show", url: "https://www.youtube.com/@TheDailyShow", kind: "embed" } as Source,
-  gkids: { name: "GKIDS Films", url: "https://www.youtube.com/@GKIDStv", kind: "embed" } as Source,
-  netflixKorea: { name: "Netflix Korea 넷플릭스 코리아", url: "https://www.youtube.com/@NetflixKorea", kind: "embed" } as Source,
-  bangtantv: { name: "BANGTANTV", url: "https://www.youtube.com/@BTS", kind: "embed" } as Source,
-  muply: { name: "MUPLY 뮤플리", url: "https://www.youtube.com/@muply", kind: "embed" } as Source,
-  strayKids: { name: "Stray Kids", url: "https://www.youtube.com/@StrayKids", kind: "embed" } as Source,
-  aespa: { name: "aespa", url: "https://www.youtube.com/@aespa", kind: "embed" } as Source,
-  hearts2hearts: { name: "Hearts2Hearts", url: "https://www.youtube.com/@hearts2hearts.official", kind: "embed" } as Source,
-  seventeen: { name: "SEVENTEEN", url: "https://www.youtube.com/@pledis17", kind: "embed" } as Source,
-};
+  ddeunddeun: { name: "뜬뜬 DdeunDdeun", url: "https://www.youtube.com/@ddeunddeun", kind: "embed" },
+  mmtg: { name: "MMTG 문명특급", url: "https://www.youtube.com/@mmtg_official", kind: "embed" },
+  tvnJoy: { name: "tvN Joy", url: "https://www.youtube.com/@tvNJoy_official", kind: "embed" },
+  dailyShow: { name: "The Daily Show", url: "https://www.youtube.com/@TheDailyShow", kind: "embed" },
+  gkids: { name: "GKIDS Films", url: "https://www.youtube.com/@GKIDStv", kind: "embed" },
+  netflixKorea: { name: "Netflix Korea 넷플릭스 코리아", url: "https://www.youtube.com/@NetflixKorea", kind: "embed" },
+  bangtantv: { name: "BANGTANTV", url: "https://www.youtube.com/@BTS", kind: "embed" },
+  muply: { name: "MUPLY 뮤플리", url: "https://www.youtube.com/@muply", kind: "embed" },
+  strayKids: { name: "Stray Kids", url: "https://www.youtube.com/@StrayKids", kind: "embed" },
+  aespa: { name: "aespa", url: "https://www.youtube.com/@aespa", kind: "embed" },
+  hearts2hearts: { name: "Hearts2Hearts", url: "https://www.youtube.com/@hearts2hearts.official", kind: "embed" },
+  seventeen: { name: "SEVENTEEN", url: "https://www.youtube.com/@pledis17", kind: "embed" },
+} satisfies Record<string, Source>;
 
 // Music clip (landscape player, k-pop pillar). videoId was oEmbed-verified on the
 // named artist/label channel. evergreenUntil (optional, ISO date): a dated

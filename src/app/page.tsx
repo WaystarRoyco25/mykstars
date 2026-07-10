@@ -7,13 +7,14 @@ import {
   getGalleriesForPillar,
   getMusicClips,
   getOpenPredictions,
+  getPredictionTallies,
   getRankings,
   getVarietyClips,
   hasFeaturedArtist,
   pillarFillEmbeds,
 } from "@/lib/data";
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
-import type { Article, Pillar } from "@/lib/types";
+import type { Article, Clip, Pillar, Prediction, PredictionTally } from "@/lib/types";
 import { relativeTime } from "@/lib/format";
 import { NOW } from "@/lib/seed";
 import PhotoMedia from "@/components/PhotoMedia";
@@ -94,31 +95,103 @@ function AnalysisInterlude({
   );
 }
 
+function ClipRail({
+  title,
+  description,
+  clips,
+}: {
+  title: string;
+  description: string;
+  clips: Clip[];
+}) {
+  return (
+    <section className="mx-auto max-w-6xl px-5 mt-16">
+      <div className="mb-6">
+        <h2 className="kicker">{title}</h2>
+        <p className="text-muted mt-3 max-w-2xl leading-relaxed">{description}</p>
+      </div>
+      <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+        {clips.map((clip) => (
+          <ClipCard key={clip.id} clip={clip} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ForecastRail({
+  predictions,
+  tallies,
+}: {
+  predictions: Prediction[];
+  tallies: ReadonlyMap<string, PredictionTally>;
+}) {
+  return (
+    <section className="mx-auto max-w-6xl px-5 mt-16">
+      <div className="flex items-end justify-between mb-6">
+        <Link href="/predictions" className="group inline-block">
+          <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
+        </Link>
+        <Link href="/predictions" className="label hover:text-bone transition-colors">
+          All forecasts →
+        </Link>
+      </div>
+      <div className="grid gap-5 sm:grid-cols-3">
+        {predictions.map((prediction) => (
+          <PredictionCard
+            key={prediction.slug}
+            prediction={prediction}
+            tally={tallies.get(prediction.slug)!}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default async function HomePage() {
-  const featured = await getFeaturedGallery();
-  const [bands, articles, rankings, forecasts, events, musicClips, varietyClips] =
-    await Promise.all([
-      Promise.all(
-        PILLAR_ORDER.map(async (pillar) => {
-          const galleries = (await getGalleriesForPillar(pillar))
-            .filter((g) => g.slug !== featured.slug && hasFeaturedArtist(g))
-            .slice(0, BAND_COUNT[pillar]);
-          // Top up a thin band with the band artists' official-account tiles so it
-          // never renders with empty columns (deficit only; a full band is unchanged).
-          return {
-            pillar,
-            galleries,
-            fillEmbeds: pillarFillEmbeds(galleries, BAND_COUNT[pillar] - galleries.length),
-          };
-        }),
-      ),
-      getArticles(),
-      getRankings(),
-      getOpenPredictions(),
-      getEvents({ upcomingFrom: NOW }),
-      getMusicClips(14),
-      getVarietyClips(14),
-    ]);
+  const forecastsPromise = getOpenPredictions();
+  const forecastTalliesPromise = forecastsPromise.then((forecasts) =>
+    getPredictionTallies(forecasts.slice(0, 6)),
+  );
+  const [
+    featured,
+    pillarGalleries,
+    articles,
+    rankings,
+    forecasts,
+    forecastTallies,
+    events,
+    musicClips,
+    varietyClips,
+  ] = await Promise.all([
+    getFeaturedGallery(),
+    Promise.all(
+      PILLAR_ORDER.map(async (pillar) => ({
+        pillar,
+        galleries: await getGalleriesForPillar(pillar),
+      })),
+    ),
+    getArticles(),
+    getRankings(),
+    forecastsPromise,
+    forecastTalliesPromise,
+    getEvents({ upcomingFrom: NOW }),
+    getMusicClips(14),
+    getVarietyClips(14),
+  ]);
+  const bands = pillarGalleries.map(({ pillar, galleries: pillarGalleryList }) => {
+    const galleries = pillarGalleryList
+      .filter((gallery) => gallery.slug !== featured.slug && hasFeaturedArtist(gallery))
+      .slice(0, BAND_COUNT[pillar]);
+    // Top up a thin band with the band artists' official-account tiles so it
+    // never renders with empty columns (deficit only; a full band is unchanged).
+    return {
+      pillar,
+      galleries,
+      fillEmbeds: pillarFillEmbeds(galleries, BAND_COUNT[pillar] - galleries.length),
+    };
+  });
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
   // The Fan Forecast, split for rhythm: the three soonest-closing questions land
@@ -126,6 +199,9 @@ export default async function HomePage() {
   // return-visit hook recurs deeper in the scroll.
   const leadForecasts = forecasts.slice(0, 3);
   const nextForecasts = forecasts.slice(3, 6);
+  const forecastTallyBySlug = new Map(
+    forecastTallies.map((tally) => [tally.predictionSlug, tally]),
+  );
   // The soonest shows lead a horizontal D-Day rail under the hero, the urgency hook.
   const upcomingEvents = events.slice(0, 8);
   const renderedBands = bands.filter((b) => b.galleries.length > 0);
@@ -157,7 +233,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-5 pt-6">
         <Link href={`/photos/${featured.slug}`} className="group block">
           <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden rounded-tile border border-line">
-            <PhotoMedia item={featured.cover} sizes="100vw" priority />
+            <PhotoMedia item={featured.cover} sizes="100vw" preload />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
               <p className="kicker">
@@ -169,7 +245,7 @@ export default async function HomePage() {
               <div className="mt-4 flex items-center gap-3 text-sm text-bone">
                 <span className="label text-bone">{featured.media.length} photos</span>
                 <span className="text-muted">·</span>
-                <span className="label text-muted">{relativeTime(featured.date)}</span>
+                <span className="label text-muted">{relativeTime(featured.date, NOW)}</span>
                 <span className="text-muted">·</span>
                 <AttributionBadge source={featured.source} asLink={false} className="text-muted" />
               </div>
@@ -212,7 +288,7 @@ export default async function HomePage() {
               </div>
               <GalleryGrid
                 galleries={b.galleries}
-                priorityCount={b.pillar === "k-pop" ? 3 : 0}
+                preloadCount={b.pillar === "k-pop" ? 3 : 0}
                 fillEmbeds={b.fillEmbeds}
               />
             </section>
@@ -225,55 +301,25 @@ export default async function HomePage() {
             )}
             {/* In motion — the music-video rail right after the K-Pop band, its home genre */}
             {b.pillar === "k-pop" && musicClips.length > 0 && (
-              <section className="mx-auto max-w-6xl px-5 mt-16">
-                <div className="mb-6">
-                  <h2 className="kicker">In motion</h2>
-                  <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-                    The music videos of the moment, straight from the official channels.
-                  </p>
-                </div>
-                <div className="flex snap-x gap-3 overflow-x-auto pb-2">
-                  {musicClips.map((c) => (
-                    <ClipCard key={c.id} clip={c} />
-                  ))}
-                </div>
-              </section>
+              <ClipRail
+                title="In motion"
+                description="The music videos of the moment, straight from the official channels."
+                clips={musicClips}
+              />
             )}
             {/* Fan Forecast — the first three questions, right after the K-Pop chapter;
                 the next three run after the K-Drama chapter, the return-visit hook */}
             {b.pillar === "k-pop" && leadForecasts.length > 0 && (
-              <section className="mx-auto max-w-6xl px-5 mt-16">
-                <div className="flex items-end justify-between mb-6">
-                  <Link href="/predictions" className="group inline-block">
-                    <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
-                  </Link>
-                  <Link href="/predictions" className="label hover:text-bone transition-colors">
-                    All forecasts →
-                  </Link>
-                </div>
-                <div className="grid gap-5 sm:grid-cols-3">
-                  {leadForecasts.map((p) => (
-                    <PredictionCard key={p.slug} prediction={p} />
-                  ))}
-                </div>
-              </section>
+              <ForecastRail predictions={leadForecasts} tallies={forecastTallyBySlug} />
             )}
             {/* On air — the comedy / variety / talk-show rail right after the K-Drama
                 band, where the roster's actors and directors live */}
             {b.pillar === "k-drama" && varietyClips.length > 0 && (
-              <section className="mx-auto max-w-6xl px-5 mt-16">
-                <div className="mb-6">
-                  <h2 className="kicker">On air</h2>
-                  <p className="text-muted mt-3 max-w-2xl leading-relaxed">
-                    The roster on the talk and variety circuit, in Korea and abroad.
-                  </p>
-                </div>
-                <div className="flex snap-x gap-3 overflow-x-auto pb-2">
-                  {varietyClips.map((c) => (
-                    <ClipCard key={c.id} clip={c} />
-                  ))}
-                </div>
-              </section>
+              <ClipRail
+                title="On air"
+                description="The roster on the talk and variety circuit, in Korea and abroad."
+                clips={varietyClips}
+              />
             )}
             {/* Analysis interlude for K-Drama — right after the On air rail */}
             {b.pillar === "k-drama" && (
@@ -283,21 +329,7 @@ export default async function HomePage() {
                 alive deeper in the scroll; each card carries its own pillar kicker,
                 so a mixed cluster reads fine here */}
             {b.pillar === "k-drama" && nextForecasts.length > 0 && (
-              <section className="mx-auto max-w-6xl px-5 mt-16">
-                <div className="flex items-end justify-between mb-6">
-                  <Link href="/predictions" className="group inline-block">
-                    <h2 className="kicker group-hover:text-bone transition-colors">Fan Forecast</h2>
-                  </Link>
-                  <Link href="/predictions" className="label hover:text-bone transition-colors">
-                    All forecasts →
-                  </Link>
-                </div>
-                <div className="grid gap-5 sm:grid-cols-3">
-                  {nextForecasts.map((p) => (
-                    <PredictionCard key={p.slug} prediction={p} />
-                  ))}
-                </div>
-              </section>
+              <ForecastRail predictions={nextForecasts} tallies={forecastTallyBySlug} />
             )}
           </Fragment>
         );

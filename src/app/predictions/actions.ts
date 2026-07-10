@@ -2,8 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { predictions } from "@/lib/seed";
-import { effectiveStatus, VOTER_COOKIE } from "@/lib/data";
+import { effectiveStatus, getPrediction, VOTER_COOKIE } from "@/lib/data";
 import { getSupabase } from "@/lib/supabase";
 
 // The voter cookie (VOTER_COOKIE, from the data layer) is httpOnly so client JS
@@ -16,7 +15,7 @@ export type VoteResult = { ok: true; optionId: string } | { ok: false; error: st
 export async function castVote(slug: string, optionId: string): Promise<VoteResult> {
   // Server Actions are reachable by direct POST, so never trust the inputs:
   // validate the slug/option against the curated set and confirm voting is open.
-  const prediction = predictions.find((p) => p.slug === slug);
+  const prediction = await getPrediction(slug);
   if (!prediction) return { ok: false, error: "Unknown question." };
   if (!prediction.options.some((o) => o.id === optionId)) {
     return { ok: false, error: "That option doesn't exist." };

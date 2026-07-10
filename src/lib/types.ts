@@ -20,23 +20,19 @@ export const PILLAR_LABELS: Record<Pillar, string> = {
 export const PILLAR_ORDER: Pillar[] = ["k-pop", "k-drama", "fashion-beauty", "k-movie"];
 
 // URL slug per pillar. "fashion-beauty" surfaces as the cleaner /fashion.
-export const PILLAR_SLUGS: Record<Pillar, string> = {
+const PILLAR_SLUGS: Record<Pillar, string> = {
   "k-pop": "k-pop",
   "k-drama": "k-drama",
   "k-movie": "k-movie",
   "fashion-beauty": "fashion",
 };
 
-const SLUG_TO_PILLAR: Record<string, Pillar> = Object.fromEntries(
-  (Object.entries(PILLAR_SLUGS) as [Pillar, string][]).map(([p, s]) => [s, p]),
-);
-
 export function pillarSlug(p: Pillar): string {
   return PILLAR_SLUGS[p];
 }
 
 export function pillarFromSlug(slug: string): Pillar | undefined {
-  return SLUG_TO_PILLAR[slug];
+  return PILLAR_ORDER.find((pillar) => PILLAR_SLUGS[pillar] === slug);
 }
 
 // ---------------------------------------------------------------------------
@@ -116,6 +112,11 @@ export type MediaKind = "placeholder" | "image" | "embed";
 // reserved. Instagram and X embeds were retired in July 2026 (messy third-party
 // widgets); their official-account records live on as SocialLink data only.
 export type EmbedPlatform = "tiktok" | "youtube";
+
+export const EMBED_PLATFORM_LABELS: Record<EmbedPlatform, string> = {
+  tiktok: "TikTok",
+  youtube: "YouTube",
+};
 
 // Orientation drives the vertical-leaning masonry. Portrait dominates the grid;
 // landscape breaks out wide; nothing is force-cropped. For real images this is

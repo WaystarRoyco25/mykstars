@@ -12,7 +12,7 @@ export default function ArticleListItem({
   on?: "dark" | "light";
 }) {
   const ruleColor = on === "light" ? "border-bone-line" : "border-line";
-  const dekColor = on === "light" ? "text-muted-2" : "text-muted";
+  const mutedColor = on === "light" ? "text-muted-2" : "text-muted";
 
   return (
     <article className={`border-t ${ruleColor} pt-5`}>
@@ -26,10 +26,10 @@ export default function ArticleListItem({
           <StatusFlag status={article.status} on={on} />
         </div>
       </div>
-      <p className={`mt-2 text-sm leading-relaxed ${dekColor} max-w-2xl`}>
+      <p className={`mt-2 text-sm leading-relaxed ${mutedColor} max-w-2xl`}>
         {renderEmphasis(article.dek)}
       </p>
-      <p className={`label mt-3 ${on === "light" ? "text-muted-2" : "text-muted"}`}>
+      <p className={`label mt-3 ${mutedColor}`}>
         {article.author} · {absoluteDate(article.date)}
       </p>
     </article>

@@ -11,7 +11,7 @@ export default function ClipCard({ clip }: { clip: Clip }) {
   return (
     <div className="group flex w-[22rem] shrink-0 snap-start flex-col overflow-hidden rounded-tile border border-line transition-colors hover:border-crimson">
       <div className="relative aspect-video overflow-hidden bg-ink-2">
-        <LiveEmbed item={clipMedia(clip)} layout="fill" />
+        <LiveEmbed item={clipMedia(clip)} />
       </div>
       <div className="flex flex-col gap-1.5 p-3">
         <p className="line-clamp-2 text-sm leading-snug text-bone">{renderEmphasis(clip.caption)}</p>

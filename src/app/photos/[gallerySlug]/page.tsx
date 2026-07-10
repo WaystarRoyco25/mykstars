@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { allGallerySlugs, getArtist, getGallery } from "@/lib/data";
 import { PILLAR_LABELS, TAG_LABELS, pillarSlug } from "@/lib/types";
 import { absoluteDate, relativeTime } from "@/lib/format";
+import { NOW } from "@/lib/seed";
 import GalleryViewer from "@/components/GalleryViewer";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
@@ -15,9 +16,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ gallerySlug: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/photos/[gallerySlug]">): Promise<Metadata> {
   const { gallerySlug } = await params;
   const gallery = await getGallery(gallerySlug);
   if (!gallery) return { title: "Gallery not found" };
@@ -32,9 +31,7 @@ export async function generateMetadata({
 
 export default async function GalleryPage({
   params,
-}: {
-  params: Promise<{ gallerySlug: string }>;
-}) {
+}: PageProps<"/photos/[gallerySlug]">) {
   const { gallerySlug } = await params;
   const gallery = await getGallery(gallerySlug);
   if (!gallery) notFound();
@@ -73,7 +70,7 @@ export default async function GalleryPage({
           {renderEmphasis(gallery.title)}
         </h1>
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
-          <span>{relativeTime(gallery.date)}</span>
+          <span>{relativeTime(gallery.date, NOW)}</span>
           <span className="text-muted-2">·</span>
           <span>{absoluteDate(gallery.date)}</span>
           <span className="text-muted-2">·</span>

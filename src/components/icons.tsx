@@ -19,24 +19,6 @@ function base({ size = 18, ...props }: IconProps) {
   };
 }
 
-export function IconSearch(p: IconProps) {
-  return (
-    <svg {...base(p)}>
-      <circle cx="11" cy="11" r="7" />
-      <path d="M21 21l-4.3-4.3" />
-    </svg>
-  );
-}
-
-export function IconBell(p: IconProps) {
-  return (
-    <svg {...base(p)}>
-      <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7 2.5 7h-17S6 15 6 9" />
-      <path d="M10.5 20a2 2 0 0 0 3 0" />
-    </svg>
-  );
-}
-
 export function IconArrowUpRight(p: IconProps) {
   return (
     <svg {...base(p)}>
@@ -132,17 +114,6 @@ export function IconShield(p: IconProps) {
     <svg {...base(p)}>
       <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
       <path d="M9 12l2 2 4-4" />
-    </svg>
-  );
-}
-
-export function IconGrid(p: IconProps) {
-  return (
-    <svg {...base(p)}>
-      <rect x="4" y="4" width="7" height="7" rx="1" />
-      <rect x="13" y="4" width="7" height="7" rx="1" />
-      <rect x="4" y="13" width="7" height="7" rx="1" />
-      <rect x="13" y="13" width="7" height="7" rx="1" />
     </svg>
   );
 }

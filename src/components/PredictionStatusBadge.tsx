@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import DDayBadge from "./DDayBadge";
-import { absoluteDate, dDayLabel } from "@/lib/format";
+import { absoluteDate } from "@/lib/format";
 import type { PredictionStatus } from "@/lib/types";
 
 // The lifecycle chip shown on cards and the detail header. Open questions get the
@@ -18,15 +18,16 @@ const subscribe = () => () => {};
 
 export default function PredictionStatusBadge({
   closesAt,
-  isResolved,
   resolvedAt,
   initialStatus,
+  initialLabel,
 }: {
   closesAt: string;
-  isResolved: boolean;
   resolvedAt?: string;
   initialStatus: PredictionStatus;
+  initialLabel: string;
 }) {
+  const isResolved = initialStatus === "resolved";
   const status = useSyncExternalStore<PredictionStatus>(
     subscribe,
     () => (isResolved ? "resolved" : Date.parse(closesAt) <= Date.now() ? "closed" : "open"),
@@ -49,7 +50,7 @@ export default function PredictionStatusBadge({
   return (
     <span className="inline-flex items-center gap-2">
       <span className="label text-muted">Closes</span>
-      <DDayBadge date={closesAt} initialLabel={dDayLabel(closesAt)} />
+      <DDayBadge date={closesAt} initialLabel={initialLabel} />
     </span>
   );
 }

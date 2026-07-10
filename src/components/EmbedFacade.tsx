@@ -1,11 +1,6 @@
-import type { MediaItem } from "@/lib/types";
+import { EMBED_PLATFORM_LABELS, type MediaItem } from "@/lib/types";
 import { IconArrowUpRight, IconCamera } from "./icons";
 import { stripEmphasis } from "@/lib/text";
-
-const PLATFORM_LABEL: Record<string, string> = {
-  tiktok: "TikTok",
-  youtube: "YouTube",
-};
 
 // "Embed-first" facade: we DON'T rehost the photo and we DON'T load heavy
 // third-party scripts on the critical path. We render a lightweight placeholder
@@ -18,7 +13,7 @@ export default function EmbedFacade({
   item: MediaItem;
   className?: string;
 }) {
-  const platform = item.platform ? PLATFORM_LABEL[item.platform] ?? "source" : "source";
+  const platform = item.platform ? EMBED_PLATFORM_LABELS[item.platform] : "source";
   return (
     <a
       href={item.embedUrl ?? item.credit.url}

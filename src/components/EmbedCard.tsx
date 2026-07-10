@@ -1,13 +1,8 @@
-import type { MediaItem } from "@/lib/types";
+import { EMBED_PLATFORM_LABELS, type MediaItem } from "@/lib/types";
 import { IconArrowUpRight, IconCamera } from "./icons";
 import { stripEmphasis } from "@/lib/text";
 import { isEmbeddablePost } from "@/lib/embeds";
 import LiveEmbed from "./LiveEmbed";
-
-const PLATFORM_LABEL: Record<string, string> = {
-  tiktok: "TikTok",
-  youtube: "YouTube",
-};
 
 // A masonry tile for a video embed used to top up a sparse grid so it never
 // renders with empty columns. When the item is a specific, embeddable post (a
@@ -17,7 +12,7 @@ const PLATFORM_LABEL: Record<string, string> = {
 // lightweight link-out tile. Either way the media is never rehosted: it lives on
 // the source platform and is always credited.
 export default function EmbedCard({ item }: { item: MediaItem }) {
-  const platform = item.platform ? PLATFORM_LABEL[item.platform] ?? "source" : "source";
+  const platform = item.platform ? EMBED_PLATFORM_LABELS[item.platform] : "source";
 
   // Real post → live player in an orientation-sized box (layout="flow"): 16:9 for
   // landscape clips, 3:4 otherwise, so a video tile packs into the masonry like a

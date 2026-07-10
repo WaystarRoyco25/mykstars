@@ -16,7 +16,7 @@ import type { ReactNode } from "react";
 // Balanced *...* pair. The capture group is kept by String.split, so the parts
 // array alternates plain / emphasized / plain / emphasized ... A lone unmatched
 // "*" never matches and stays literal.
-const EMPHASIS = /\*([^*]+)\*/;
+const EMPHASIS = /\*([^*]+)\*/g;
 
 // For visible JSX: returns a ReactNode with each *...* span wrapped in <em>.
 // `italic` is set explicitly so the emphasis renders regardless of CSS resets.
@@ -37,5 +37,5 @@ export function renderEmphasis(text: string): ReactNode {
 // For plain-text contexts (metadata, <img alt>, aria-label, <title>, JSON-LD,
 // OG images): drop the markers and return a bare string.
 export function stripEmphasis(text: string): string {
-  return text.replace(/\*([^*]+)\*/g, "$1");
+  return text.replace(EMPHASIS, "$1");
 }

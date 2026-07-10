@@ -7,11 +7,9 @@ import { IconCheck, IconAlert } from "./icons";
 export default function StatusFlag({
   status,
   on = "dark",
-  size = 13,
 }: {
   status: ArticleStatus;
   on?: "dark" | "light";
-  size?: number;
 }) {
   const neutral = on === "light" ? "text-ink" : "text-bone";
   const muted = on === "light" ? "text-muted-2" : "text-muted";
@@ -19,7 +17,7 @@ export default function StatusFlag({
   if (status === "confirmed") {
     return (
       <span className={`label ${neutral} inline-flex items-center gap-1.5`}>
-        <IconCheck size={size} />
+        <IconCheck size={13} />
         Confirmed
       </span>
     );
@@ -27,7 +25,7 @@ export default function StatusFlag({
   if (status === "unverified") {
     return (
       <span className="label text-crimson inline-flex items-center gap-1.5">
-        <IconAlert size={size} />
+        <IconAlert size={13} />
         Unverified
       </span>
     );

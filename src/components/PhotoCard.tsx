@@ -4,6 +4,7 @@ import { aspectClass, orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
 import { renderEmphasis } from "@/lib/text";
 import PhotoMedia from "./PhotoMedia";
+import { NOW } from "@/lib/seed";
 
 // A single gallery brick in the column-balanced masonry: the cover fills its box
 // and crops to fit (aspectClass sets the box shape per orientation), with a black
@@ -12,10 +13,10 @@ import PhotoMedia from "./PhotoMedia";
 // so bricks of different heights interlock with no empty space (see GalleryGrid).
 export default function PhotoCard({
   gallery,
-  priority = false,
+  preload = false,
 }: {
   gallery: Gallery;
-  priority?: boolean;
+  preload?: boolean;
 }) {
   const orientation = orientationOf(gallery.cover);
   // Keep faces in frame as covers crop to their cell.
@@ -34,7 +35,7 @@ export default function PhotoCard({
       <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
         <PhotoMedia
           item={gallery.cover}
-          priority={priority}
+          preload={preload}
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
           position={position}
         />
@@ -50,7 +51,7 @@ export default function PhotoCard({
           {renderEmphasis(gallery.title)}
         </h3>
         <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
-          <span className="shrink-0 whitespace-nowrap">{relativeTime(gallery.date)}</span>
+          <span className="shrink-0 whitespace-nowrap">{relativeTime(gallery.date, NOW)}</span>
           <span aria-hidden className="shrink-0">·</span>
           <span className="min-w-0 truncate">via {gallery.source.name}</span>
         </div>

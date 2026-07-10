@@ -13,129 +13,23 @@
 // find the calls, split their top-level arguments, and read the date slots.
 // A call it cannot parse is a loud failure, never a silent skip. Known
 // limitation: a new clip factory (e.g. TikTok) needs a matching entry in
-// FACTORIES below AND in the callRe regex.
+// FACTORIES below.
 //
 // Usage:  node scripts/check-freshness.mjs [file ...]   (defaults to src/lib/seed.ts)
 
 import { readFileSync } from "node:fs";
+import { CODE, contextMap, lineAt, lineStarts, parseNow } from "./source-scanner.mjs";
 
 const MAX_AGE_DAYS = 180; // all clips are YouTube
 const NOW_DRIFT_WARN_DAYS = 14;
 const DAY_MS = 86_400_000;
 
-// factory name -> { platform, dateArg (0-based), arity, evergreenArg }
+// factory name -> { dateArg (0-based), arity, evergreenArg }
 const FACTORIES = {
-  yt: { platform: "youtube", dateArg: 3, arity: 6, evergreenArg: 6 },
-  tv: { platform: "youtube", dateArg: 4, arity: 7, evergreenArg: 7 },
+  yt: { dateArg: 3, arity: 6, evergreenArg: 6 },
+  tv: { dateArg: 4, arity: 7, evergreenArg: 7 },
 };
-
-const CODE = 0;
-const COMMENT = 1;
-const STRING = 2;
-
-// One pass over the source classifying every index as code / comment / string,
-// with the same string- and template-expression awareness as check-style.mjs.
-function contextMap(src) {
-  const map = new Uint8Array(src.length);
-  let ctx = "code";
-  let inTmplExpr = false;
-  let braceDepth = 0;
-  for (let i = 0; i < src.length; i++) {
-    const c = src[i];
-    const next = src[i + 1];
-    if (ctx === "line") {
-      map[i] = COMMENT;
-      if (c === "\n") ctx = "code";
-      continue;
-    }
-    if (ctx === "block") {
-      map[i] = COMMENT;
-      if (c === "*" && next === "/") {
-        map[i + 1] = COMMENT;
-        i++;
-        ctx = "code";
-      }
-      continue;
-    }
-    if (ctx === "sq" || ctx === "dq" || ctx === "tmpl") {
-      map[i] = STRING;
-      if (c === "\\") {
-        if (i + 1 < src.length) map[i + 1] = STRING;
-        i++;
-        continue;
-      }
-      if (ctx === "sq" && c === "'") ctx = "code";
-      else if (ctx === "dq" && c === '"') ctx = "code";
-      else if (ctx === "tmpl") {
-        if (c === "`") ctx = "code";
-        else if (c === "$" && next === "{") {
-          map[i + 1] = CODE;
-          i++;
-          ctx = "code";
-          inTmplExpr = true;
-          braceDepth = 1;
-        }
-      }
-      continue;
-    }
-    // ctx === "code"
-    map[i] = CODE;
-    if (c === "/" && next === "/") {
-      map[i] = COMMENT;
-      ctx = "line";
-      continue;
-    }
-    if (c === "/" && next === "*") {
-      map[i] = COMMENT;
-      ctx = "block";
-      continue;
-    }
-    if (c === "'") {
-      map[i] = STRING;
-      ctx = "sq";
-      continue;
-    }
-    if (c === '"') {
-      map[i] = STRING;
-      ctx = "dq";
-      continue;
-    }
-    if (c === "`") {
-      map[i] = STRING;
-      ctx = "tmpl";
-      continue;
-    }
-    if (inTmplExpr) {
-      if (c === "{") braceDepth++;
-      else if (c === "}") {
-        braceDepth--;
-        if (braceDepth === 0) {
-          inTmplExpr = false;
-          map[i] = STRING;
-          ctx = "tmpl";
-        }
-      }
-    }
-  }
-  return map;
-}
-
-function lineStarts(src) {
-  const starts = [0];
-  for (let i = 0; i < src.length; i++) if (src[i] === "\n") starts.push(i + 1);
-  return starts;
-}
-
-function lineAt(starts, idx) {
-  let lo = 0;
-  let hi = starts.length - 1;
-  while (lo < hi) {
-    const mid = (lo + hi + 1) >> 1;
-    if (starts[mid] <= idx) lo = mid;
-    else hi = mid - 1;
-  }
-  return lo + 1;
-}
+const FACTORY_NAMES = Object.keys(FACTORIES).join("|");
 
 // Split the text of an argument list on top-level commas (paren/bracket/brace
 // depth 0, and never inside a string per the context map).
@@ -173,20 +67,11 @@ function scanFile(file) {
     failures.push({ line: lineAt(starts, idx), kind, detail });
 
   // --- NOW ---
-  const nowMatch = /export const NOW = "([^"]+)"/.exec(src);
-  if (!nowMatch) {
-    console.error(`${file}: cannot find \`export const NOW = "..."\` — nothing to check against.`);
-    process.exit(1);
-  }
-  const nowMs = Date.parse(nowMatch[1]);
-  if (Number.isNaN(nowMs)) {
-    console.error(`${file}: NOW ("${nowMatch[1]}") does not parse as a date.`);
-    process.exit(1);
-  }
+  const { iso: nowIso, ms: nowMs } = parseNow(file, src);
   const driftDays = Math.abs(Date.now() - nowMs) / DAY_MS;
   if (driftDays > NOW_DRIFT_WARN_DAYS) {
     warnings.push(
-      `NOW (${nowMatch[1]}) is ${Math.round(driftDays)} days from the real clock — ` +
+      `NOW (${nowIso}) is ${Math.round(driftDays)} days from the real clock — ` +
         `run the NOW-bump ritual (docs/roster-playbook.md) with this refresh.`,
     );
   }
@@ -195,7 +80,7 @@ function scanFile(file) {
 
   // --- clip factory calls ---
   let clipCount = 0;
-  const callRe = /\b(yt|tv)\(/g;
+  const callRe = new RegExp(`\\b(${FACTORY_NAMES})\\(`, "g");
   let m;
   while ((m = callRe.exec(src)) !== null) {
     const nameIdx = m.index;

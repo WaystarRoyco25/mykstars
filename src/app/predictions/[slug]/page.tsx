@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import {
-  allPredictionSlugs,
   effectiveStatus,
   getPrediction,
   getPredictionTally,
@@ -11,7 +10,8 @@ import {
   VOTER_COOKIE,
 } from "@/lib/data";
 import { PILLAR_LABELS, PREDICTION_CATEGORY_LABELS } from "@/lib/types";
-import { absoluteDate } from "@/lib/format";
+import { absoluteDate, dDayLabel } from "@/lib/format";
+import { NOW } from "@/lib/seed";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
 import PredictionOptions from "@/components/PredictionOptions";
@@ -19,18 +19,9 @@ import PredictionStatusBadge from "@/components/PredictionStatusBadge";
 import VoteForm from "@/components/VoteForm";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
 
-// Known forecast slugs; unknown ones 404 via notFound() below. The page reads
-// the voter cookie, so it renders dynamically per request — live tallies, no
-// rebuild needed.
-export function generateStaticParams() {
-  return allPredictionSlugs().map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/predictions/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const prediction = await getPrediction(slug);
   if (!prediction) return { title: "Not found" };
@@ -49,21 +40,21 @@ export async function generateMetadata({
 
 export default async function PredictionDetailPage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: PageProps<"/predictions/[slug]">) {
   const { slug } = await params;
   const prediction = await getPrediction(slug);
   if (!prediction) notFound();
 
-  const tally = await getPredictionTally(slug);
-  if (!tally) notFound();
   const status = effectiveStatus(prediction);
 
   // The visitor's existing pick (anonymous, cookie-scoped). Reading the cookie
-  // opts this route into dynamic rendering, so the tally above stays live.
+  // opts this route into dynamic rendering, so its live reads stay current.
   const voterId = (await cookies()).get(VOTER_COOKIE)?.value;
-  const votedOptionId = status === "open" ? await getVotedOptionId(slug, voterId) : null;
+  const [tally, votedOptionId] = await Promise.all([
+    getPredictionTally(slug),
+    status === "open" ? getVotedOptionId(slug, voterId) : Promise.resolve(null),
+  ]);
+  if (!tally) notFound();
 
   const winningLabel = prediction.resolution
     ? (prediction.options.find((o) => o.id === prediction.resolution!.winningOptionId)?.label ?? "")
@@ -93,9 +84,9 @@ export default async function PredictionDetailPage({
           </span>
           <PredictionStatusBadge
             closesAt={prediction.closesAt}
-            isResolved={status === "resolved"}
             resolvedAt={prediction.resolution?.resolvedAt}
             initialStatus={status}
+            initialLabel={dDayLabel(prediction.closesAt, NOW)}
           />
         </div>
         <h1 className="font-serif text-3xl sm:text-4xl leading-tight">

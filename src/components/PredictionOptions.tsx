@@ -16,56 +16,63 @@ export default function PredictionOptions({
   tally: PredictionTally;
   status: PredictionStatus;
 }) {
-  const byId = new Map(tally.perOption.map((o) => [o.optionId, o]));
-  const winningId = prediction.resolution?.winningOptionId;
-
-  // The fan favourite among open/closed questions (the current highest share).
-  let leadingId: string | undefined;
-  if (status !== "resolved" && tally.totalVotes > 0) {
-    leadingId = tally.perOption.reduce((best, o) => (o.votes > best.votes ? o : best)).optionId;
-  }
-
   const hidden = !tally.revealed && status !== "resolved";
+  if (hidden) {
+    // The participation nudge shown while the breakdown is still under wraps.
+    const nudge =
+      tally.totalVotes === 0
+        ? "Be the first to call it."
+        : `${tally.totalVotes.toLocaleString("en-US")} ${
+            tally.totalVotes === 1 ? "fan has" : "fans have"
+          } weighed in. The breakdown reveals at ${prediction.tallyVisibleThreshold} votes.`;
 
-  // The participation nudge shown while the breakdown is still under wraps.
-  const nudge =
-    tally.totalVotes === 0
-      ? "Be the first to call it."
-      : `${tally.totalVotes.toLocaleString("en-US")} ${
-          tally.totalVotes === 1 ? "fan has" : "fans have"
-        } weighed in. The breakdown reveals at ${prediction.tallyVisibleThreshold} votes.`;
+    // The VoteForm already lists open options as selectable buttons, so avoid a
+    // second, non-interactive copy of the same choices.
+    if (status === "open") {
+      return <p className="text-muted text-sm leading-relaxed">{nudge}</p>;
+    }
 
-  // Open + below the reveal threshold: the VoteForm below already lists every
-  // option as a selectable button, so repeating them here would just be a
-  // second, non-interactive copy of the same choices. Show only the nudge.
-  if (hidden && status === "open") {
-    return <p className="text-muted text-sm leading-relaxed">{nudge}</p>;
+    return (
+      <div className="border-t border-line">
+        {prediction.options.map((option) => (
+          <div
+            key={option.id}
+            className="border-b border-line py-3 font-serif text-base sm:text-lg text-bone"
+          >
+            {renderEmphasis(option.label)}
+          </div>
+        ))}
+        <p className="text-muted text-sm mt-3 leading-relaxed">{nudge}</p>
+      </div>
+    );
   }
+
+  const byId = new Map(tally.perOption.map((option) => [option.optionId, option]));
+  const winningId = prediction.resolution?.winningOptionId;
+  const leadingId =
+    status !== "resolved" && tally.totalVotes > 0
+      ? tally.perOption.reduce((best, option) => (option.votes > best.votes ? option : best)).optionId
+      : undefined;
 
   return (
     <div className="border-t border-line">
-      {prediction.options.map((o) =>
-        hidden ? (
-          <div
-            key={o.id}
-            className="border-b border-line py-3 font-serif text-base sm:text-lg text-bone"
-          >
-            {renderEmphasis(o.label)}
-          </div>
-        ) : (
-          <div key={o.id} className="border-b border-line">
-            <TallyBar
-              label={o.label}
-              artistSlug={o.artistSlug}
-              pct={byId.get(o.id)?.pct ?? 0}
-              votes={byId.get(o.id)?.votes ?? 0}
-              highlight={o.id === winningId ? "winner" : o.id === leadingId ? "leading" : undefined}
-            />
-          </div>
-        ),
-      )}
-
-      {hidden && <p className="text-muted text-sm mt-3 leading-relaxed">{nudge}</p>}
+      {prediction.options.map((option) => (
+        <div key={option.id} className="border-b border-line">
+          <TallyBar
+            label={option.label}
+            artistSlug={option.artistSlug}
+            pct={byId.get(option.id)?.pct ?? 0}
+            votes={byId.get(option.id)?.votes ?? 0}
+            highlight={
+              option.id === winningId
+                ? "winner"
+                : option.id === leadingId
+                  ? "leading"
+                  : undefined
+            }
+          />
+        </div>
+      ))}
     </div>
   );
 }

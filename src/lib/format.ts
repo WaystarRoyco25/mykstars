@@ -1,9 +1,7 @@
-import { NOW } from "./seed";
-
 // Relative time ("2h ago"), computed against a fixed reference so server-rendered
 // output is deterministic (no hydration drift). When real data lands, pass the
 // real current time or compute on the server only.
-export function relativeTime(iso: string, nowIso: string = NOW): string {
+export function relativeTime(iso: string, nowIso: string): string {
   const then = new Date(iso).getTime();
   const now = new Date(nowIso).getTime();
   const sec = Math.max(0, Math.round((now - then) / 1000));
@@ -17,13 +15,15 @@ export function relativeTime(iso: string, nowIso: string = NOW): string {
   return absoluteDate(iso);
 }
 
+const SEOUL_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: "Asia/Seoul",
+});
+
 export function absoluteDate(iso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "Asia/Seoul",
-  }).format(new Date(iso));
+  return SEOUL_DATE_FORMATTER.format(new Date(iso));
 }
 
 // --- D-Day schedule helpers ---------------------------------------------------
@@ -32,19 +32,38 @@ export function absoluteDate(iso: string): string {
 // displayed day matches what was announced, with no timezone drift — a US
 // evening show never slips to "tomorrow" the way Asia/Seoul formatting would.
 const MS_PER_DAY = 86_400_000;
+const UTC_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+const UTC_MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+const UTC_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function utcDate(iso: string): Date {
+  return new Date(`${iso.slice(0, 10)}T00:00:00Z`);
+}
 
 function dayStartUTC(iso: string): number {
-  return Date.parse(`${iso.slice(0, 10)}T00:00:00Z`);
+  return utcDate(iso).getTime();
 }
 
 // Whole days from `now` until `dateIso` (negative once the date has passed).
-// Defaults to the fixed NOW so server output stays deterministic, matching
-// relativeTime above; DDayBadge re-runs this against the real clock on mount.
-export function daysUntil(dateIso: string, nowIso: string = NOW): number {
+// Server callers pass the fixed site clock; DDayBadge passes the real client clock.
+function daysUntil(dateIso: string, nowIso: string): number {
   return Math.round((dayStartUTC(dateIso) - dayStartUTC(nowIso)) / MS_PER_DAY);
 }
 
-export function dDayLabel(dateIso: string, nowIso: string = NOW): string {
+export function dDayLabel(dateIso: string, nowIso: string): string {
   const d = daysUntil(dateIso, nowIso);
   if (d > 0) return `D-${d}`;
   if (d === 0) return "D-DAY";
@@ -52,13 +71,8 @@ export function dDayLabel(dateIso: string, nowIso: string = NOW): string {
 }
 
 // "Aug 15, 2026" — formatted in UTC so the date-only value renders verbatim.
-export function eventDate(dateIso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${dateIso.slice(0, 10)}T00:00:00Z`));
+function eventDate(dateIso: string): string {
+  return UTC_DATE_FORMATTER.format(utcDate(dateIso));
 }
 
 // "Aug 15 to 16, 2026" for a multi-night run; falls back to a single date. A
@@ -68,12 +82,8 @@ export function eventDateRange(startIso: string, endIso?: string): string {
   if (!endIso) return eventDate(startIso);
   const sameMonth = startIso.slice(0, 7) === endIso.slice(0, 7);
   if (sameMonth) {
-    const startDay = new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      timeZone: "UTC",
-    }).format(new Date(`${startIso.slice(0, 10)}T00:00:00Z`));
-    const end = new Date(`${endIso.slice(0, 10)}T00:00:00Z`);
+    const startDay = UTC_MONTH_DAY_FORMATTER.format(utcDate(startIso));
+    const end = utcDate(endIso);
     return `${startDay} to ${end.getUTCDate()}, ${end.getUTCFullYear()}`;
   }
   return `${eventDate(startIso)} to ${eventDate(endIso)}`;
@@ -81,9 +91,5 @@ export function eventDateRange(startIso: string, endIso?: string): string {
 
 // "August 2026" — the month-group heading on the schedule page.
 export function monthLabel(dateIso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${dateIso.slice(0, 10)}T00:00:00Z`));
+  return UTC_MONTH_FORMATTER.format(utcDate(dateIso));
 }

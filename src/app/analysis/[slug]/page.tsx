@@ -14,9 +14,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/analysis/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticle(slug);
   if (!article) return { title: "Article not found" };
@@ -31,19 +29,21 @@ export async function generateMetadata({
 
 export default async function ArticlePage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: PageProps<"/analysis/[slug]">) {
   const { slug } = await params;
   const article = await getArticle(slug);
   if (!article) notFound();
 
-  const relatedArtists = (
-    await Promise.all((article.related?.artistSlugs ?? []).map((s) => getArtist(s)))
-  ).filter((a): a is NonNullable<typeof a> => Boolean(a));
-  const relatedGalleries = (
-    await Promise.all((article.related?.gallerySlugs ?? []).map((s) => getGallery(s)))
-  ).filter((g): g is NonNullable<typeof g> => Boolean(g));
+  const [artistResults, galleryResults] = await Promise.all([
+    Promise.all((article.related?.artistSlugs ?? []).map((s) => getArtist(s))),
+    Promise.all((article.related?.gallerySlugs ?? []).map((s) => getGallery(s))),
+  ]);
+  const relatedArtists = artistResults.filter(
+    (artist): artist is NonNullable<typeof artist> => Boolean(artist),
+  );
+  const relatedGalleries = galleryResults.filter(
+    (gallery): gallery is NonNullable<typeof gallery> => Boolean(gallery),
+  );
 
   return (
     <article className="mx-auto max-w-2xl px-5 py-10">

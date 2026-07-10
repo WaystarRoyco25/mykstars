@@ -21,7 +21,7 @@ import type {
   SocialLink,
   StarEvent,
 } from "./types";
-import { PILLAR_ORDER } from "./types";
+import { EMBED_PLATFORM_LABELS } from "./types";
 
 // ---------------------------------------------------------------------------
 // Data access layer (the "CMS seam").
@@ -73,6 +73,11 @@ const BENCHED_SLUGS: ReadonlySet<string> = new Set(
   artists.filter((a) => !isFeatured(a)).map((a) => a.slug),
 );
 
+const ARTIST_BY_SLUG = new Map(artists.map((artist) => [artist.slug, artist]));
+const PREDICTION_BY_SLUG = new Map(
+  predictions.map((prediction) => [prediction.slug, prediction]),
+);
+
 // True when at least one slug belongs to a featured artist. Slugs that don't
 // resolve to a roster record count as featured — rankings, events and clips may
 // name people we don't cover, and those must keep rendering.
@@ -87,7 +92,7 @@ export function hasFeaturedArtist(g: Gallery): boolean {
   return anyFeaturedSlug(g.artistSlugs);
 }
 
-export async function getGalleries(): Promise<Gallery[]> {
+async function getGalleries(): Promise<Gallery[]> {
   return byDateDesc(galleries);
 }
 
@@ -147,7 +152,7 @@ export async function getArchiveGalleries(opts?: {
   }
 }
 
-export async function getArtists(): Promise<Artist[]> {
+async function getArtists(): Promise<Artist[]> {
   return [...artists].sort((a, b) => a.name.localeCompare(b.name));
 }
 
@@ -159,52 +164,15 @@ export async function getArtistsByPillar(pillar: Pillar): Promise<Artist[]> {
     .filter((a) => (a.pillars ?? ["k-pop"]).includes(pillar));
 }
 
-// People in focus on the home page: a pillar-spread teaser. Round-robins across
-// PILLAR_ORDER (one fresh artist per pillar per round, A to Z within a pillar),
-// de-duping cross-pillar names by slug, then attaches each one's photo-set count.
-export async function getArtistsInFocus(
-  limit = 6,
-): Promise<{ artist: Artist; photoSets: number }[]> {
-  const byPillar = await Promise.all(PILLAR_ORDER.map((p) => getArtistsByPillar(p)));
-  const cursors = byPillar.map(() => 0);
-  const picked: Artist[] = [];
-  const seen = new Set<string>();
-  let progressed = true;
-  while (picked.length < limit && progressed) {
-    progressed = false;
-    for (let i = 0; i < byPillar.length && picked.length < limit; i++) {
-      const list = byPillar[i];
-      while (cursors[i] < list.length && seen.has(list[cursors[i]].slug)) cursors[i]++;
-      if (cursors[i] < list.length) {
-        const a = list[cursors[i]++];
-        seen.add(a.slug);
-        picked.push(a);
-        progressed = true;
-      }
-    }
-  }
-  return Promise.all(
-    picked.map(async (a) => ({
-      artist: a,
-      photoSets: (await getGalleriesByArtist(a.slug)).length,
-    })),
-  );
-}
-
 export async function getArtist(slug: string): Promise<Artist | undefined> {
-  return artists.find((a) => a.slug === slug);
+  return ARTIST_BY_SLUG.get(slug);
 }
-
-const PLATFORM_NAMES: Record<EmbedPlatform, string> = {
-  tiktok: "TikTok",
-  youtube: "YouTube",
-};
 
 // Official-account tiles for an artist. We only link out (the media stays on the
 // source platform, always credited) — the embed-first, legally-safe pattern.
 // Restricted to platforms the site still embeds: the retired Instagram/X handles
 // stay in the seed as verification records and never render.
-export function artistEmbeds(artist: Artist): MediaItem[] {
+function artistEmbeds(artist: Artist): MediaItem[] {
   return (artist.social ?? [])
     .filter(
       (s): s is SocialLink & { platform: EmbedPlatform } =>
@@ -216,7 +184,7 @@ export function artistEmbeds(artist: Artist): MediaItem[] {
         kind: "embed",
         platform: s.platform,
         embedUrl: s.url,
-        alt: `${artist.name} on ${PLATFORM_NAMES[s.platform]}`,
+        alt: `${artist.name} on ${EMBED_PLATFORM_LABELS[s.platform]}`,
         credit: { name: s.handle, url: s.url, kind: "embed" },
       }),
     );
@@ -244,10 +212,11 @@ function distinctArtistSlugs(galleries: Gallery[]): string[] {
 // cap. Sync — reads the already-loaded seed arrays.
 function artistClipEmbeds(slugs: string[], cap: number): MediaItem[] {
   if (cap <= 0) return [];
+  const slugSet = new Set(slugs);
   return clips
     .filter(
       (c) =>
-        c.artistSlugs.some((s) => slugs.includes(s)) &&
+        c.artistSlugs.some((s) => slugSet.has(s)) &&
         anyFeaturedSlug(c.artistSlugs),
     )
     .sort((a, b) => (a.date < b.date ? 1 : -1))
@@ -305,7 +274,7 @@ export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaIt
     if (push(m)) return out;
   }
   for (const slug of slugs) {
-    const artist = artists.find((a) => a.slug === slug);
+    const artist = ARTIST_BY_SLUG.get(slug);
     if (!artist || !isFeatured(artist)) continue;
     for (const m of artistEmbeds(artist)) {
       if (push(m)) return out;
@@ -386,7 +355,7 @@ export async function getEvents(opts?: {
 // Newest-first like galleries; clips never enter the photo archive and generate
 // no route.
 // ---------------------------------------------------------------------------
-export async function getClips(opts?: {
+async function getClips(opts?: {
   platform?: EmbedPlatform;
   genre?: ClipGenre;
   pillar?: Pillar;
@@ -415,10 +384,6 @@ export async function getVarietyClips(limit = 12): Promise<Clip[]> {
   return (await getClips({ genre: "variety" }))
     .filter((c) => anyFeaturedSlug(c.artistSlugs))
     .slice(0, limit);
-}
-
-export async function getClipsByArtist(artistSlug: string): Promise<Clip[]> {
-  return byDateDesc(clips).filter((c) => c.artistSlugs.includes(artistSlug));
 }
 
 // Synchronous slug lists for generateStaticParams.
@@ -459,18 +424,31 @@ const PREDICTION_STATUS_ORDER: Record<PredictionStatus, number> = {
   resolved: 2,
 };
 
-// Live counts per option from the `prediction_tallies` view. Degrades to an
-// empty map (→ "no votes yet") when Supabase is unconfigured or errors, so a
-// tally read never throws and the page still renders.
-async function fetchVoteCounts(slug: string): Promise<Map<string, number>> {
+// Live counts per prediction and option from the `prediction_tallies` view.
+// Degrades to an empty map (→ "no votes yet") when Supabase is unconfigured
+// or errors, so a tally read never throws and the page still renders.
+async function fetchVoteCounts(
+  slugs: string[],
+): Promise<Map<string, Map<string, number>>> {
+  if (slugs.length === 0) return new Map();
   const supabase = getSupabase();
   if (!supabase) return new Map();
   const { data, error } = await supabase
     .from("prediction_tallies")
-    .select("option_id, votes")
-    .eq("prediction_slug", slug);
+    .select("prediction_slug, option_id, votes")
+    .in("prediction_slug", slugs);
   if (error || !data) return new Map();
-  return new Map(data.map((r) => [r.option_id as string, Number(r.votes)]));
+  const counts = new Map<string, Map<string, number>>();
+  for (const row of data) {
+    const slug = row.prediction_slug as string;
+    let byOption = counts.get(slug);
+    if (!byOption) {
+      byOption = new Map();
+      counts.set(slug, byOption);
+    }
+    byOption.set(row.option_id as string, Number(row.votes));
+  }
+  return counts;
 }
 
 function buildTally(p: Prediction, counts: Map<string, number>): PredictionTally {
@@ -526,13 +504,25 @@ export async function getOpenPredictions(opts?: { pillar?: Pillar }): Promise<Pr
 }
 
 export async function getPrediction(slug: string): Promise<Prediction | undefined> {
-  return predictions.find((p) => p.slug === slug);
+  return PREDICTION_BY_SLUG.get(slug);
+}
+
+export async function getPredictionTallies(
+  predictionList: Prediction[],
+): Promise<PredictionTally[]> {
+  const counts = await fetchVoteCounts([
+    ...new Set(predictionList.map((prediction) => prediction.slug)),
+  ]);
+  return predictionList.map((prediction) =>
+    buildTally(prediction, counts.get(prediction.slug) ?? new Map()),
+  );
 }
 
 export async function getPredictionTally(slug: string): Promise<PredictionTally | undefined> {
-  const p = predictions.find((x) => x.slug === slug);
-  if (!p) return undefined;
-  return buildTally(p, await fetchVoteCounts(slug));
+  const prediction = PREDICTION_BY_SLUG.get(slug);
+  if (!prediction) return undefined;
+  const [tally] = await getPredictionTallies([prediction]);
+  return tally;
 }
 
 // Cookie carrying the anonymous voter id (set by the castVote action). Exported
@@ -556,8 +546,4 @@ export async function getVotedOptionId(
     .eq("voter_id", voterId)
     .maybeSingle();
   return (data?.option_id as string | undefined) ?? null;
-}
-
-export function allPredictionSlugs(): string[] {
-  return predictions.map((p) => p.slug);
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getArchiveGalleries, getArtist } from "@/lib/data";
 import { pillarFromSlug } from "@/lib/types";
 import type { GallerySort } from "@/lib/types";
+import { singleParam } from "@/lib/params";
 import ArchiveFilters from "@/components/ArchiveFilters";
 import GalleryGrid from "@/components/GalleryGrid";
 
@@ -13,14 +14,11 @@ export const metadata: Metadata = {
 
 export default async function PhotosPage({
   searchParams,
-}: {
-  searchParams: Promise<{ pillar?: string; artist?: string; sort?: string }>;
-}) {
-  const {
-    pillar: pillarParam,
-    artist: artistParam,
-    sort: sortParam,
-  } = await searchParams;
+}: PageProps<"/photos">) {
+  const query = await searchParams;
+  const pillarParam = singleParam(query.pillar);
+  const artistParam = singleParam(query.artist);
+  const sortParam = singleParam(query.sort);
 
   // Validate page-side: unknown values are dropped, so a junk query degrades to
   // the unfiltered view rather than 404ing.
@@ -62,7 +60,7 @@ export default async function PhotosPage({
       </p>
 
       {galleries.length > 0 ? (
-        <GalleryGrid galleries={galleries} priorityCount={3} />
+        <GalleryGrid galleries={galleries} preloadCount={3} />
       ) : (
         <p className="text-muted">No photo sets match this filter yet.</p>
       )}

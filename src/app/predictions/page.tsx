@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { getPredictions } from "@/lib/data";
+import { getPredictions, getPredictionTallies } from "@/lib/data";
 import { pillarFromSlug } from "@/lib/types";
 import type { Pillar } from "@/lib/types";
 import PredictionCard from "@/components/PredictionCard";
 import PredictionFilter from "@/components/PredictionFilter";
 import JsonLd from "@/components/JsonLd";
 import { stripEmphasis } from "@/lib/text";
+import { singleParam } from "@/lib/params";
 
 export const metadata: Metadata = {
   title: "Fan Forecast",
@@ -15,13 +16,14 @@ export const metadata: Metadata = {
 
 export default async function PredictionsPage({
   searchParams,
-}: {
-  searchParams: Promise<{ pillar?: string }>;
-}) {
-  const { pillar: pillarParam } = await searchParams;
+}: PageProps<"/predictions">) {
+  const query = await searchParams;
+  const pillarParam = singleParam(query.pillar);
   const activePillar: Pillar | null = pillarParam ? (pillarFromSlug(pillarParam) ?? null) : null;
 
   const predictions = await getPredictions({ pillar: activePillar ?? undefined });
+  const tallies = await getPredictionTallies(predictions);
+  const tallyBySlug = new Map(tallies.map((tally) => [tally.predictionSlug, tally]));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -55,7 +57,7 @@ export default async function PredictionsPage({
       {predictions.length > 0 ? (
         <div className="grid gap-5 sm:grid-cols-2">
           {predictions.map((p) => (
-            <PredictionCard key={p.slug} prediction={p} />
+            <PredictionCard key={p.slug} prediction={p} tally={tallyBySlug.get(p.slug)!} />
           ))}
         </div>
       ) : (

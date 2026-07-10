@@ -17,119 +17,12 @@
 // Usage:  node scripts/check-articles.mjs [file ...]   (defaults to src/lib/seed.ts)
 
 import { readFileSync } from "node:fs";
+import { CODE, contextMap, lineAt, lineStarts, parseNow } from "./source-scanner.mjs";
 
 const BYLINE = "MyKStars"; // docs/analysis-playbook.md rule 12: exactly this
 const DAY_MS = 86_400_000;
 const RUN_WINDOW_DAYS = 45; // proxy for "the latest publishing run"
 const RUN_FLOOR = 10; // playbook rule 13
-
-const CODE = 0;
-const COMMENT = 1;
-const STRING = 2;
-
-// One pass over the source classifying every index as code / comment / string
-// (ported from check-freshness.mjs).
-function contextMap(src) {
-  const map = new Uint8Array(src.length);
-  let ctx = "code";
-  let inTmplExpr = false;
-  let braceDepth = 0;
-  for (let i = 0; i < src.length; i++) {
-    const c = src[i];
-    const next = src[i + 1];
-    if (ctx === "line") {
-      map[i] = COMMENT;
-      if (c === "\n") ctx = "code";
-      continue;
-    }
-    if (ctx === "block") {
-      map[i] = COMMENT;
-      if (c === "*" && next === "/") {
-        map[i + 1] = COMMENT;
-        i++;
-        ctx = "code";
-      }
-      continue;
-    }
-    if (ctx === "sq" || ctx === "dq" || ctx === "tmpl") {
-      map[i] = STRING;
-      if (c === "\\") {
-        if (i + 1 < src.length) map[i + 1] = STRING;
-        i++;
-        continue;
-      }
-      if (ctx === "sq" && c === "'") ctx = "code";
-      else if (ctx === "dq" && c === '"') ctx = "code";
-      else if (ctx === "tmpl") {
-        if (c === "`") ctx = "code";
-        else if (c === "$" && next === "{") {
-          map[i + 1] = CODE;
-          i++;
-          ctx = "code";
-          inTmplExpr = true;
-          braceDepth = 1;
-        }
-      }
-      continue;
-    }
-    // ctx === "code"
-    map[i] = CODE;
-    if (c === "/" && next === "/") {
-      map[i] = COMMENT;
-      ctx = "line";
-      continue;
-    }
-    if (c === "/" && next === "*") {
-      map[i] = COMMENT;
-      ctx = "block";
-      continue;
-    }
-    if (c === "'") {
-      map[i] = STRING;
-      ctx = "sq";
-      continue;
-    }
-    if (c === '"') {
-      map[i] = STRING;
-      ctx = "dq";
-      continue;
-    }
-    if (c === "`") {
-      map[i] = STRING;
-      ctx = "tmpl";
-      continue;
-    }
-    if (inTmplExpr) {
-      if (c === "{") braceDepth++;
-      else if (c === "}") {
-        braceDepth--;
-        if (braceDepth === 0) {
-          inTmplExpr = false;
-          map[i] = STRING;
-          ctx = "tmpl";
-        }
-      }
-    }
-  }
-  return map;
-}
-
-function lineStarts(src) {
-  const starts = [0];
-  for (let i = 0; i < src.length; i++) if (src[i] === "\n") starts.push(i + 1);
-  return starts;
-}
-
-function lineAt(starts, idx) {
-  let lo = 0;
-  let hi = starts.length - 1;
-  while (lo < hi) {
-    const mid = (lo + hi + 1) >> 1;
-    if (starts[mid] <= idx) lo = mid;
-    else hi = mid - 1;
-  }
-  return lo + 1;
-}
 
 // Find `export const <name>: <Type>[] = [` and return the content span of the
 // array literal (exclusive of its brackets). A missing anchor is a hard fail.
@@ -248,16 +141,7 @@ function scanFile(file) {
     failures.push({ line: lineAt(starts, idx), kind, detail });
 
   // --- NOW ---
-  const nowMatch = /export const NOW = "([^"]+)"/.exec(src);
-  if (!nowMatch) {
-    console.error(`${file}: cannot find \`export const NOW = "..."\` — nothing to check against.`);
-    process.exit(1);
-  }
-  const nowMs = Date.parse(nowMatch[1]);
-  if (Number.isNaN(nowMs)) {
-    console.error(`${file}: NOW ("${nowMatch[1]}") does not parse as a date.`);
-    process.exit(1);
-  }
+  const { ms: nowMs } = parseNow(file, src);
 
   // --- slug allow-sets ---
   const slugSet = (name) => {
