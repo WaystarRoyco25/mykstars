@@ -25,6 +25,11 @@ export async function generateMetadata({
   return {
     title,
     description,
+    // Archived sets stay reachable for inbound links but leave the index;
+    // follow keeps the crawl paths to artists and analysis alive.
+    ...(gallery.publicationState === "archived"
+      ? { robots: { index: false, follow: true } }
+      : {}),
     openGraph: { title, description, type: "article" },
   };
 }
@@ -77,6 +82,13 @@ export default async function GalleryPage({
           <AttributionBadge source={gallery.source} />
         </div>
       </header>
+
+      {gallery.publicationState === "archived" && (
+        <p className="label text-muted border border-line px-3 py-2 mb-6 inline-block">
+          Archived set. Placeholder galleries left the listings while permitted
+          photography is sourced.
+        </p>
+      )}
 
       <GalleryViewer media={gallery.media} />
 

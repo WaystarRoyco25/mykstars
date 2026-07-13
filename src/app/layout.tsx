@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -22,14 +23,14 @@ export const metadata: Metadata = {
     template: "%s · MyKStars",
   },
   description:
-    "The world's photo-first K-Culture newspaper and magazine: the freshest organized, credited photos of Korean celebrities (airport, red carpet, comeback, event and pictorial), plus credible analysis.",
+    "MyKStars covers Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion: credited coverage of the stars that matter, from official video and schedules to fan forecasts and credible analysis.",
   applicationName: "MyKStars",
   openGraph: {
     siteName: "MyKStars",
     type: "website",
     title: "MyKStars: K-stars, in focus",
     description:
-      "The freshest organized, credited photos of Korean celebrities, plus credible analysis.",
+      "Credited Korean celebrity coverage: official video, schedules, fan forecasts and credible analysis.",
   },
   twitter: { card: "summary_large_image" },
   robots: {
@@ -64,6 +65,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   );

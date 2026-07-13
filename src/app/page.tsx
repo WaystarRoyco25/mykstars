@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import {
+  clipFillMedia,
   getArticles,
   getEvents,
-  getFeaturedGallery,
   getGalleriesForPillar,
+  getHomeHero,
   getMusicClips,
   getOpenPredictions,
   getPredictionTallies,
@@ -20,6 +21,8 @@ import { NOW } from "@/lib/content";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
 import GalleryGrid from "@/components/GalleryGrid";
+import LiveEmbed from "@/components/LiveEmbed";
+import { clipMedia } from "@/lib/media";
 import ClipCard from "@/components/ClipCard";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
@@ -155,7 +158,7 @@ export default async function HomePage() {
     getPredictionTallies(forecasts.slice(0, 6)),
   );
   const [
-    featured,
+    hero,
     pillarGalleries,
     articles,
     rankings,
@@ -165,7 +168,7 @@ export default async function HomePage() {
     musicClips,
     varietyClips,
   ] = await Promise.all([
-    getFeaturedGallery(),
+    getHomeHero(),
     Promise.all(
       PILLAR_ORDER.map(async (pillar) => ({
         pillar,
@@ -180,17 +183,20 @@ export default async function HomePage() {
     getMusicClips(14),
     getVarietyClips(14),
   ]);
+  const featuredSlug = hero?.kind === "gallery" ? hero.gallery.slug : null;
   const bands = pillarGalleries.map(({ pillar, galleries: pillarGalleryList }) => {
     const galleries = pillarGalleryList
-      .filter((gallery) => gallery.slug !== featured.slug && hasFeaturedArtist(gallery))
+      .filter((gallery) => gallery.slug !== featuredSlug && hasFeaturedArtist(gallery))
       .slice(0, BAND_COUNT[pillar]);
     // Top up a thin band with the band artists' official-account tiles so it
     // never renders with empty columns (deficit only; a full band is unchanged).
-    return {
-      pillar,
-      galleries,
-      fillEmbeds: pillarFillEmbeds(galleries, BAND_COUNT[pillar] - galleries.length),
-    };
+    // With no galleries at all (the interim while placeholders sit archived),
+    // the band runs entirely on the pillar's own clip tiles instead.
+    const fillEmbeds =
+      galleries.length > 0
+        ? pillarFillEmbeds(galleries, BAND_COUNT[pillar] - galleries.length)
+        : clipFillMedia(BAND_COUNT[pillar], pillar);
+    return { pillar, galleries, fillEmbeds };
   });
   // Each table is interleaved right after its pillar's band (K-Pop, K-Drama today).
   const rankingByPillar = new Map(rankings.map((r) => [r.pillar, r]));
@@ -204,7 +210,10 @@ export default async function HomePage() {
   );
   // The soonest shows lead a horizontal D-Day rail under the hero, the urgency hook.
   const upcomingEvents = events.slice(0, 8);
-  const renderedBands = bands.filter((b) => b.galleries.length > 0);
+  // A band renders while it has anything to show — galleries or clip fill — so
+  // the chapter (and the ranking, rails and interludes hanging off it) survives
+  // the interim.
+  const renderedBands = bands.filter((b) => b.galleries.length + b.fillEmbeds.length > 0);
   // Pillar-matched analysis: each chapter gets up to three of its own articles as a
   // light interlude; the site-wide standards pieces and any overflow close the page.
   const { interludes, closer } = planHomeArticles(
@@ -221,38 +230,66 @@ export default async function HomePage() {
           name: "MyKStars",
           url: "https://mykstars.com",
           description:
-            "Photo-first K-Culture newspaper and magazine: the freshest, organized, credited photos of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion.",
+            "Credited coverage of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion: official video, schedules, fan forecasts and credible analysis.",
         }}
       />
 
       <h1 className="sr-only">
-        MyKStars: the freshest organized, credited photos of Korean celebrities
+        MyKStars: Korean celebrities in focus, from K-Pop to K-Drama, K-Movie and Fashion
       </h1>
 
-      {/* Hero — global featured gallery */}
-      <section className="mx-auto max-w-6xl px-5 pt-6">
-        <Link href={`/photos/${featured.slug}`} className="group block">
-          <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden rounded-tile border border-line">
-            <PhotoMedia item={featured.cover} sizes="100vw" preload />
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
+      {/* Hero — the featured gallery when one is published, else the newest
+          official clip (the video-led interim while permitted photography is
+          sourced). The clip hero keeps the ClipCard grammar at hero scale:
+          click-to-play player above, caption block below. */}
+      {hero?.kind === "gallery" && (
+        <section className="mx-auto max-w-6xl px-5 pt-6">
+          <Link href={`/photos/${hero.gallery.slug}`} className="group block">
+            <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden rounded-tile border border-line">
+              <PhotoMedia item={hero.gallery.cover} sizes="100vw" preload />
+              <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
+                <p className="kicker">
+                  {PILLAR_LABELS[hero.gallery.pillar]} · {TAG_LABELS[hero.gallery.category]} · Featured
+                </p>
+                <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
+                  {renderEmphasis(hero.gallery.title)}
+                </h2>
+                <div className="mt-4 flex items-center gap-3 text-sm text-bone">
+                  <span className="label text-bone">{hero.gallery.media.length} photos</span>
+                  <span className="text-muted">·</span>
+                  <span className="label text-muted">{relativeTime(hero.gallery.date, NOW)}</span>
+                  <span className="text-muted">·</span>
+                  <AttributionBadge source={hero.gallery.source} asLink={false} className="text-muted" />
+                </div>
+              </div>
+            </div>
+          </Link>
+        </section>
+      )}
+      {hero?.kind === "clip" && (
+        <section className="mx-auto max-w-6xl px-5 pt-6">
+          <div className="group overflow-hidden rounded-tile border border-line transition-colors hover:border-crimson">
+            <div className="relative aspect-video max-h-[560px] w-full overflow-hidden bg-ink-2">
+              <LiveEmbed item={clipMedia(hero.clip)} />
+            </div>
+            <div className="p-6 sm:p-8">
               <p className="kicker">
-                {PILLAR_LABELS[featured.pillar]} · {TAG_LABELS[featured.category]} · Featured
+                {PILLAR_LABELS[hero.clip.pillar]} ·{" "}
+                {hero.clip.genre === "music" ? "In motion" : "On air"} · Featured
               </p>
-              <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
-                {renderEmphasis(featured.title)}
+              <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl">
+                {renderEmphasis(hero.clip.caption)}
               </h2>
               <div className="mt-4 flex items-center gap-3 text-sm text-bone">
-                <span className="label text-bone">{featured.media.length} photos</span>
+                <span className="label text-muted">{relativeTime(hero.clip.date, NOW)}</span>
                 <span className="text-muted">·</span>
-                <span className="label text-muted">{relativeTime(featured.date, NOW)}</span>
-                <span className="text-muted">·</span>
-                <AttributionBadge source={featured.source} asLink={false} className="text-muted" />
+                <AttributionBadge source={hero.clip.credit} asLink={false} className="text-muted" />
               </div>
             </div>
           </div>
-        </Link>
-      </section>
+        </section>
+      )}
 
       {/* Schedule — a horizontal D-Day rail of the soonest shows, the urgency hook */}
       {upcomingEvents.length > 0 && (

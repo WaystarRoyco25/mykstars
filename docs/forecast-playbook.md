@@ -1,9 +1,14 @@
 # Fan Forecast — question playbook ("The Engagement Engine")
 
 This is the standing brief for **any session that updates the Fan Forecast questions**. The
-questions live in the `predictions` array in [`src/lib/seed.ts`](../src/lib/seed.ts); the schema is
-`Prediction` in [`src/lib/types.ts`](../src/lib/types.ts). Read this before writing or refreshing
-any question.
+questions live in the `predictions` array in
+[`src/content/predictions.ts`](../src/content/predictions.ts); the schema is `Prediction` in
+[`src/lib/types.ts`](../src/lib/types.ts). Read this before writing or refreshing any question.
+
+**Portfolio target:** 8 to 16 strong open questions at any time, spread across pillars and
+fandoms. The old one-question-per-featured-artist rule is retired: a forced question is a weak
+question, and weak questions cost more engagement than a missing one. Preview (pre-debut)
+profiles are never forecast subjects (check-enforced; see the roster playbook's guardrail).
 
 **Cadence:** roughly **monthly**, owner-initiated (not fixed — may also be triggered reactively when
 big news breaks). Each refresh should bump the site clock `NOW` and every `asOf` to that day, which
@@ -58,8 +63,8 @@ through **stakes, identity, timing, and rivalry**, never through gossip. Gossip 
 | Brand / campaign    | Official house announcement; Vogue Korea / WWD              |
 | New project / tour  | Agency / network / studio announcement; Weverse             |
 
-Add a `Source` const in `seed.ts` if none fits; keep `kind` honest (`official`/`wire`/`press`/
-`magazine`).
+Add a `Source` const in `src/content/predictions.ts` (or `sources.ts` when shared across files)
+if none fits; keep `kind` honest (`official`/`wire`/`press`/`magazine`).
 
 ## Red flags → reframe or skip
 
@@ -69,22 +74,30 @@ Add a `Source` const in `seed.ts` if none fits; keep `kind` honest (`official`/`
 
 ## Mechanics reminders (match the existing schema)
 
-- `slug` kebab-case and unique; if you rename a slug, the old Supabase vote rows orphan — wipe
-  the `votes` table when renaming (see below).
+- `slug` kebab-case, unique, and **permanent once published** — live votes key on it. A "rename"
+  is a retirement plus a new slug, and a resolved slug is never reused (see below).
 - `tallyVisibleThreshold: 25` — keeps a cold-start "be the first" state (FOMO) until real votes
   arrive.
 - Lifecycle is **time-derived** from `closesAt` vs `NOW` (`effectiveStatus` in `data.ts`); a stored
   `status: "resolved"` or a `resolution` record always wins. Keep at least one closed-awaiting and
   one resolved entry so all three UI states stay on display.
-- Set every question's `asOf` and the site clock `NOW` (top of `seed.ts`) to the day you refresh.
-  `NOW` is the **whole site's** clock — after bumping it, spot-check the Events and Schedule pages.
+- Set every question's `asOf` and the site clock `NOW` (`src/content/now.ts`) to the day you
+  refresh. `NOW` is the **whole site's** clock — after bumping it, spot-check the Events and
+  Schedule pages.
 
-## Resetting test votes
+## Retiring prediction slugs (votes are user data)
 
 Votes live in the Supabase `votes` table (deduped by the `myk_voter` cookie); tallies are computed
-live via the `prediction_tallies` view. To clear test/sample votes, run in **Supabase → SQL
-Editor**: `truncate table votes;`. No code or schema change — the table is managed in Supabase, not
-in a repo migration.
+live via the `prediction_tallies` view. Real reader votes are **never mass-reset**: no
+whole-table truncate against a live site. When a refresh retires, replaces, or resolves-and-
+removes questions, delete only those questions' rows in **Supabase → SQL Editor**:
+
+```sql
+delete from votes where prediction_slug in ('<retired-slug>', '<other-retired-slug>');
+```
+
+Replaced slugs orphan their vote rows; never leave them counting toward a different question. No
+code or schema change — the table is managed in Supabase, not in a repo migration.
 
 ## Vote store security
 

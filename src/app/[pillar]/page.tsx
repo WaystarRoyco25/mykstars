@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  clipFillMedia,
   getArticles,
   getArtistsByPillar,
   getGalleriesForPillar,
@@ -133,11 +134,17 @@ export default async function PillarPage({
           </Link>
         ))}
 
-      {/* Masonry */}
+      {/* Masonry — clip-led while the pillar has no published photo sets (the
+          interim while placeholder galleries sit archived) */}
       {galleries.length > 0 ? (
         <GalleryGrid galleries={rest} preloadCount={3} />
       ) : (
-        <p className="text-muted">No photo sets here yet.</p>
+        <div>
+          <p className="label text-muted mb-6">
+            Official video while permitted photography is sourced.
+          </p>
+          <GalleryGrid galleries={[]} fillEmbeds={clipFillMedia(8, pillar)} />
+        </div>
       )}
 
       {/* Ranking — only K-Pop and K-Drama have one today; other pillars render nothing */}

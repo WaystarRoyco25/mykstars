@@ -1,15 +1,17 @@
 # Analysis playbook ("Takes with receipts")
 
 This is the standing brief for **any session that writes or edits Analysis articles** (the
-`articles` array in [`src/lib/seed.ts`](../src/lib/seed.ts); the schema is `Article` in
-[`src/lib/types.ts`](../src/lib/types.ts)). Pieces with `status: "analysis"` render under the
-muted "Context" flag and interleave through the home page by `pillar`. Read this before writing
-or refreshing any article.
+`articles` array in [`src/content/articles.ts`](../src/content/articles.ts); the schema is
+`Article` in [`src/lib/types.ts`](../src/lib/types.ts)). Pieces with `status: "analysis"` render
+under the muted "Context" flag and interleave through the home page by `pillar`. Read this
+before writing or refreshing any article.
 
-**Cadence:** every periodic publishing run: roughly **monthly**, riding the same NOW-bump ritual
-as [`docs/roster-playbook.md`](roster-playbook.md), plus reactive runs when big news breaks.
-Every run adds **at least 10** analysis articles; scale up when the K-culture news cycle is
-heavy (the sizing heuristic is Mechanics step 1).
+**Cadence:** analysis ships inside the monthly edition
+([`docs/edition-playbook.md`](edition-playbook.md)), riding the same NOW-bump ritual as
+[`docs/roster-playbook.md`](roster-playbook.md), plus reactive pieces when big news breaks.
+Every edition carries **at least 4** analysis articles inside its mix (Pulse carries volume;
+analysis carries authority); scale up when the K-culture news cycle is heavy (the sizing
+heuristic is Mechanics step 1).
 
 ## The goal
 
@@ -58,10 +60,10 @@ that combination (not volume) is what separates this section from a fan feed.
 12. **The byline is MyKStars.** Exactly `"MyKStars"`, always. **Never** an invented reporter
     name; authorship is disclosed on `/about/editorial-standards`, and the publication stands
     behind every take.
-13. **Ten pieces minimum, scale with the news.** Every publishing run adds at least 10 analysis
-    articles, more when the cycle is heavy (Mechanics step 1). Verification still gates
-    quantity: a piece that cannot meet rule 4 gets replaced with one that can, never padded
-    through.
+13. **Four pieces minimum per edition, scale with the news.** Every monthly edition carries at
+    least 4 analysis articles, more when the cycle is heavy (Mechanics step 1). Verification
+    still gates quantity: a piece that cannot meet rule 4 gets replaced with one that can,
+    never padded through.
 14. **The ethics floor holds.** Professional outcomes and public business facts only. **Never**
     private lives, dating, health, appearance, or rumor (the forecast playbook's sensitivity
     rule, verbatim). A bearish take criticizes strategy, output and results, never people, and
@@ -81,24 +83,27 @@ that combination (not volume) is what separates this section from a fan feed.
 | TV / streaming viewership      | Nielsen Korea, Netflix global Top 10               |
 | Brand / campaign               | Official house announcement; Vogue Korea / WWD     |
 
-Add a `Source` const in `seed.ts` if none fits; keep `kind` honest (`official`/`wire`/`press`/
-`magazine`). In body prose, name the source and date inline for any figure a reader should be
-able to check: "2.31 million first-week copies (Hanteo, June 2026)".
+Add a `Source` const in `src/content/articles.ts` (or `sources.ts` when shared across files) if
+none fits; keep `kind` honest (`official`/`wire`/`press`/`magazine`). In body prose, name the
+source and date inline for any figure a reader should be able to check: "2.31 million first-week
+copies (Hanteo, June 2026)".
 
-## Per-run coverage quotas
+## Per-edition coverage quotas
 
-Floors for a 10-piece run; scale proportionally when the run is bigger.
+Floors for a 4-piece edition contribution; scale proportionally when the edition carries more
+analysis. Quotas marked *quarterly* are measured across the trailing three editions, since a
+4-piece month cannot carry them all at once.
 
 | Quota                     | Floor                                                        |
 |---------------------------|--------------------------------------------------------------|
-| Artist-scope pieces       | at least 3                                                   |
-| Company / agency scope    | at least 2                                                   |
-| Industry-wide scope       | at least 3                                                   |
-| Pillars                   | all four covered, at least 1 piece each                      |
-| Bullish / bearish         | at least 3 each                                              |
-| Same subject              | at most 2 pieces                                             |
-| Opposing-takes pair       | exactly 1 (opposite sides of one question, cross-linked via `related`) |
-| Flagships (300-500 words) | 2-3                                                          |
+| Artist-scope pieces       | at least 1                                                   |
+| Company / agency scope    | at least 1                                                   |
+| Industry-wide scope       | at least 1                                                   |
+| Pillars                   | all four covered *quarterly*; no pillar dark two editions running |
+| Bullish / bearish         | at least 1 each                                              |
+| Same subject              | at most 2 pieces per edition                                 |
+| Opposing-takes pair       | at least 1 *quarterly* (opposite sides of one question, cross-linked via `related`) |
+| Flagships (300-500 words) | 1-2                                                          |
 
 ## Red flags → reframe or drop
 
@@ -110,10 +115,11 @@ outcomes, or drop the piece. A run with 10 clean pieces beats a run with 14 and 
 
 ## Mechanics: how a publishing run works
 
-1. **Size the run.** Baseline 10. Count the pillar-defining stories since the last run (an award
-   night, a record comeback week, a major festival premiere, an agency earnings or M&A shock, a
-   global #1). More than about 5 such stories adds roughly one piece per extra story, with a
-   soft ceiling around 16 so rule 4 verification holds.
+1. **Size the run.** Baseline 4 pieces inside the edition (roughly its 20% "other formats"
+   share alongside events, forecasts and rankings). Count the pillar-defining stories since the
+   last edition (an award night, a record comeback week, a major festival premiere, an agency
+   earnings or M&A shock, a global #1) and add roughly one piece per such story, with a soft
+   ceiling around 10 so rule 4 verification holds.
 2. **Web-verify first.** Every subject's current status and every figure against the canonical
    table; capture each figure's source name and date while researching, before drafting.
 3. **Draft to quota.** Sketch the run against the quota table before writing; assign scopes,
@@ -129,7 +135,7 @@ outcomes, or drop the piece. A run with 10 clean pieces beats a run with 14 and 
 7. **Run the checks, then a preview pass** of `/`, `/analysis`, and at least one new article
    page (the pillar interludes and the closer band re-shuffle as articles land).
 
-## Check commands (run after every seed edit)
+## Check commands (run after every content edit)
 
 - `npm run check:style` (house style: em/en dashes, negation-reveal constructions, AI-tell
   phrases in content strings; docs/style-guide.md)
@@ -145,9 +151,9 @@ outcomes, or drop the piece. A run with 10 clean pieces beats a run with 14 and 
 `check:articles` machine-checks what a script can see: every article's byline is exactly
 `"MyKStars"`, every `date` parses and does not sit past `NOW` (1 day of slack), no title ends in
 a question mark, every `related` slug resolves to a real artist or gallery, and article slugs
-are unique. It warns (without failing) when fewer than 10 analysis pieces are dated within 45
-days of `NOW`, the sign that the latest run came in under the floor. `check:style` fails on the
-banned constructions and phrases anywhere in seed content strings; its `BANNED_PHRASES` constant
+are unique. It warns (without failing) when fewer than 4 analysis pieces are dated within 45
+days of `NOW`, the sign that the latest edition came in under the floor. `check:style` fails on
+the banned constructions and phrases anywhere in content strings; its `BANNED_PHRASES` constant
 is the canonical list.
 
 Everything else in this playbook is editorial judgment a script cannot make: whether a thesis is

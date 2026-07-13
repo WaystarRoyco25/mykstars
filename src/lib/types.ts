@@ -196,6 +196,27 @@ export type CoverageLevel = "active" | "catalog";
 // where applicable) while leaving listings, sitemaps and promotion surfaces.
 export type PublicationState = "draft" | "published" | "archived";
 
+export const CAREER_STAGE_LABELS: Record<CareerStage, string> = {
+  preview: "Pre-debut",
+  rookie: "Rookie",
+  rising: "Rising",
+  established: "Established",
+  icon: "Icon",
+};
+
+export const CAREER_STAGE_ORDER: CareerStage[] = [
+  "rookie",
+  "rising",
+  "established",
+  "icon",
+  "preview",
+];
+
+export const COVERAGE_LEVEL_LABELS: Record<CoverageLevel, string> = {
+  active: "Active coverage",
+  catalog: "Catalog",
+};
+
 // An official non-social link shown on a profile (official site, agency profile
 // page). Platform accounts stay in SocialLink.
 export interface OfficialLink {

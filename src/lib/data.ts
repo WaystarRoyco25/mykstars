@@ -4,9 +4,11 @@ import { clipMedia } from "./media";
 import type {
   Article,
   Artist,
+  CareerStage,
   CategoryTag,
   Clip,
   ClipGenre,
+  CoverageLevel,
   EmbedPlatform,
   EventRegion,
   EventType,
@@ -96,14 +98,22 @@ export function hasFeaturedArtist(g: Gallery): boolean {
   return anyPromotedSlug(g.artistSlugs);
 }
 
+// Publication filter: an archived gallery keeps its /photos/{slug} route (it
+// renders an archival notice) but leaves every listing, grid, band and the
+// sitemap. All placeholder galleries are archived until permitted photography
+// replaces them (docs/roster-playbook.md).
+function isPublishedGallery(g: Gallery): boolean {
+  return (g.publicationState ?? "published") !== "archived";
+}
+
 async function getGalleries(): Promise<Gallery[]> {
-  return byDateDesc(galleries);
+  return byDateDesc(galleries.filter(isPublishedGallery));
 }
 
 // Galleries for a pillar landing page. For fashion-beauty this applies the lens
 // (native fashion galleries OR any gallery carrying a fashion tag).
 export async function getGalleriesForPillar(pillar: Pillar): Promise<Gallery[]> {
-  let list = byDateDesc(galleries);
+  let list = byDateDesc(galleries.filter(isPublishedGallery));
   if (pillar === "fashion-beauty") {
     list = list.filter(
       (g) =>
@@ -121,15 +131,34 @@ export async function getGallery(slug: string): Promise<Gallery | undefined> {
   return galleries.find((g) => g.slug === slug);
 }
 
-export async function getFeaturedGallery(): Promise<Gallery> {
-  // Newest gallery with a featured artist; falls back to newest overall so the
-  // hero never renders empty even if the whole roster were benched.
-  const list = byDateDesc(galleries);
+export async function getFeaturedGallery(): Promise<Gallery | undefined> {
+  // Newest published gallery with a promoted artist, falling back to newest
+  // published overall. Undefined while every gallery is archived — the interim
+  // state — in which case the home hero leads with a clip (getHomeHero).
+  const list = byDateDesc(galleries.filter(isPublishedGallery));
   return list.find(hasFeaturedArtist) ?? list[0];
 }
 
+// What the home hero leads with: the featured gallery when one is published,
+// else the newest promoted clip (music first — the lead rail's genre), else
+// nothing (the page renders no hero rather than a fabricated one).
+export type HomeHero =
+  | { kind: "gallery"; gallery: Gallery }
+  | { kind: "clip"; clip: Clip };
+
+export async function getHomeHero(): Promise<HomeHero | undefined> {
+  const gallery = await getFeaturedGallery();
+  if (gallery) return { kind: "gallery", gallery };
+  const [music] = await getMusicClips(1);
+  if (music) return { kind: "clip", clip: music };
+  const [variety] = await getVarietyClips(1);
+  return variety ? { kind: "clip", clip: variety } : undefined;
+}
+
 export async function getGalleriesByArtist(artistSlug: string): Promise<Gallery[]> {
-  return byDateDesc(galleries).filter((g) => g.artistSlugs.includes(artistSlug));
+  return byDateDesc(galleries.filter(isPublishedGallery)).filter((g) =>
+    g.artistSlugs.includes(artistSlug),
+  );
 }
 
 // The photo archive (/photos): the full library, narrowed by any combination of
@@ -173,6 +202,46 @@ export async function getArtist(slug: string): Promise<Artist | undefined> {
   // Drafts never render: the hub route stays a 404 until the profile publishes.
   const artist = ARTIST_BY_SLUG.get(slug);
   return artist && artist.publicationState !== "draft" ? artist : undefined;
+}
+
+// The Stars directory (/artists): published profiles, narrowed by any
+// combination of filters, name-sorted. `q` is a case-insensitive substring
+// match on the English name (native aliases stay internal — source matching
+// only, per the roster playbook).
+export async function getStarsDirectory(opts?: {
+  pillar?: Pillar;
+  stage?: CareerStage;
+  type?: Artist["type"];
+  agency?: string;
+  debutYear?: number;
+  coverage?: CoverageLevel;
+  q?: string;
+}): Promise<Artist[]> {
+  let list = (await getArtists()).filter((a) => a.publicationState === "published");
+  if (opts?.pillar) list = list.filter((a) => (a.pillars ?? ["k-pop"]).includes(opts.pillar!));
+  if (opts?.stage) list = list.filter((a) => a.careerStage === opts.stage);
+  if (opts?.type) list = list.filter((a) => a.type === opts.type);
+  if (opts?.coverage) list = list.filter((a) => a.coverageLevel === opts.coverage);
+  if (opts?.agency) list = list.filter((a) => a.agency === opts.agency);
+  if (opts?.debutYear) list = list.filter((a) => a.debutYear === opts.debutYear);
+  const q = opts?.q?.trim().toLowerCase();
+  if (q) list = list.filter((a) => a.name.toLowerCase().includes(q));
+  return list;
+}
+
+// Facet values for the directory's form controls, from published profiles only.
+export async function getDirectoryFacets(): Promise<{
+  agencies: string[];
+  debutYears: number[];
+}> {
+  const published = artists.filter((a) => a.publicationState === "published");
+  const agencies = [
+    ...new Set(published.map((a) => a.agency).filter((x): x is string => Boolean(x))),
+  ].sort((a, b) => a.localeCompare(b));
+  const debutYears = [
+    ...new Set(published.map((a) => a.debutYear).filter((x): x is number => typeof x === "number")),
+  ].sort((a, b) => b - a);
+  return { agencies, debutYears };
 }
 
 // Official-account tiles for an artist. We only link out (the media stays on the
@@ -290,6 +359,31 @@ export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaIt
   return out;
 }
 
+// Clip tiles for a surface with no galleries to derive artists from — the
+// interim fill while placeholder galleries sit archived and permitted
+// photography is sourced. With a pillar, takes the pillar's own clips plus any
+// clip whose artist carries that pillar (the lens — Fashion & Beauty has no
+// native clips but its people do); without one, the whole promoted clip pool.
+// Newest-first, capped, grid-ready. Sync — reads the loaded content.
+export function clipFillMedia(cap: number, pillar?: Pillar): MediaItem[] {
+  if (cap <= 0) return [];
+  let list = clips.filter((c) => anyPromotedSlug(c.artistSlugs));
+  if (pillar) {
+    const lensArtists = new Set(
+      artists
+        .filter((a) => (a.pillars ?? ["k-pop"]).includes(pillar))
+        .map((a) => a.slug),
+    );
+    list = list.filter(
+      (c) => c.pillar === pillar || c.artistSlugs.some((s) => lensArtists.has(s)),
+    );
+  }
+  return list
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .slice(0, cap)
+    .map(clipMedia);
+}
+
 export async function getArticles(opts?: { pillar?: Pillar }): Promise<Article[]> {
   const list = byDateDesc(articles);
   if (opts?.pillar) return list.filter((a) => a.pillar === opts.pillar);
@@ -304,6 +398,31 @@ export async function getRelatedArticles(artistSlug: string): Promise<Article[]>
   return byDateDesc(articles).filter((a) =>
     a.related?.artistSlugs?.includes(artistSlug),
   );
+}
+
+// One profile's unified activity stream: published galleries, clips, related
+// analysis and events, newest first (pulses join in wave 1b). The hub is not a
+// promotion surface, so a catalog profile's timeline still renders in full.
+export type TimelineEntry =
+  | { format: "gallery"; date: string; gallery: Gallery }
+  | { format: "clip"; date: string; clip: Clip }
+  | { format: "article"; date: string; article: Article }
+  | { format: "event"; date: string; event: StarEvent };
+
+export async function getProfileTimeline(artistSlug: string): Promise<TimelineEntry[]> {
+  const [ownGalleries, ownClips, ownArticles] = await Promise.all([
+    getGalleriesByArtist(artistSlug),
+    getClips({ artist: artistSlug }),
+    getRelatedArticles(artistSlug),
+  ]);
+  const ownEvents = events.filter((e) => e.artistSlugs?.includes(artistSlug));
+  const entries: TimelineEntry[] = [
+    ...ownGalleries.map((gallery): TimelineEntry => ({ format: "gallery", date: gallery.date, gallery })),
+    ...ownClips.map((clip): TimelineEntry => ({ format: "clip", date: clip.date, clip })),
+    ...ownArticles.map((article): TimelineEntry => ({ format: "article", date: article.date, article })),
+    ...ownEvents.map((event): TimelineEntry => ({ format: "event", date: event.date, event })),
+  ];
+  return byDateDesc(entries);
 }
 
 // Rankings — scannable chart tables interleaved into the feed. Today there is one
@@ -395,7 +514,12 @@ export async function getVarietyClips(limit = 12): Promise<Clip[]> {
 
 // Synchronous slug lists for generateStaticParams.
 export function allGallerySlugs(): string[] {
+  // Archived galleries keep building their routes (they render an archival
+  // notice); only listings and the sitemap narrow to published slugs.
   return galleries.map((g) => g.slug);
+}
+export function publishedGallerySlugs(): string[] {
+  return galleries.filter(isPublishedGallery).map((g) => g.slug);
 }
 export function allArtistSlugs(): string[] {
   // Drafts have no route; published and archived hubs both build.
