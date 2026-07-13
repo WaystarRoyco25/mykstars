@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Embed-freshness guard (see docs/roster-playbook.md): MyKStars embeds are
 // YouTube-only and carry a freshness obligation measured against the site clock
-// NOW in src/lib/seed.ts — every clip must be at most 180 days old, unless it
+// NOW in src/content/now.ts — every clip must be at most 180 days old, unless it
 // carries a dated, still-future evergreenUntil exemption. Gallery-embedded
 // media (kind: "embed") is archival, so it is not age-gated, but its date must
 // exist, parse, and not sit in the future — a post dated after NOW is the
@@ -15,10 +15,11 @@
 // limitation: a new clip factory (e.g. TikTok) needs a matching entry in
 // FACTORIES below.
 //
-// Usage:  node scripts/check-freshness.mjs [file ...]   (defaults to src/lib/seed.ts)
+// Usage:  node scripts/check-freshness.mjs [file ...]   (defaults to src/content/*.ts)
 
 import { readFileSync } from "node:fs";
-import { CODE, contextMap, lineAt, lineStarts, parseNow } from "./source-scanner.mjs";
+import { CODE, contextMap, lineAt, lineStarts } from "./source-scanner.mjs";
+import { contentFiles, loadNow } from "./content-files.mjs";
 
 const MAX_AGE_DAYS = 180; // all clips are YouTube
 const NOW_DRIFT_WARN_DAYS = 14;
@@ -57,24 +58,13 @@ function unquote(arg) {
   return m ? m[1] : null;
 }
 
-function scanFile(file) {
+function scanFile(file, nowMs) {
   const src = readFileSync(file, "utf8");
   const map = contextMap(src);
   const starts = lineStarts(src);
   const failures = [];
-  const warnings = [];
   const fail = (idx, kind, detail) =>
     failures.push({ line: lineAt(starts, idx), kind, detail });
-
-  // --- NOW ---
-  const { iso: nowIso, ms: nowMs } = parseNow(file, src);
-  const driftDays = Math.abs(Date.now() - nowMs) / DAY_MS;
-  if (driftDays > NOW_DRIFT_WARN_DAYS) {
-    warnings.push(
-      `NOW (${nowIso}) is ${Math.round(driftDays)} days from the real clock — ` +
-        `run the NOW-bump ritual (docs/roster-playbook.md) with this refresh.`,
-    );
-  }
 
   const ageDays = (iso) => (nowMs - Date.parse(iso)) / DAY_MS;
 
@@ -212,26 +202,34 @@ function scanFile(file) {
     }
   }
 
-  return { failures, warnings, clipCount, embedCount };
+  return { failures, clipCount, embedCount };
+}
+
+// --- NOW (single canonical location; drift warned once, not per file) ---
+const { iso: nowIso, ms: nowMs } = loadNow();
+const driftDays = Math.abs(Date.now() - nowMs) / DAY_MS;
+if (driftDays > NOW_DRIFT_WARN_DAYS) {
+  console.warn(
+    `⚠ NOW (${nowIso}) is ${Math.round(driftDays)} days from the real clock — ` +
+      `run the NOW-bump ritual (docs/roster-playbook.md) with this refresh.`,
+  );
 }
 
 const targets = process.argv.slice(2);
-const files = targets.length ? targets : ["src/lib/seed.ts"];
+const files = targets.length ? targets : contentFiles();
 
 let total = 0;
-const allWarnings = [];
-const counts = [];
+let clipTotal = 0;
+let embedTotal = 0;
 for (const file of files) {
-  const { failures, warnings, clipCount, embedCount } = scanFile(file);
-  counts.push(`${clipCount} clips, ${embedCount} gallery embeds`);
-  allWarnings.push(...warnings);
+  const { failures, clipCount, embedCount } = scanFile(file, nowMs);
+  clipTotal += clipCount;
+  embedTotal += embedCount;
   for (const f of failures) {
     total++;
     console.error(`${file}:${f.line}  ${f.kind}  ${f.detail}`);
   }
 }
-
-for (const w of allWarnings) console.warn(`⚠ ${w}`);
 
 if (total > 0) {
   console.error(
@@ -241,4 +239,6 @@ if (total > 0) {
   );
   process.exit(1);
 }
-console.log(`✓ No stale or undated embeds (${files.join(", ")}: ${counts.join("; ")}).`);
+console.log(
+  `✓ No stale or undated embeds (${files.length} content files: ${clipTotal} clips, ${embedTotal} gallery embeds).`,
+);

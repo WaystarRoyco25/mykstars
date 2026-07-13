@@ -8,12 +8,14 @@
 // It is comment-aware: it walks each file character by character and only flags
 // content that sits INSIDE a string literal ('...', "...", or `...`). Comments
 // are ignored on purpose — the rules govern published copy, not the developer
-// prose in comments. This is the surface the recurring Fan Forecast and
-// Analysis refreshes touch, so the guard runs against seed.ts by default.
+// prose in comments. This is the surface the recurring Fan Forecast, Analysis
+// and edition refreshes touch, so the guard runs against every content file
+// under src/content by default.
 //
-// Usage:  node scripts/check-style.mjs [file ...]   (defaults to src/lib/seed.ts)
+// Usage:  node scripts/check-style.mjs [file ...]   (defaults to src/content/*.ts)
 
 import { readFileSync } from "node:fs";
+import { contentFiles } from "./content-files.mjs";
 
 const BANNED_DASHES = new Map([
   ["—", "em dash (—)"],
@@ -214,7 +216,7 @@ function scanFile(file) {
 }
 
 const targets = process.argv.slice(2);
-const files = targets.length ? targets : ["src/lib/seed.ts"];
+const files = targets.length ? targets : contentFiles();
 
 let total = 0;
 for (const file of files) {
@@ -232,4 +234,6 @@ if (total > 0) {
   );
   process.exit(1);
 }
-console.log(`✓ No house-style violations in content strings (${files.join(", ")}).`);
+console.log(
+  `✓ No house-style violations in content strings (${files.length === 1 ? files[0] : `${files.length} content files`}).`,
+);

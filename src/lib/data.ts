@@ -1,4 +1,4 @@
-import { articles, artists, clips, events, galleries, predictions, rankings } from "./seed";
+import { articles, artists, clips, events, galleries, predictions, rankings } from "./content";
 import { getSupabase } from "./supabase";
 import { clipMedia } from "./media";
 import type {
@@ -25,7 +25,7 @@ import { EMBED_PLATFORM_LABELS } from "./types";
 
 // ---------------------------------------------------------------------------
 // Data access layer (the "CMS seam").
-// Every page reads through these functions, never the seed file directly. To
+// Every page reads through these functions, never the content files directly. To
 // move onto a headless CMS later, re-implement this module against the CMS
 // client while keeping the same signatures — no page or component changes.
 // Functions are async so the swap to a real (awaited) data source is invisible.
@@ -59,18 +59,20 @@ const FASHION_LENS_TAGS: CategoryTag[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Roster tiers (docs/roster-playbook.md). A benched artist keeps their
-// /artists/{slug} hub, galleries and analysis links, but drops off every surface
-// that actively promotes the roster: the home hero/bands/rails, the pillar-page
-// People strip, ranking links, the Fan Forecast, and clip/account grid fill.
-// Absent tier = "featured", so pre-existing records are unaffected.
+// Promotion surfaces (docs/roster-playbook.md). A profile is promoted while it
+// is published AND actively covered (coverageLevel "active"). Catalog and
+// unpublished profiles keep their /artists/{slug} hub, galleries and analysis
+// links, but drop off every surface that actively promotes the roster: the home
+// hero/bands/rails, the pillar-page People strip, ranking links, the Fan
+// Forecast, and clip/account grid fill — the same semantics the old
+// featured/bench tier carried.
 // ---------------------------------------------------------------------------
-function isFeatured(a: Artist): boolean {
-  return (a.tier ?? "featured") === "featured";
+function isPromoted(a: Artist): boolean {
+  return a.coverageLevel === "active" && a.publicationState === "published";
 }
 
-const BENCHED_SLUGS: ReadonlySet<string> = new Set(
-  artists.filter((a) => !isFeatured(a)).map((a) => a.slug),
+const UNPROMOTED_SLUGS: ReadonlySet<string> = new Set(
+  artists.filter((a) => !isPromoted(a)).map((a) => a.slug),
 );
 
 const ARTIST_BY_SLUG = new Map(artists.map((artist) => [artist.slug, artist]));
@@ -78,18 +80,20 @@ const PREDICTION_BY_SLUG = new Map(
   predictions.map((prediction) => [prediction.slug, prediction]),
 );
 
-// True when at least one slug belongs to a featured artist. Slugs that don't
-// resolve to a roster record count as featured — rankings, events and clips may
+// True when at least one slug belongs to a promoted artist. Slugs that don't
+// resolve to a roster record count as promoted — rankings, events and clips may
 // name people we don't cover, and those must keep rendering.
-function anyFeaturedSlug(slugs: string[]): boolean {
-  return slugs.length === 0 || slugs.some((s) => !BENCHED_SLUGS.has(s));
+function anyPromotedSlug(slugs: string[]): boolean {
+  return slugs.length === 0 || slugs.some((s) => !UNPROMOTED_SLUGS.has(s));
 }
 
-// Gallery-level view of the same rule, used by the home page to keep bench-only
-// galleries out of the hero and bands. The galleries themselves stay live in
-// /photos, the pillar grids and the artist hub — benching never unpublishes.
+// Gallery-level view of the same rule, used by the home page to keep galleries
+// whose subjects are all unpromoted out of the hero and bands. The galleries
+// themselves stay live in /photos, the pillar grids and the artist hub — moving
+// a profile to catalog never unpublishes content. (The exported name predates
+// the coverage vocabulary; every page imports it, so it stays.)
 export function hasFeaturedArtist(g: Gallery): boolean {
-  return anyFeaturedSlug(g.artistSlugs);
+  return anyPromotedSlug(g.artistSlugs);
 }
 
 async function getGalleries(): Promise<Gallery[]> {
@@ -157,21 +161,24 @@ async function getArtists(): Promise<Artist[]> {
 }
 
 export async function getArtistsByPillar(pillar: Pillar): Promise<Artist[]> {
-  // Feeds the pillar-page People strip — a promotion surface, so benched artists
-  // are excluded (their hubs stay reachable via their galleries and articles).
+  // Feeds the pillar-page People strip — a promotion surface, so catalog and
+  // unpublished profiles are excluded (their hubs stay reachable via their
+  // galleries and articles).
   return (await getArtists())
-    .filter(isFeatured)
+    .filter(isPromoted)
     .filter((a) => (a.pillars ?? ["k-pop"]).includes(pillar));
 }
 
 export async function getArtist(slug: string): Promise<Artist | undefined> {
-  return ARTIST_BY_SLUG.get(slug);
+  // Drafts never render: the hub route stays a 404 until the profile publishes.
+  const artist = ARTIST_BY_SLUG.get(slug);
+  return artist && artist.publicationState !== "draft" ? artist : undefined;
 }
 
 // Official-account tiles for an artist. We only link out (the media stays on the
 // source platform, always credited) — the embed-first, legally-safe pattern.
 // Restricted to platforms the site still embeds: the retired Instagram/X handles
-// stay in the seed as verification records and never render.
+// stay in the content data as verification records and never render.
 function artistEmbeds(artist: Artist): MediaItem[] {
   return (artist.social ?? [])
     .filter(
@@ -209,7 +216,7 @@ function distinctArtistSlugs(galleries: Gallery[]): string[] {
 // grid fill from a plain account link-out to a real, click-to-play player (see
 // EmbedCard), and their landscape 16:9 frames double as the horizontal bricks
 // that break up the portrait masonry. Newest-first across genres, deduped to the
-// cap. Sync — reads the already-loaded seed arrays.
+// cap. Sync — reads the already-loaded content arrays.
 function artistClipEmbeds(slugs: string[], cap: number): MediaItem[] {
   if (cap <= 0) return [];
   const slugSet = new Set(slugs);
@@ -217,7 +224,7 @@ function artistClipEmbeds(slugs: string[], cap: number): MediaItem[] {
     .filter(
       (c) =>
         c.artistSlugs.some((s) => slugSet.has(s)) &&
-        anyFeaturedSlug(c.artistSlugs),
+        anyPromotedSlug(c.artistSlugs),
     )
     .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, cap)
@@ -256,7 +263,7 @@ export async function sparseFill(
 // YouTube players (landscape tiles that also loosen the portrait masonry). Then
 // official-channel link-outs as a backstop for artists with no curated clips.
 // Deduped by id and capped at `cap` (the band's deficit) so a full band never
-// grows. Sync — reads the loaded seed.
+// grows. Sync — reads the loaded content.
 export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaItem[] {
   if (cap <= 0) return [];
   const slugs = distinctArtistSlugs(bandGalleries);
@@ -275,7 +282,7 @@ export function pillarFillEmbeds(bandGalleries: Gallery[], cap: number): MediaIt
   }
   for (const slug of slugs) {
     const artist = ARTIST_BY_SLUG.get(slug);
-    if (!artist || !isFeatured(artist)) continue;
+    if (!artist || !isPromoted(artist)) continue;
     for (const m of artistEmbeds(artist)) {
       if (push(m)) return out;
     }
@@ -302,16 +309,16 @@ export async function getRelatedArticles(artistSlug: string): Promise<Article[]>
 // Rankings — scannable chart tables interleaved into the feed. Today there is one
 // per pillar (K-Pop brand reputation, K-Drama viewership); pillars without one
 // resolve to undefined so callers render nothing.
-// A benched artist's row keeps its place in the table (the chart is the chart),
-// but loses its hub link — RankingTable renders a link iff artistSlug is set.
-function stripBenchedLinks(r: Ranking): Ranking {
-  if (!r.rows.some((row) => row.artistSlug && BENCHED_SLUGS.has(row.artistSlug))) {
+// An unpromoted artist's row keeps its place in the table (the chart is the
+// chart), but loses its hub link — RankingTable renders a link iff artistSlug is set.
+function stripUnpromotedLinks(r: Ranking): Ranking {
+  if (!r.rows.some((row) => row.artistSlug && UNPROMOTED_SLUGS.has(row.artistSlug))) {
     return r;
   }
   return {
     ...r,
     rows: r.rows.map((row) =>
-      row.artistSlug && BENCHED_SLUGS.has(row.artistSlug)
+      row.artistSlug && UNPROMOTED_SLUGS.has(row.artistSlug)
         ? { ...row, artistSlug: undefined }
         : row,
     ),
@@ -319,12 +326,12 @@ function stripBenchedLinks(r: Ranking): Ranking {
 }
 
 export async function getRankings(): Promise<Ranking[]> {
-  return rankings.map(stripBenchedLinks);
+  return rankings.map(stripUnpromotedLinks);
 }
 
 export async function getRankingForPillar(pillar: Pillar): Promise<Ranking | undefined> {
   const ranking = rankings.find((r) => r.pillar === pillar);
-  return ranking && stripBenchedLinks(ranking);
+  return ranking && stripUnpromotedLinks(ranking);
 }
 
 // Schedule of upcoming concerts & fan meetings, soonest-first. `region` accepts a
@@ -374,7 +381,7 @@ async function getClips(opts?: {
 // surfaces.
 export async function getMusicClips(limit = 12): Promise<Clip[]> {
   return (await getClips({ genre: "music" }))
-    .filter((c) => anyFeaturedSlug(c.artistSlugs))
+    .filter((c) => anyPromotedSlug(c.artistSlugs))
     .slice(0, limit);
 }
 
@@ -382,7 +389,7 @@ export async function getMusicClips(limit = 12): Promise<Clip[]> {
 // appearances on official program channels, newest-first.
 export async function getVarietyClips(limit = 12): Promise<Clip[]> {
   return (await getClips({ genre: "variety" }))
-    .filter((c) => anyFeaturedSlug(c.artistSlugs))
+    .filter((c) => anyPromotedSlug(c.artistSlugs))
     .slice(0, limit);
 }
 
@@ -391,7 +398,8 @@ export function allGallerySlugs(): string[] {
   return galleries.map((g) => g.slug);
 }
 export function allArtistSlugs(): string[] {
-  return artists.map((a) => a.slug);
+  // Drafts have no route; published and archived hubs both build.
+  return artists.filter((a) => a.publicationState !== "draft").map((a) => a.slug);
 }
 export function allArticleSlugs(): string[] {
   return articles.map((a) => a.slug);
@@ -402,7 +410,7 @@ export function allArticleSlugs(): string[] {
 // professional outcomes. The data layer derives a ready-to-render tally so pages
 // stay declarative. Live vote counts come from Supabase (table `votes`, read via
 // the `prediction_tallies` aggregate view); question metadata still comes from
-// the seed.
+// the content files.
 // ---------------------------------------------------------------------------
 
 // open → closed → resolved. The open→closed cut is a REAL-CLOCK decision — a
@@ -486,20 +494,21 @@ export async function getPredictions(opts?: { pillar?: Pillar }): Promise<Predic
   });
 }
 
-// A question whose only artist-tagged options point at benched artists is a
-// bench-promotion surface — keep it off the open-forecast teasers. Content-side,
-// a roster refresh should retire such questions; this is the safety net.
-function promotesOnlyBenched(p: Prediction): boolean {
+// A question whose only artist-tagged options point at unpromoted artists is a
+// promotion surface for people we no longer actively cover — keep it off the
+// open-forecast teasers. Content-side, a roster refresh should retire such
+// questions; this is the safety net.
+function promotesOnlyUnpromoted(p: Prediction): boolean {
   const tagged = p.options
     .map((o) => o.artistSlug)
     .filter((s): s is string => typeof s === "string");
-  return tagged.length > 0 && tagged.every((s) => BENCHED_SLUGS.has(s));
+  return tagged.length > 0 && tagged.every((s) => UNPROMOTED_SLUGS.has(s));
 }
 
 export async function getOpenPredictions(opts?: { pillar?: Pillar }): Promise<Prediction[]> {
   const now = new Date().toISOString();
   return (await getPredictions(opts)).filter(
-    (p) => effectiveStatus(p, now) === "open" && !promotesOnlyBenched(p),
+    (p) => effectiveStatus(p, now) === "open" && !promotesOnlyUnpromoted(p),
   );
 }
 

@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run check:style && npm run check:articles && npm run check:fresh",
+    "prebuild": "npm run check:style && npm run check:articles && npm run check:fresh && npm run check:profiles",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "check:style": "node scripts/check-style.mjs",
     "check:articles": "node scripts/check-articles.mjs",
-    "check:fresh": "node scripts/check-freshness.mjs"
+    "check:fresh": "node scripts/check-freshness.mjs",
+    "check:profiles": "node scripts/check-profiles.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

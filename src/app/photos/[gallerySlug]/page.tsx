@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { allGallerySlugs, getArtist, getGallery } from "@/lib/data";
 import { PILLAR_LABELS, TAG_LABELS, pillarSlug } from "@/lib/types";
 import { absoluteDate, relativeTime } from "@/lib/format";
-import { NOW } from "@/lib/seed";
+import { NOW } from "@/lib/content";
 import GalleryViewer from "@/components/GalleryViewer";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
