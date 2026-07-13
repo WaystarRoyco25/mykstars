@@ -1,4 +1,15 @@
-import { articles, artists, clips, events, galleries, predictions, rankings } from "./content";
+import {
+  NOW,
+  articles,
+  artists,
+  clips,
+  editions,
+  events,
+  galleries,
+  predictions,
+  pulses,
+  rankings,
+} from "./content";
 import { getSupabase } from "./supabase";
 import { clipMedia } from "./media";
 import type {
@@ -12,6 +23,7 @@ import type {
   EmbedPlatform,
   EventRegion,
   EventType,
+  FeedEdition,
   Gallery,
   GallerySort,
   MediaItem,
@@ -19,6 +31,7 @@ import type {
   Prediction,
   PredictionStatus,
   PredictionTally,
+  Pulse,
   Ranking,
   SocialLink,
   StarEvent,
@@ -34,19 +47,19 @@ import { EMBED_PLATFORM_LABELS } from "./types";
 // ---------------------------------------------------------------------------
 
 function byDateDesc<T extends { date: string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => (a.date < b.date ? 1 : -1));
+  return [...items].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 // Schedule reads soonest-first (the opposite of the newest-first photo feed).
 function byDateAsc<T extends { date: string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => (a.date > b.date ? 1 : -1));
+  return [...items].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 // Densest sets first (by photo count). Ties keep newest-first so the "most
 // photos" view stays chronologically sensible within a tie.
 function byPhotoCountDesc(items: Gallery[]): Gallery[] {
   return [...items].sort(
-    (a, b) => b.media.length - a.media.length || (a.date < b.date ? 1 : -1),
+    (a, b) => b.media.length - a.media.length || b.date.localeCompare(a.date),
   );
 }
 
@@ -81,6 +94,7 @@ const ARTIST_BY_SLUG = new Map(artists.map((artist) => [artist.slug, artist]));
 const PREDICTION_BY_SLUG = new Map(
   predictions.map((prediction) => [prediction.slug, prediction]),
 );
+const PULSE_BY_SLUG = new Map(pulses.map((pulse) => [pulse.slug, pulse]));
 
 // True when at least one slug belongs to a promoted artist. Slugs that don't
 // resolve to a roster record count as promoted — rankings, events and clips may
@@ -400,26 +414,58 @@ export async function getRelatedArticles(artistSlug: string): Promise<Article[]>
   );
 }
 
+// Pulse is the lightest dated format. It stays deliberately simple at the CMS
+// seam: newest first, optionally narrowed to an artist and capped for a band.
+export async function getPulses(opts?: {
+  artist?: string;
+  limit?: number;
+}): Promise<Pulse[]> {
+  let list = byDateDesc(pulses);
+  if (opts?.artist) {
+    list = list.filter((pulse) => pulse.artistSlugs.includes(opts.artist!));
+  }
+  if (opts?.limit !== undefined) {
+    list = list.slice(0, Math.max(0, opts.limit));
+  }
+  return list;
+}
+
+export async function getPulse(slug: string): Promise<Pulse | undefined> {
+  return PULSE_BY_SLUG.get(slug);
+}
+
 // One profile's unified activity stream: published galleries, clips, related
-// analysis and events, newest first (pulses join in wave 1b). The hub is not a
+// analysis, Pulse and events, newest first. The hub is not a
 // promotion surface, so a catalog profile's timeline still renders in full.
 export type TimelineEntry =
   | { format: "gallery"; date: string; gallery: Gallery }
   | { format: "clip"; date: string; clip: Clip }
   | { format: "article"; date: string; article: Article }
+  | { format: "pulse"; date: string; pulse: Pulse; artists: Artist[] }
   | { format: "event"; date: string; event: StarEvent };
 
 export async function getProfileTimeline(artistSlug: string): Promise<TimelineEntry[]> {
-  const [ownGalleries, ownClips, ownArticles] = await Promise.all([
+  const [ownGalleries, ownClips, ownArticles, ownPulses] = await Promise.all([
     getGalleriesByArtist(artistSlug),
     getClips({ artist: artistSlug }),
     getRelatedArticles(artistSlug),
+    getPulses({ artist: artistSlug }),
   ]);
   const ownEvents = events.filter((e) => e.artistSlugs?.includes(artistSlug));
   const entries: TimelineEntry[] = [
     ...ownGalleries.map((gallery): TimelineEntry => ({ format: "gallery", date: gallery.date, gallery })),
     ...ownClips.map((clip): TimelineEntry => ({ format: "clip", date: clip.date, clip })),
     ...ownArticles.map((article): TimelineEntry => ({ format: "article", date: article.date, article })),
+    ...ownPulses.map(
+      (pulse): TimelineEntry => ({
+        format: "pulse",
+        date: pulse.date,
+        pulse,
+        artists: pulse.artistSlugs
+          .map((slug) => ARTIST_BY_SLUG.get(slug))
+          .filter((artist): artist is Artist => Boolean(artist)),
+      }),
+    ),
     ...ownEvents.map((event): TimelineEntry => ({ format: "event", date: event.date, event })),
   ];
   return byDateDesc(entries);
@@ -527,6 +573,56 @@ export function allArtistSlugs(): string[] {
 }
 export function allArticleSlugs(): string[] {
   return articles.map((a) => a.slug);
+}
+export function allPulseSlugs(): string[] {
+  return pulses.map((pulse) => pulse.slug);
+}
+
+// ---------------------------------------------------------------------------
+// Editions — committed monthly home-page plans. Selection is deterministic
+// against the supplied site clock; no request-time wall clock enters this path.
+// ---------------------------------------------------------------------------
+export async function getEdition(id: string): Promise<FeedEdition | undefined> {
+  return editions.find((edition) => edition.id === id);
+}
+
+export async function getCurrentEdition(
+  nowIso: string = NOW,
+): Promise<FeedEdition | undefined> {
+  const monthId = nowIso.slice(0, 7);
+  const currentMonth = editions.find((edition) => edition.id === monthId);
+  if (currentMonth) return currentMonth;
+
+  const nowMs = Date.parse(nowIso);
+  if (Number.isNaN(nowMs)) return undefined;
+  return [...editions]
+    .filter((edition) => {
+      const publishedMs = Date.parse(edition.publishedAt);
+      return !Number.isNaN(publishedMs) && publishedMs <= nowMs;
+    })
+    .sort(
+      (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+    )[0];
+}
+
+export async function getSpotlightForDate(dateIso: string): Promise<Artist[]> {
+  const edition = await getCurrentEdition(dateIso);
+  if (!edition) return [];
+  const day = Number(dateIso.slice(8, 10));
+  const week = Number.isFinite(day) && day > 0
+    ? day <= 7
+      ? 0
+      : day <= 14
+        ? 1
+        : day <= 21
+          ? 2
+          : 3
+    : 0;
+  return [...edition.spotlight.anchors, ...(edition.spotlight.weeks[week] ?? [])]
+    .map((slug) => ARTIST_BY_SLUG.get(slug))
+    .filter(
+      (artist): artist is Artist => artist !== undefined && isPromoted(artist),
+    );
 }
 
 // ---------------------------------------------------------------------------
