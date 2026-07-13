@@ -3,19 +3,36 @@ import Link from "next/link";
 import {
   clipFillMedia,
   getArticles,
+  getArtist,
+  getCurrentEdition,
   getEvents,
   getGalleriesForPillar,
   getHomeHero,
   getMusicClips,
   getOpenPredictions,
+  getPredictions,
   getPredictionTallies,
+  getPulses,
   getRankings,
+  getSpotlightForDate,
   getVarietyClips,
   hasFeaturedArtist,
   pillarFillEmbeds,
 } from "@/lib/data";
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
-import type { Article, Clip, Pillar, Prediction, PredictionTally } from "@/lib/types";
+import type {
+  Article,
+  Artist,
+  Clip,
+  FeedEdition,
+  Gallery,
+  Pillar,
+  Prediction,
+  PredictionTally,
+  Pulse,
+  StarEvent,
+} from "@/lib/types";
+import type { HomeHero } from "@/lib/data";
 import { relativeTime } from "@/lib/format";
 import { NOW } from "@/lib/content";
 import PhotoMedia from "@/components/PhotoMedia";
@@ -27,9 +44,11 @@ import ClipCard from "@/components/ClipCard";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
+import PulseItem from "@/components/PulseItem";
 import EventCard from "@/components/EventCard";
 import JsonLd from "@/components/JsonLd";
 import { renderEmphasis } from "@/lib/text";
+import { roleLabel } from "@/lib/people";
 
 // Tiles per pillar band, weighted to coverage (K-Pop > K-Drama > Fashion > K-Movie).
 const BAND_COUNT: Record<Pillar, number> = {
@@ -152,7 +171,369 @@ function ForecastRail({
   );
 }
 
+function PulseBand({
+  pulses,
+  artistsBySlug,
+}: {
+  pulses: Pulse[];
+  artistsBySlug: ReadonlyMap<string, Artist>;
+}) {
+  if (pulses.length === 0) return null;
+  return (
+    <section className="bg-bone text-ink mt-16">
+      <div className="mx-auto max-w-6xl px-5 py-10">
+        <h2 className="kicker mb-6">The pulse</h2>
+        <div className="flex flex-col gap-6">
+          {pulses.map((pulse) => (
+            <PulseItem
+              key={pulse.slug}
+              pulse={pulse}
+              artists={pulse.artistSlugs
+                .map((slug) => artistsBySlug.get(slug))
+                .filter((artist): artist is Artist => Boolean(artist))}
+              on="light"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EditionEventRail({ events }: { events: StarEvent[] }) {
+  if (events.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-5 mt-12">
+      <div className="mb-6 flex items-end justify-between">
+        <Link href="/schedule" className="group inline-block">
+          <h2 className="kicker group-hover:text-bone transition-colors">On the calendar</h2>
+        </Link>
+        <Link href="/schedule" className="label hover:text-bone transition-colors">
+          All dates →
+        </Link>
+      </div>
+      <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+        {events.map((event) => (
+          <EventCard key={event.slug} event={event} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function EditionGalleryBand({ pillar, galleries }: { pillar: Pillar; galleries: Gallery[] }) {
+  if (galleries.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-5 mt-12">
+      <div className="mb-6">
+        <Link href={`/${pillarSlug(pillar)}`} className="group inline-block">
+          <h2 className="kicker group-hover:text-bone transition-colors">
+            {PILLAR_LABELS[pillar]}
+          </h2>
+        </Link>
+      </div>
+      <GalleryGrid galleries={galleries} preloadCount={pillar === "k-pop" ? 3 : 0} />
+    </section>
+  );
+}
+
+function AnalysisCloser({ articles }: { articles: Article[] }) {
+  if (articles.length === 0) return null;
+  return (
+    <section className="bg-bone text-ink mt-16">
+      <div className="mx-auto max-w-6xl px-5 py-14">
+        <div className="flex items-end justify-between mb-8">
+          <h2 className="kicker">Analysis</h2>
+          <Link href="/analysis" className="label text-muted-2 hover:text-ink transition-colors">
+            All analysis →
+          </Link>
+        </div>
+        <div className="flex flex-col gap-6">
+          {articles.map((article) => (
+            <ArticleListItem key={article.slug} article={article} on="light" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SpotlightStrip({ artists }: { artists: Artist[] }) {
+  if (artists.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-5 mt-16">
+      <h2 className="kicker mb-6">In the Spotlight</h2>
+      <div className="flex flex-wrap gap-3">
+        {artists.map((artist) => (
+          <Link
+            key={artist.slug}
+            href={`/artists/${artist.slug}`}
+            className="border border-line px-4 py-2 hover:border-crimson transition-colors group"
+          >
+            <span className="font-serif text-lg group-hover:text-crimson transition-colors">
+              {artist.name}
+            </span>
+            <span className="label text-muted ml-2">{roleLabel(artist)}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function EditionHero({ hero }: { hero: HomeHero }) {
+  if (hero.kind === "gallery") {
+    return (
+      <section className="mx-auto max-w-6xl px-5 pt-6">
+        <Link href={`/photos/${hero.gallery.slug}`} className="group block">
+          <div className="relative h-[56vw] max-h-[560px] min-h-[340px] overflow-hidden rounded-tile border border-line">
+            <PhotoMedia item={hero.gallery.cover} sizes="100vw" preload />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-ink/55" aria-hidden />
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
+              <p className="kicker">
+                {PILLAR_LABELS[hero.gallery.pillar]} · {TAG_LABELS[hero.gallery.category]} · Featured
+              </p>
+              <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl group-hover:text-crimson transition-colors">
+                {renderEmphasis(hero.gallery.title)}
+              </h2>
+              <div className="mt-4 flex items-center gap-3 text-sm text-bone">
+                <span className="label text-bone">{hero.gallery.media.length} photos</span>
+                <span className="text-muted">·</span>
+                <span className="label text-muted">{relativeTime(hero.gallery.date, NOW)}</span>
+                <span className="text-muted">·</span>
+                <AttributionBadge source={hero.gallery.source} asLink={false} className="text-muted" />
+              </div>
+            </div>
+          </div>
+        </Link>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mx-auto max-w-6xl px-5 pt-6">
+      <div className="group overflow-hidden rounded-tile border border-line transition-colors hover:border-crimson">
+        <div className="relative aspect-video max-h-[560px] w-full overflow-hidden bg-ink-2">
+          <LiveEmbed item={clipMedia(hero.clip)} />
+        </div>
+        <div className="p-6 sm:p-8">
+          <p className="kicker">
+            {PILLAR_LABELS[hero.clip.pillar]} ·{" "}
+            {hero.clip.genre === "music" ? "In motion" : "On air"} · Featured
+          </p>
+          <h2 className="font-serif text-3xl sm:text-5xl leading-[1.05] mt-3 max-w-3xl">
+            {renderEmphasis(hero.clip.caption)}
+          </h2>
+          <div className="mt-4 flex items-center gap-3 text-sm text-bone">
+            <span className="label text-muted">{relativeTime(hero.clip.date, NOW)}</span>
+            <span className="text-muted">·</span>
+            <AttributionBadge source={hero.clip.credit} asLink={false} className="text-muted" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function requireReference<T>(
+  map: ReadonlyMap<string, T>,
+  id: string,
+  format: string,
+  editionId: string,
+): T {
+  const item = map.get(id);
+  if (!item) {
+    throw new Error(`Edition ${editionId} references missing ${format} "${id}".`);
+  }
+  return item;
+}
+
+async function EditionHomePage({ edition }: { edition: FeedEdition }) {
+  const forecastSlugs = new Set(
+    edition.bands.flatMap((band) =>
+      band.kind === "forecast-rail" ? band.predictionSlugs : [],
+    ),
+  );
+  const predictionsPromise = getPredictions();
+  const forecastTalliesPromise = predictionsPromise.then((items) =>
+    getPredictionTallies(items.filter((prediction) => forecastSlugs.has(prediction.slug))),
+  );
+  const [
+    galleryLists,
+    articles,
+    pulses,
+    rankings,
+    predictions,
+    forecastTallies,
+    events,
+    musicClips,
+    varietyClips,
+    spotlight,
+  ] = await Promise.all([
+    Promise.all(PILLAR_ORDER.map((pillar) => getGalleriesForPillar(pillar))),
+    getArticles(),
+    getPulses(),
+    getRankings(),
+    predictionsPromise,
+    forecastTalliesPromise,
+    getEvents(),
+    getMusicClips(1000),
+    getVarietyClips(1000),
+    getSpotlightForDate(NOW),
+  ]);
+
+  const pulseArtistSlugs = [...new Set(pulses.flatMap((pulse) => pulse.artistSlugs))];
+  const pulseArtists = (
+    await Promise.all(pulseArtistSlugs.map((slug) => getArtist(slug)))
+  ).filter((artist): artist is Artist => Boolean(artist));
+  const artistsBySlug = new Map(pulseArtists.map((artist) => [artist.slug, artist]));
+  const galleriesBySlug = new Map(
+    galleryLists.flat().map((gallery) => [gallery.slug, gallery]),
+  );
+  const articlesBySlug = new Map(articles.map((article) => [article.slug, article]));
+  const pulsesBySlug = new Map(pulses.map((pulse) => [pulse.slug, pulse]));
+  const rankingsBySlug = new Map(rankings.map((ranking) => [ranking.slug, ranking]));
+  const predictionsBySlug = new Map(
+    predictions.map((prediction) => [prediction.slug, prediction]),
+  );
+  const talliesBySlug = new Map(
+    forecastTallies.map((tally) => [tally.predictionSlug, tally]),
+  );
+  const eventsBySlug = new Map(events.map((event) => [event.slug, event]));
+  const clipsById = new Map(
+    [...musicClips, ...varietyClips].map((clip) => [clip.id, clip]),
+  );
+
+  return (
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "MyKStars",
+          url: "https://mykstars.com",
+          description:
+            "Credited coverage of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion: official video, schedules, fan forecasts and credible analysis.",
+        }}
+      />
+      <h1 className="sr-only">
+        MyKStars: Korean celebrities in focus, from K-Pop to K-Drama, K-Movie and Fashion
+      </h1>
+
+      {edition.bands.map((band, index) => {
+        const key = `${band.kind}-${index}`;
+        switch (band.kind) {
+          case "hero": {
+            if (Boolean(band.gallerySlug) === Boolean(band.clipId)) {
+              throw new Error(`Edition ${edition.id} hero must reference exactly one item.`);
+            }
+            const hero: HomeHero = band.gallerySlug
+              ? {
+                  kind: "gallery",
+                  gallery: requireReference(
+                    galleriesBySlug,
+                    band.gallerySlug,
+                    "gallery",
+                    edition.id,
+                  ),
+                }
+              : {
+                  kind: "clip",
+                  clip: requireReference(
+                    clipsById,
+                    band.clipId!,
+                    "clip",
+                    edition.id,
+                  ),
+                };
+            return <EditionHero key={key} hero={hero} />;
+          }
+          case "event-rail":
+            return (
+              <EditionEventRail
+                key={key}
+                events={band.eventSlugs.map((slug) =>
+                  requireReference(eventsBySlug, slug, "event", edition.id),
+                )}
+              />
+            );
+          case "gallery-band":
+            return (
+              <EditionGalleryBand
+                key={key}
+                pillar={band.pillar}
+                galleries={band.gallerySlugs.map((slug) =>
+                  requireReference(galleriesBySlug, slug, "gallery", edition.id),
+                )}
+              />
+            );
+          case "clip-rail":
+            return (
+              <ClipRail
+                key={key}
+                title={band.title}
+                description={band.description}
+                clips={band.clipIds.map((id) =>
+                  requireReference(clipsById, id, "clip", edition.id),
+                )}
+              />
+            );
+          case "ranking":
+            return (
+              <RankingTable
+                key={key}
+                ranking={requireReference(rankingsBySlug, band.slug, "ranking", edition.id)}
+              />
+            );
+          case "analysis": {
+            const bandArticles = band.articleSlugs.map((slug) =>
+              requireReference(articlesBySlug, slug, "article", edition.id),
+            );
+            return band.pillar ? (
+              <AnalysisInterlude key={key} pillar={band.pillar} articles={bandArticles} />
+            ) : (
+              <AnalysisCloser key={key} articles={bandArticles} />
+            );
+          }
+          case "pulse-band":
+            return (
+              <PulseBand
+                key={key}
+                pulses={band.pulseSlugs.map((slug) =>
+                  requireReference(pulsesBySlug, slug, "pulse", edition.id),
+                )}
+                artistsBySlug={artistsBySlug}
+              />
+            );
+          case "forecast-rail": {
+            const bandPredictions = band.predictionSlugs.map((slug) =>
+              requireReference(predictionsBySlug, slug, "forecast", edition.id),
+            );
+            for (const prediction of bandPredictions) {
+              requireReference(talliesBySlug, prediction.slug, "forecast tally", edition.id);
+            }
+            return (
+              <ForecastRail
+                key={key}
+                predictions={bandPredictions}
+                tallies={talliesBySlug}
+              />
+            );
+          }
+          case "spotlight-strip":
+            return <SpotlightStrip key={key} artists={spotlight} />;
+        }
+      })}
+    </>
+  );
+}
+
 export default async function HomePage() {
+  const edition = await getCurrentEdition();
+  return edition ? <EditionHomePage edition={edition} /> : <FallbackHomePage />;
+}
+
+async function FallbackHomePage() {
   const forecastsPromise = getOpenPredictions();
   const forecastTalliesPromise = forecastsPromise.then((forecasts) =>
     getPredictionTallies(forecasts.slice(0, 6)),

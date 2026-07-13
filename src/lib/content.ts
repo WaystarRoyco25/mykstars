@@ -13,3 +13,6 @@ export { rankings } from "../content/rankings";
 export { events } from "../content/events";
 export { predictions } from "../content/predictions";
 export { clips } from "../content/clips";
+export { mediaAssets } from "../content/media-assets";
+export { pulses } from "../content/pulses";
+export { editions } from "../content/editions";

@@ -6,12 +6,14 @@ import {
   getArtist,
   getGalleriesByArtist,
   getProfileTimeline,
+  getSpotlightForDate,
   sparseFill,
 } from "@/lib/data";
 import type { TimelineEntry } from "@/lib/data";
 import { CAREER_STAGE_LABELS, EVENT_TYPE_LABELS } from "@/lib/types";
 import GalleryGrid from "@/components/GalleryGrid";
 import ArticleListItem from "@/components/ArticleListItem";
+import PulseItem from "@/components/PulseItem";
 import JsonLd from "@/components/JsonLd";
 import LiveEmbed from "@/components/LiveEmbed";
 import PhotoMedia from "@/components/PhotoMedia";
@@ -20,6 +22,7 @@ import { absoluteDate, eventDateRange } from "@/lib/format";
 import { roleLabel } from "@/lib/people";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
 import CompanyLogo from "@/components/CompanyLogo";
+import { NOW } from "@/lib/content";
 
 export function generateStaticParams() {
   return allArtistSlugs().map((artistSlug) => ({ artistSlug }));
@@ -43,6 +46,9 @@ export async function generateMetadata({
 function TimelineRow({ entry }: { entry: TimelineEntry }) {
   if (entry.format === "article") {
     return <ArticleListItem article={entry.article} />;
+  }
+  if (entry.format === "pulse") {
+    return <PulseItem pulse={entry.pulse} artists={entry.artists} />;
   }
 
   let label: string;
@@ -107,6 +113,8 @@ function timelineKey(entry: TimelineEntry): string {
       return `clip-${entry.clip.id}`;
     case "article":
       return `article-${entry.article.slug}`;
+    case "pulse":
+      return `pulse-${entry.pulse.slug}`;
     case "event":
       return `event-${entry.event.slug}`;
   }
@@ -119,10 +127,12 @@ export default async function ArtistPage({
   const artist = await getArtist(artistSlug);
   if (!artist) notFound();
 
-  const [galleries, timeline] = await Promise.all([
+  const [galleries, timeline, spotlight] = await Promise.all([
     getGalleriesByArtist(artistSlug),
     getProfileTimeline(artistSlug),
+    getSpotlightForDate(NOW),
   ]);
+  const isInSpotlight = spotlight.some((profile) => profile.slug === artistSlug);
   // Keep the visual grid from looking empty: top up a sparse grid with the
   // artist's curated posts (live embeds) and official-account tiles, then related
   // same-pillar sets (credited; never rehosted or fabricated).
@@ -169,6 +179,11 @@ export default async function ArtistPage({
       )}
 
       <header className="border-b border-line pb-8 mb-10">
+        {isInSpotlight && (
+          <span className="kicker mb-4 inline-block border border-crimson px-3 py-1.5">
+            In the Spotlight
+          </span>
+        )}
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <h1 className="font-serif text-4xl sm:text-6xl">{artist.name}</h1>
           {artist.koreanName && (
