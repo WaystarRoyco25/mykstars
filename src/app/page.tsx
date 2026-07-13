@@ -16,7 +16,7 @@ import {
 import { PILLAR_LABELS, PILLAR_ORDER, TAG_LABELS, pillarSlug } from "@/lib/types";
 import type { Article, Clip, Pillar, Prediction, PredictionTally } from "@/lib/types";
 import { relativeTime } from "@/lib/format";
-import { NOW } from "@/lib/seed";
+import { NOW } from "@/lib/content";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
 import GalleryGrid from "@/components/GalleryGrid";

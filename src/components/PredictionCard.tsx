@@ -6,7 +6,7 @@ import type { Prediction, PredictionTally } from "@/lib/types";
 import PredictionStatusBadge from "./PredictionStatusBadge";
 import { renderEmphasis } from "@/lib/text";
 import { dDayLabel } from "@/lib/format";
-import { NOW } from "@/lib/seed";
+import { NOW } from "@/lib/content";
 
 // A compact Fan Forecast card for the list page and the home teaser. Links
 // through to the question; shows the pillar/category kicker, the lifecycle chip,

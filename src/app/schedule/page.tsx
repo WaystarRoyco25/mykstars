@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getEvents } from "@/lib/data";
-import { NOW } from "@/lib/seed";
+import { NOW } from "@/lib/content";
 import type { EventRegion, EventType, StarEvent } from "@/lib/types";
 import { EVENT_TYPE_LABELS, REGION_ORDER } from "@/lib/types";
 import { dDayLabel, eventDateRange, monthLabel } from "@/lib/format";

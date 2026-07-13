@@ -138,6 +138,9 @@ export interface MediaItem {
   // The post's TRUE publish date (ISO). Required when kind === "embed" — enforced
   // by npm run check:fresh (script-level, like check:style), not the type system.
   date?: string;
+  // Links a kind:"image" item to its MediaAsset rights record (src/content/
+  // media-assets.ts). check:media enforces that every image resolves one.
+  assetId?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -176,6 +179,30 @@ export interface Clip {
 // ---------------------------------------------------------------------------
 export type Discipline = "idol" | "actor" | "director" | "model";
 
+// Career stage — the site's shared editorial vocabulary for where a person or
+// group sits in their arc. "preview" is pre-debut and guardrailed (agency-announced
+// lineups only, activity-only coverage — docs/roster-playbook.md).
+export type CareerStage = "preview" | "rookie" | "rising" | "established" | "icon";
+
+// Coverage commitment. "active" profiles are monitored every edition and sit on
+// promotion surfaces; "catalog" profiles keep their hub, galleries and analysis
+// links but leave every surface that actively promotes the roster — the old
+// bench semantics, see isPromoted() in data.ts. Catalog profiles are reverified
+// every six months and can return to active when activity resumes.
+export type CoverageLevel = "active" | "catalog";
+
+// Publication lifecycle. "draft" never renders anywhere (no route, no listing);
+// "published" is live; "archived" keeps the URL reachable (with a noindex notice
+// where applicable) while leaving listings, sitemaps and promotion surfaces.
+export type PublicationState = "draft" | "published" | "archived";
+
+// An official non-social link shown on a profile (official site, agency profile
+// page). Platform accounts stay in SocialLink.
+export interface OfficialLink {
+  label: string;
+  url: string;
+}
+
 // A verified official account. Wider than EmbedPlatform on purpose: the retired
 // embed platforms (Instagram, X) keep their verified-handle records here as
 // documentation for the refresh/verification rituals, but only EmbedPlatform
@@ -200,12 +227,28 @@ export interface Artist {
   knownFor?: string[]; // neutral, factual descriptors (reserved for CMS)
   bio: string;
   social?: SocialLink[]; // verified official accounts (embeddable ones top up sparse grids)
-  // Roster tier. Absent = "featured". A benched artist keeps their /artists hub,
-  // galleries and analysis links, but drops off the surfaces that actively promote
-  // the roster (home hero/bands/rails, People strips, ranking links, Fan Forecast) —
-  // see isFeatured() in data.ts and docs/roster-playbook.md for the bench/promote rules.
-  tier?: "featured" | "bench";
+  careerStage: CareerStage;
+  coverageLevel: CoverageLevel;
+  publicationState: PublicationState;
+  // ISO date of the last full verification pass for this profile (web-verify per
+  // docs/roster-playbook.md). check:profiles enforces the cadence per coverage level.
+  lastVerified: string;
+  currentActivity?: string; // one house-style sentence on what they are doing now
+  memberOf?: string; // slug of the group profile this member belongs to (reciprocal with members)
+  members?: string[]; // member profile slugs — only people who have profiles of their own
+  officialLinks?: OfficialLink[];
+  aliases?: string[]; // native / alternate names for source matching — internal, never rendered
+  // Permitted hero for the profile page: kind "image" backed by a MediaAsset
+  // (assetId) under an allowed rights basis, or an official embed (the
+  // embed-as-hero basis). Required for newly published profiles — the original
+  // roster is allowlisted in scripts/check-profiles.mjs.
+  hero?: MediaItem;
 }
+
+// The plan-level name for a person/group record. Same shape as Artist — the
+// alias exists so new code and docs can speak the StarProfile vocabulary without
+// renaming the type across every consumer.
+export type StarProfile = Artist;
 
 // ---------------------------------------------------------------------------
 // Galleries — a gallery has one home pillar + one tag, plus optional extra tags
@@ -224,6 +267,10 @@ export interface Gallery {
   cover: MediaItem;
   media: MediaItem[];
   excerpt: string;
+  // Absent = "published". An archived gallery keeps its /photos/{slug} route
+  // (rendered with a noindex archival notice) but leaves every listing, grid,
+  // and the sitemap — see the publication filters in data.ts.
+  publicationState?: "published" | "archived";
 }
 
 export type ArticleStatus = "analysis" | "confirmed" | "unverified";
@@ -417,4 +464,92 @@ export interface PredictionTally {
   perOption: PredictionTallyOption[];
   revealed: boolean; // false while totalVotes < tallyVisibleThreshold
   asOf: string;
+}
+
+// ---------------------------------------------------------------------------
+// Media rights — the registry behind every permitted (non-embed) image on the
+// site. No paid photography, no arbitrary internet-image downloads: an image
+// publishes only under one of these bases, recorded per asset.
+// ---------------------------------------------------------------------------
+export type RightsBasis =
+  | "cc-by" // Creative Commons Attribution (Wikimedia Commons etc.)
+  | "cc-by-sa" // Creative Commons Attribution-ShareAlike
+  | "public-domain"
+  | "agency-press-kit" // released for editorial press use by the agency/broadcaster
+  | "official-embed" // the hero is an official embed, nothing downloaded or stored
+  | "licensed" // individually licensed imagery (reserved)
+  | "owner-supplied"; // imagery MyKStars owns outright (reserved)
+
+export interface MediaAsset {
+  id: string;
+  credit: Source;
+  rightsBasis: RightsBasis;
+  sourceUrl: string; // where the asset was obtained (license page, press kit URL)
+  acquisitionDate: string; // ISO date the asset was acquired and verified
+  reviewDate: string; // ISO date the rights record must be re-reviewed by (check:media)
+  width: number;
+  height: number;
+  checksum: string; // sha256 of the stored file
+  storagePath: string; // bucket-relative Supabase Storage path
+}
+
+// ---------------------------------------------------------------------------
+// Pulse — a one-to-three-sentence, dated, sourced celebrity update with a
+// permanent shareable URL (/pulse/{slug}). The lightest feed format: real fact,
+// real source, no padding.
+// ---------------------------------------------------------------------------
+export interface Pulse {
+  slug: string; // permanent, e.g. "2026-08-aespa-dome-encore"
+  heading: string; // short house-style headline (drives metadata/OG)
+  artistSlugs: string[];
+  pillar: Pillar;
+  date: string; // TRUE date of the underlying fact (ISO)
+  body: string; // 1-3 sentences, house style
+  source: Source;
+  media?: MediaItem; // optional permitted image (assetId) or official embed
+}
+
+// ---------------------------------------------------------------------------
+// Editions — the monthly publishing unit. An edition is a committed, human-
+// approved artifact: scripts/generate-edition.ts writes the ordered band list,
+// check:edition re-verifies every constraint in CI, and the home page renders
+// the bands through its existing components. FeedItem is the accounting unit
+// (diversity caps, coverage floors); EditionBand is the render unit. Both
+// REFERENCE content by slug/id — nothing is duplicated.
+// ---------------------------------------------------------------------------
+export type FeedItem =
+  | { format: "pulse"; slug: string }
+  | { format: "gallery"; slug: string }
+  | { format: "clip"; id: string }
+  | { format: "event"; slug: string }
+  | { format: "forecast"; slug: string }
+  | { format: "ranking"; slug: string }
+  | { format: "article"; slug: string }
+  | { format: "spotlight"; artistSlug: string };
+
+export type EditionBand =
+  | { kind: "hero"; gallerySlug?: string; clipId?: string }
+  | { kind: "event-rail"; eventSlugs: string[] }
+  | { kind: "gallery-band"; pillar: Pillar; gallerySlugs: string[] }
+  | { kind: "clip-rail"; title: string; description: string; clipIds: string[] }
+  | { kind: "ranking"; slug: string }
+  | { kind: "analysis"; pillar?: Pillar; articleSlugs: string[] }
+  | { kind: "pulse-band"; pulseSlugs: string[] }
+  | { kind: "forecast-rail"; predictionSlugs: string[] }
+  | { kind: "spotlight-strip" };
+
+// The month's Spotlight placements. Anchors hold a slot for the full month;
+// each of the four preapproved weekly cohorts rotates in for one week. Invariant
+// (check:edition): anchors and cohorts together cover every active profile
+// exactly once — Spotlight is a rotation guarantee, not a favorite list.
+export interface SpotlightSchedule {
+  anchors: string[]; // artist slugs, full-month slots (12 at full scale)
+  weeks: string[][]; // 4 weekly cohorts of artist slugs
+}
+
+export interface FeedEdition {
+  id: string; // "2026-08" — one edition per month
+  publishedAt: string; // ISO datetime the edition went live
+  bands: EditionBand[]; // the committed, approved order the home page renders
+  spotlight: SpotlightSchedule;
 }

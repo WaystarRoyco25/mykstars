@@ -11,7 +11,7 @@ import {
 } from "@/lib/data";
 import { PILLAR_LABELS, PREDICTION_CATEGORY_LABELS } from "@/lib/types";
 import { absoluteDate, dDayLabel } from "@/lib/format";
-import { NOW } from "@/lib/seed";
+import { NOW } from "@/lib/content";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
 import PredictionOptions from "@/components/PredictionOptions";

@@ -16,7 +16,7 @@ import {
 import type { Pillar } from "@/lib/types";
 import { orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
-import { NOW } from "@/lib/seed";
+import { NOW } from "@/lib/content";
 import { roleLabel } from "@/lib/people";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
