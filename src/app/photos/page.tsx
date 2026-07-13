@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getArchiveGalleries, getArtist } from "@/lib/data";
+import { clipFillMedia, getArchiveGalleries, getArtist } from "@/lib/data";
 import { pillarFromSlug } from "@/lib/types";
 import type { GallerySort } from "@/lib/types";
 import { singleParam } from "@/lib/params";
@@ -33,6 +33,10 @@ export default async function PhotosPage({
     artist: artist?.slug,
     sort,
   });
+  // Unfiltered and empty means the whole archive is archived placeholders —
+  // the wave-1a interim — so the page leads with video instead of filters.
+  const interim =
+    galleries.length === 0 && !pillar && !artist && sort === "latest";
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-10">
@@ -46,23 +50,38 @@ export default async function PhotosPage({
         </p>
       </header>
 
-      <div className="border-b border-line pb-4">
-        <ArchiveFilters
-          activePillar={pillar}
-          activeArtist={artist?.slug ?? null}
-          activeArtistName={artist?.name}
-          activeSort={sort}
-        />
-      </div>
-
-      <p className="label text-muted mt-4 mb-6">
-        {galleries.length} {galleries.length === 1 ? "photo set" : "photo sets"}
-      </p>
-
-      {galleries.length > 0 ? (
-        <GalleryGrid galleries={galleries} preloadCount={3} />
+      {interim ? (
+        // The interim while every placeholder gallery sits archived: no dead
+        // filters over an empty archive; official video keeps the surface alive.
+        <>
+          <p className="text-muted -mt-2 mb-8 max-w-2xl leading-relaxed">
+            Photo sets return as permitted photography lands. Until then,
+            official video keeps the record moving: every tile below plays in
+            place and links back to its channel.
+          </p>
+          <GalleryGrid galleries={[]} fillEmbeds={clipFillMedia(18)} />
+        </>
       ) : (
-        <p className="text-muted">No photo sets match this filter yet.</p>
+        <>
+          <div className="border-b border-line pb-4">
+            <ArchiveFilters
+              activePillar={pillar}
+              activeArtist={artist?.slug ?? null}
+              activeArtistName={artist?.name}
+              activeSort={sort}
+            />
+          </div>
+
+          <p className="label text-muted mt-4 mb-6">
+            {galleries.length} {galleries.length === 1 ? "photo set" : "photo sets"}
+          </p>
+
+          {galleries.length > 0 ? (
+            <GalleryGrid galleries={galleries} preloadCount={3} />
+          ) : (
+            <p className="text-muted">No photo sets match this filter yet.</p>
+          )}
+        </>
       )}
     </div>
   );

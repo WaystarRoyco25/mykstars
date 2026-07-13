@@ -1,5 +1,12 @@
 # Home page roadmap
 
+> **Superseded (2026-07-13):** the home page's growth path is now the monthly edition
+> model in [`docs/edition-playbook.md`](edition-playbook.md): a committed, human-approved
+> band order over a broad roster, rendered through the same chapter layout (owner
+> decision: longer band stack, no new layout system, no auto-loading). The Shipped
+> history below stands as the record of how the page got here, and the Guardrails
+> section still applies verbatim.
+
 Working notes for the MyKStars home page (`src/app/page.tsx`). Goal: make the front
 page a "doomscroll" surface so visitors stay and return, rather than clicking into the
 top-nav categories.

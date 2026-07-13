@@ -69,6 +69,7 @@ export const galleries: Gallery[] = [
     // real moment: ADOR-confirmed pre-production sessions in Copenhagen, April
     // 13 to 17, 2026, with Haerin, Hyein and Hanni. See docs/roster-playbook.md.
     slug: "newjeans-copenhagen-sessions",
+    publicationState: "archived",
     title: "NewJeans regroup in Copenhagen",
     pillar: "k-pop",
     category: "event",
@@ -83,6 +84,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "blackpink-incheon-airport",
+    publicationState: "archived",
     title: "BLACKPINK at Incheon, ahead of a tour leg",
     pillar: "k-pop",
     category: "airport",
@@ -97,6 +99,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "stray-kids-music-show",
+    publicationState: "archived",
     title: "Stray Kids work the comeback stage",
     pillar: "k-pop",
     category: "comeback",
@@ -110,6 +113,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "aespa-fan-meet",
+    publicationState: "archived",
     title: "aespa, up close at the fan meet",
     pillar: "k-pop",
     category: "event",
@@ -123,6 +127,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "iu-baeksang-red-carpet",
+    publicationState: "archived",
     title: "IU on an awards-night red carpet",
     pillar: "k-pop",
     category: "red-carpet",
@@ -137,6 +142,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "cha-eunwoo-w-korea",
+    publicationState: "archived",
     title: "Cha Eun-woo for *W Korea*",
     pillar: "k-pop",
     category: "pictorial",
@@ -150,6 +156,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "twice-incheon-airport",
+    publicationState: "archived",
     title: "TWICE depart from Incheon",
     pillar: "k-pop",
     category: "airport",
@@ -165,6 +172,7 @@ export const galleries: Gallery[] = [
   // ===================== K-DRAMA =====================
   {
     slug: "drama-production-presentation",
+    publicationState: "archived",
     title: "A new series, unveiled at its production presentation",
     pillar: "k-drama",
     category: "stills",
@@ -178,6 +186,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "lee-min-ho-press-tour",
+    publicationState: "archived",
     title: "Lee Min-ho on the drama press tour",
     pillar: "k-drama",
     category: "press",
@@ -191,6 +200,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "drama-awards-press-line",
+    publicationState: "archived",
     title: "Park Eun-bin on the drama awards press line",
     pillar: "k-drama",
     category: "press",
@@ -205,6 +215,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "historical-series-stills",
+    publicationState: "archived",
     title: "Stills from a new historical series",
     pillar: "k-drama",
     category: "stills",
@@ -218,6 +229,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "drama-casting-ensemble",
+    publicationState: "archived",
     title: "Casting confirmed: the ensemble for an upcoming series",
     pillar: "k-drama",
     category: "casting",
@@ -233,6 +245,7 @@ export const galleries: Gallery[] = [
   // ===================== FASHION & BEAUTY =====================
   {
     slug: "vogue-korea-editorial",
+    publicationState: "archived",
     title: "Jung Ho-yeon, a *Vogue Korea* editorial",
     pillar: "fashion-beauty",
     category: "pictorial",
@@ -246,6 +259,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "luxury-house-campaign",
+    publicationState: "archived",
     title: "A luxury-house campaign, shot in Seoul",
     pillar: "fashion-beauty",
     category: "campaign",
@@ -259,6 +273,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "seoul-fashion-week-front-row",
+    publicationState: "archived",
     title: "Seoul Fashion Week: the front row",
     pillar: "fashion-beauty",
     category: "fashion-week",
@@ -274,6 +289,7 @@ export const galleries: Gallery[] = [
   // ===================== K-MOVIE =====================
   {
     slug: "busan-opening-photocall",
+    publicationState: "archived",
     title: "Busan festival: the opening photocall",
     pillar: "k-movie",
     category: "festival",
@@ -287,6 +303,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "director-in-focus",
+    publicationState: "archived",
     title: "Director in focus: a career retrospective",
     pillar: "k-movie",
     category: "director",
@@ -302,6 +319,7 @@ export const galleries: Gallery[] = [
   // ----- additional K-POP sets (depth for the home band + /k-pop) -----
   {
     slug: "twice-music-bank-comeback",
+    publicationState: "archived",
     title: "TWICE light up the comeback stage",
     pillar: "k-pop",
     category: "comeback",
@@ -315,6 +333,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "stray-kids-variety-appearance",
+    publicationState: "archived",
     title: "Stray Kids drop by a variety set",
     pillar: "k-pop",
     category: "event",
@@ -331,6 +350,7 @@ export const galleries: Gallery[] = [
   // web-verified real moment (docs/roster-playbook.md rule 2) -----
   {
     slug: "bts-the-city-london",
+    publicationState: "archived",
     title: "BTS THE CITY takes over London",
     pillar: "k-pop",
     category: "event",
@@ -345,6 +365,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "bts-gwanghwamun-comeback",
+    publicationState: "archived",
     title: "BTS pack Gwanghwamun for the comeback",
     pillar: "k-pop",
     category: "event",
@@ -359,6 +380,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "seventeen-carat-land",
+    publicationState: "archived",
     title: "SEVENTEEN scale CARAT LAND up to a stadium",
     pillar: "k-pop",
     category: "event",
@@ -373,6 +395,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "ive-blackhole-comeback",
+    publicationState: "archived",
     title: "IVE pull the room into 'BLACKHOLE'",
     pillar: "k-pop",
     category: "comeback",
@@ -387,6 +410,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "cortis-golden-disc-rookie",
+    publicationState: "archived",
     title: "CORTIS take Rookie of the Year in Taipei",
     pillar: "k-pop",
     category: "event",
@@ -402,6 +426,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "cortis-nba-celebrity-game",
+    publicationState: "archived",
     title: "CORTIS bring K-pop to the NBA Celebrity Game",
     pillar: "k-pop",
     category: "event",
@@ -416,6 +441,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "hearts2hearts-lemon-tang-week",
+    publicationState: "archived",
     title: "Hearts2Hearts squeeze summer into *Lemon Tang*",
     pillar: "k-pop",
     category: "comeback",
@@ -430,6 +456,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "babymonster-choom-tour-opener",
+    publicationState: "archived",
     title: "BABYMONSTER open the *Choom* tour at home",
     pillar: "k-pop",
     category: "event",
@@ -444,6 +471,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "le-sserafim-boompala-comeback",
+    publicationState: "archived",
     title: "LE SSERAFIM go Latin house with 'BOOMPALA'",
     pillar: "k-pop",
     category: "comeback",
@@ -460,6 +488,7 @@ export const galleries: Gallery[] = [
   // ----- additional K-DRAMA sets -----
   {
     slug: "drama-ost-release",
+    publicationState: "archived",
     title: "Park Eun-bin lends her voice to a new OST",
     pillar: "k-drama",
     category: "ost",
@@ -473,6 +502,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "drama-review-screening",
+    publicationState: "archived",
     title: "Lee Min-ho at a drama review screening",
     pillar: "k-drama",
     category: "review",
@@ -486,6 +516,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "byeon-woo-seok-perfect-crown-press",
+    publicationState: "archived",
     title: "Byeon Woo-seok and IU present *Perfect Crown*",
     pillar: "k-drama",
     category: "press",
@@ -500,6 +531,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "byeon-woo-seok-bnb-set",
+    publicationState: "archived",
     title: "Byeon Woo-seok checks into *Jae Seok's B&B Rules!*",
     pillar: "k-drama",
     category: "stills",
@@ -516,6 +548,7 @@ export const galleries: Gallery[] = [
   // ----- additional FASHION & BEAUTY sets (the sparsest band) -----
   {
     slug: "cha-eunwoo-beauty-cover",
+    publicationState: "archived",
     title: "Cha Eun-woo, an *Allure Korea* beauty cover",
     pillar: "fashion-beauty",
     category: "beauty",
@@ -529,6 +562,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "aespa-elle-korea-summer",
+    publicationState: "archived",
     title: "aespa cover *Elle Korea*'s summer issue",
     pillar: "fashion-beauty",
     category: "pictorial",
@@ -542,6 +576,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "jung-hoyeon-milan-fashion-week",
+    publicationState: "archived",
     title: "Jung Ho-yeon at Milan Fashion Week",
     pillar: "fashion-beauty",
     category: "fashion-week",
@@ -555,6 +590,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "beauty-house-skincare-campaign",
+    publicationState: "archived",
     title: "A skincare house unveils its summer campaign",
     pillar: "fashion-beauty",
     category: "campaign",
@@ -570,6 +606,7 @@ export const galleries: Gallery[] = [
   // ----- additional K-MOVIE sets (the other sparse band) -----
   {
     slug: "cannes-competition-photocall",
+    publicationState: "archived",
     title: "Cannes: the competition photocall",
     pillar: "k-movie",
     category: "festival",
@@ -583,6 +620,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "bong-joon-ho-press-conference",
+    publicationState: "archived",
     title: "Bong Joon-ho fields the festival press",
     pillar: "k-movie",
     category: "review",
@@ -596,6 +634,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "director-masterclass",
+    publicationState: "archived",
     title: "A director's masterclass, in full",
     pillar: "k-movie",
     category: "director",
@@ -609,6 +648,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "kim-tae-ri-indie-spotlight",
+    publicationState: "archived",
     title: "Kim Tae-ri headlines an indie spotlight",
     pillar: "k-movie",
     category: "crossover",
@@ -624,6 +664,7 @@ export const galleries: Gallery[] = [
   //     as a single portrait column (see docs/roster-playbook.md) ---
   {
     slug: "park-eun-bin-talk-show-taping",
+    publicationState: "archived",
     title: "Park Eun-bin, wide frames from a talk-show taping",
     pillar: "k-drama",
     category: "press",
@@ -637,6 +678,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "festival-main-stage-wides",
+    publicationState: "archived",
     title: "Festival season from the pit, shot wide",
     pillar: "k-pop",
     category: "event",
@@ -650,6 +692,7 @@ export const galleries: Gallery[] = [
   },
   {
     slug: "premiere-photocall-row",
+    publicationState: "archived",
     title: "The premiere photocall, in a row",
     pillar: "k-movie",
     category: "festival",

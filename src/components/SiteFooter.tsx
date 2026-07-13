@@ -9,6 +9,7 @@ const SIGNALS = [
 ];
 
 const FOOTER_LINKS = [
+  { label: "Stars", href: "/artists" },
   { label: "Photos", href: "/photos" },
   { label: "Analysis", href: "/analysis" },
   { label: "Editorial standards", href: "/about/editorial-standards" },
@@ -32,9 +33,9 @@ export default function SiteFooter() {
           <div>
             <LogoLockup className="h-7 w-auto" />
             <p className="text-sm text-muted mt-3 max-w-md leading-relaxed">
-              The world&apos;s photo-first K-Culture newspaper and magazine. Photos are
-              aggregated and embedded from their original sources, always credited and
-              linked. Rights-holders can request removal anytime.
+              Korean celebrity coverage across K-Pop, K-Drama, K-Movie and Fashion.
+              Media is aggregated and embedded from its original sources, always
+              credited and linked. Rights-holders can request removal anytime.
             </p>
           </div>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2 label text-muted">

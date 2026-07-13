@@ -1,8 +1,8 @@
 # MyKStars
 
-> The world's photo-first K-Culture newspaper + magazine. A fast, English-first, mobile-first destination for the freshest organized, **credited** photos of Korean celebrities — plus credible analysis.
+> Broad, credited coverage of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion: official video, schedules, fan forecasts and credible analysis, published as one human-approved monthly edition. Fast, English-first, mobile-first.
 
-The wedge: *"Naver's photo layer, for the world."* Organized, attributed, swipeable HD galleries filterable by artist / event / date — the thing every incumbent (Soompi, allkpop, Koreaboo, Kpopmap) leaves on the table — delivered with a sophisticated **editorial-noir** identity rather than the usual pastel clickbait.
+The wedge: organized, attributed coverage of the stars that matter (the thing every incumbent, Soompi, allkpop, Koreaboo, Kpopmap, leaves on the table) delivered with a sophisticated **editorial-noir** identity rather than the usual pastel clickbait. Photography returns as permitted imagery lands (see Status); the credit-and-link discipline covers every media kind either way.
 
 ## Stack
 
@@ -16,16 +16,18 @@ The wedge: *"Naver's photo layer, for the world."* Organized, attributed, swipea
 ```bash
 npm install
 npm run dev      # http://localhost:3000
-npm run build    # production build (static-generates all routes)
+npm run build    # production build (static-generates all routes; prebuild runs every check)
 npm run lint
+npm run check:style && npm run check:articles && npm run check:fresh && npm run check:profiles
 ```
 
 ## Architecture
 
-- `src/lib/types.ts` — domain model (Artist, Gallery, MediaItem, Article, Source).
-- `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions; today they're backed by `src/lib/seed.ts`. Swap in a headless CMS (Sanity/Payload) later by re-implementing this module against the same signatures — no page changes.
-- `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), etc.
-- `src/app/` — home, `photos/` (+ `[gallerySlug]`), `artists/[artistSlug]` (per-person hubs), `analysis/` (+ `[slug]`), `legal/dmca`, `about/editorial-standards`, `api/takedown`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
+- `src/lib/types.ts` — domain model (Artist/StarProfile with careerStage, coverageLevel and publicationState; Gallery, MediaItem, Article, Source; the wave-1b content types Pulse, MediaAsset, FeedEdition).
+- `src/content/` — typed, versioned content files (profiles, galleries, articles, rankings, events, predictions, clips, the site clock `now.ts`), aggregated by `src/lib/content.ts`. The hand-rolled check scripts under `scripts/` lex these files directly.
+- `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions, backed by `src/lib/content.ts`. Swap in a headless CMS later by re-implementing this module against the same signatures, with no page changes.
+- `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), `StarsFilters`, etc.
+- `src/app/` — home, `artists/` (the Stars directory + `[artistSlug]` per-person hubs), `photos/` (+ `[gallerySlug]`), `analysis/` (+ `[slug]`), `predictions/`, `schedule/`, `legal/dmca`, `about/editorial-standards`, `api/takedown`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
 
 ## Defensible aggregation (content/legal model)
 
@@ -42,4 +44,4 @@ Aggregation is engineered to **survive**, not just to repost:
 
 ## Status
 
-Phase 0 (design system) and most of Phase 1 (photo layer, artist hubs, news + flags, DMCA, SEO infra) are built. Media is currently rendered as branded placeholders with baked credits; real licensed/embedded media, a live CMS, faceted search, alerts and monetization are the next phases. Content in `seed.ts` is sample data (neutral captions + analysis/explainers — no unverified claims about real people).
+Wave 1a of the broad-coverage expansion is built: the content split (`src/content/`), the profile coverage model (careerStage / coverageLevel / publicationState / lastVerified, guarded by `check:profiles`), the Stars directory at `/artists`, expanded profile hubs with unified timelines, and the placeholder retirement. The 43 placeholder galleries are archived: their URLs stay live with a noindex archival notice while every listing runs video-led on official YouTube clips. Wave 1b brings permitted media (Supabase Storage + `MediaAsset` rights records), Pulse items with permanent URLs, the monthly edition engine (`docs/edition-playbook.md`), and roster growth to 40 profiles. Editorial rules live in `docs/`; every content edit runs the check suite (`npm run check:style|articles|fresh|profiles`).

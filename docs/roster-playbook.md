@@ -1,10 +1,18 @@
 # Roster & freshness playbook ("Who we cover, and how current it reads")
 
 This is the standing brief for **any session that touches the roster** (the `artists` array in
-[`src/lib/seed.ts`](../src/lib/seed.ts)) **or any dated/embedded content** (clips, gallery embeds,
-events, rankings, forecast premises). The schema lives in [`src/lib/types.ts`](../src/lib/types.ts);
-the tier filters live in [`src/lib/data.ts`](../src/lib/data.ts). Read this before adding, benching,
-or promoting anyone, and before touching the `clips` array.
+[`src/content/profiles.ts`](../src/content/profiles.ts)) **or any dated/embedded content** (clips,
+gallery embeds, events, rankings, forecast premises). The schema lives in
+[`src/lib/types.ts`](../src/lib/types.ts); the coverage predicates live in
+[`src/lib/data.ts`](../src/lib/data.ts) (`isPromoted`). Read this before adding, benching, or
+promoting anyone, and before touching the `clips` array.
+
+Every profile carries four standing fields: `careerStage` (`preview | rookie | rising |
+established | icon`), `coverageLevel` (`active | catalog`), `publicationState` (`draft |
+published | archived`) and `lastVerified` (the ISO date of its last full verification pass).
+`npm run check:profiles` enforces the mechanics: valid values, verification cadence (active 60
+days, preview 120, catalog 190), reciprocal `memberOf`/`members` links, the permitted-hero rule
+for new profiles, and the pre-debut guardrails.
 
 **Cadence:** every content refresh (roughly monthly, same ritual as
 [`docs/forecast-playbook.md`](forecast-playbook.md)), and reactively when big news breaks.
@@ -15,6 +23,31 @@ MyKStars sells one thing: the feeling that the site is *live*. A roster missing 
 the moment, or a feed surfacing a nine-month-old post as if it were today's, kills that feeling
 faster than any design flaw. Two disciplines protect it: cover the people who are verifiably
 iconic **right now**, and never let an embed's date be stale or, worse, a lie.
+
+## Admitting a new profile
+
+Roster growth is gated on human approval, in this order:
+
+1. **Candidate dossier.** Before writing a profile, assemble a sourced dossier: who they are,
+   pillar and discipline, agency, debut, the dated public evidence of current activity, proposed
+   `careerStage`, and the hero plan (which permitted rights basis: openly licensed photography,
+   an agency press kit, or the official-embed fallback). Dossiers go to the owner for admission
+   approval; nothing is written into the content files before that approval.
+2. **Draft first.** An approved profile enters `src/content/profiles.ts` as
+   `publicationState: "draft"` (no route, no listing). Drafts carry everything a published
+   profile does, verified per rule 2 below.
+3. **Publish with a hero.** A new profile flips to `"published"` only with a permitted hero in
+   place (`check:profiles` enforces this; the original 2026-07 roster of 21 is allowlisted until
+   permitted media lands). Pre-debut candidates additionally follow the guardrail below.
+
+## The pre-debut guardrail (preview profiles)
+
+`careerStage: "preview"` is allowed only for **agency-announced lineups with a dated official
+source**, capped at 10 public preview profiles, re-verified every 120 days. Coverage is
+**activity-only**: official clips and (in wave 1b) Pulse items. A preview profile never appears
+as a Fan Forecast subject and never carries a ranking-row link — both are check-enforced. Treat
+pre-debut people, who are often minors, with the forecast playbook's sensitivity rule doubled:
+professional facts from official announcements only.
 
 ## The roster rules
 
@@ -38,15 +71,16 @@ iconic **right now**, and never let an embed's date be stale or, worse, a lie.
    first-week sales at rookie-record scale (2025-26 reference points: 200k+ first-day marks a
    serious debut; CORTIS scaled 436k to 2.31M first-week by EP 2, Hearts2Hearts 231k first-day to
    592k first-week). Sustained scaling beats a single spike.
-5. **Bench and promote on every refresh, never delete.**
-   - Bench: set `tier: "bench"` on the `Artist` when rule 1 fails. Their `/artists/[slug]` hub,
-     galleries, analysis links and sitemap entries stay live; they drop off the home hero/bands/
-     rails, pillar People strips, ranking links, the Fan Forecast, and clip fill (see
-     `isFeatured()` in `data.ts`).
-   - Promote: remove the tier (or set `"featured"`) the moment rule 1 passes again.
-   - Every bench or promote flip carries a one-line dated justification comment in `seed.ts`
-     citing the source. No silent flips.
-   - Retire a benched artist's open forecast questions in the same refresh (the
+5. **Catalog and reactivate on every refresh, never delete.**
+   - Catalog (the old "bench"): set `coverageLevel: "catalog"` when rule 1 fails. Their
+     `/artists/[slug]` hub, galleries, analysis links and sitemap entries stay live; they drop
+     off the home hero/bands/rails, pillar People strips, ranking links, the Fan Forecast, the
+     Stars directory's active view, and clip fill (see `isPromoted()` in `data.ts`).
+   - Reactivate: set `coverageLevel: "active"` the moment rule 1 passes again. Catalog profiles
+     are re-verified at least every six months (`lastVerified`; check-enforced at 190 days).
+   - Every flip carries a one-line dated justification comment in `profiles.ts` citing the
+     source, and refreshes `lastVerified`. No silent flips.
+   - Retire a catalog artist's open forecast questions in the same refresh (the
      `getOpenPredictions` filter is only a safety net).
 6. **The embed rules.** (Embeds are YouTube-only since July 2026: Instagram and X embeds were
    retired. The official IG/X handles stay on each `Artist.social` as verification records and
@@ -81,13 +115,13 @@ iconic **right now**, and never let an embed's date be stale or, worse, a lie.
 
 ## Roster reference (as of 2026-07-05)
 
-| Tier | Artists |
+| Coverage | Artists |
 |---|---|
-| Featured (21) | NewJeans, BLACKPINK, IU, Stray Kids, aespa, Cha Eun-woo, TWICE, BTS, SEVENTEEN, IVE, CORTIS, Hearts2Hearts, BABYMONSTER, LE SSERAFIM, Lee Min-ho, Park Eun-bin, Kim Tae-ri, Byeon Woo-seok, Park Chan-wook, Bong Joon-ho, Jung Ho-yeon |
-| Bench (0) | (empty; the 2026-07-05 verification pass found every member active under rule 1: e.g. Bong Joon-ho confirmed *Ally* at Cannes in May 2026, Jung Ho-yeon walked the Met Gala and Cannes in May 2026, Lee Min-ho has *Assassins* filming) |
+| Active (21) | NewJeans, BLACKPINK, IU, Stray Kids, aespa, Cha Eun-woo, TWICE, BTS, SEVENTEEN, IVE, CORTIS, Hearts2Hearts, BABYMONSTER, LE SSERAFIM, Lee Min-ho, Park Eun-bin, Kim Tae-ri, Byeon Woo-seok, Park Chan-wook, Bong Joon-ho, Jung Ho-yeon |
+| Catalog (0) | (empty; the 2026-07-05 verification pass found every member active under rule 1: e.g. Bong Joon-ho confirmed *Ally* at Cannes in May 2026, Jung Ho-yeon walked the Met Gala and Cannes in May 2026, Lee Min-ho has *Assassins* filming) |
 
-When benching someone, add them to this table with: benched-since date, last verified major
-activity, reason, and the promote-back trigger to watch.
+When moving someone to catalog, add them to this table with: catalog-since date, last verified
+major activity, reason, and the reactivation trigger to watch.
 
 ## Red flags: reframe, hold, or verify twice
 
@@ -105,11 +139,12 @@ activity, reason, and the promote-back trigger to watch.
 
 ## Mechanics: the NOW-bump ritual
 
-1. Set `NOW` (`src/lib/seed.ts`) to the refresh date, KST evening (`T20:00:00+09:00`).
+1. Set `NOW` (`src/content/now.ts`) to the refresh date, KST evening (`T20:00:00+09:00`).
 2. Bump every `Prediction.asOf` and `Ranking.asOf`; re-verify ranking rows against the current
    month's real charts (names and order real; figures stay `sample: true` until a live feed exists).
 3. Re-run every open forecast question through `docs/forecast-playbook.md`: resolve, reframe, or
-   retire anything stale; add questions for any new artists (one per featured artist).
+   retire anything stale, and keep the portfolio target of 8 to 16 strong open questions.
+   Refresh `lastVerified` on every profile the pass re-verified.
 4. Re-check every `StarEvent`: anything now past drops off `/schedule` automatically (multi-night
    runs live until `endDate`), but verify nothing upcoming silently changed dates or venues.
 5. Audit clips against the 180-day rule (the check below does this), replace what expired, and
@@ -118,22 +153,27 @@ activity, reason, and the promote-back trigger to watch.
 6. Run the check commands, then a preview pass (home order, both video rails render and play,
    artist hubs).
 
-## Check commands (run after every seed edit)
+## Check commands (run after every content edit)
 
 - `npm run check:style` (house style: no em/en dashes, negation-reveal constructions, or AI-tell
   phrases in content strings; docs/style-guide.md)
 - `npm run check:articles` (analysis bylines, article dates vs `NOW`, related slugs;
   docs/analysis-playbook.md)
 - `npm run check:fresh` (this playbook's 180-day + true-date gates; scripts/check-freshness.mjs)
+- `npm run check:profiles` (this playbook's profile fields, verification cadence, relationships,
+  hero requirement and pre-debut guardrails; scripts/check-profiles.mjs)
 - `npm run lint`
 - `npx tsc --noEmit`
 - `npm run build` before shipping a roster change (catches dangling slugs that nothing else does)
 
-## Supabase test-vote reset
+## Retiring prediction slugs (votes are user data)
 
-After any refresh that replaces, resolves, or renames prediction slugs, reset test votes in
-Supabase (SQL editor): `truncate table votes;` (see forecast-playbook.md). Replaced slugs orphan
-their vote rows; never leave them counting toward a different question.
+Live reader votes are never mass-reset. A published prediction slug is permanent: a "rename" is
+a retirement plus a new slug, and a resolved slug is never reused. When a refresh retires or
+replaces questions, delete only those rows in the Supabase SQL editor:
+`delete from votes where prediction_slug in ('<retired-slug>', ...);` (see
+forecast-playbook.md). Replaced slugs orphan their vote rows; never leave them counting toward
+a different question, and never run a whole-table truncate against live votes.
 
 ## Enforcement
 

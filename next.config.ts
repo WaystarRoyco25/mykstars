@@ -7,16 +7,27 @@ const nextConfig: NextConfig = {
     // The core differentiator: serve AVIF/WebP (40–60% smaller than the
     // JPEG-only incumbents). next/image negotiates per Accept header.
     formats: ["image/avif", "image/webp"],
-    // Allow remote licensed/embedded imagery once real sources are wired in.
-    remotePatterns: [{ protocol: "https", hostname: "**" }],
+    // Permitted imagery only: the Supabase Storage media bucket (MediaAsset
+    // registry) and YouTube thumbnails (embed facades). Anything else fails
+    // loudly instead of optimizing an unvetted host.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      { protocol: "https", hostname: "i.ytimg.com" },
+    ],
+    qualities: [75],
+    // Asset URLs are content-addressed (assetId in the path), so a long CDN
+    // TTL is safe; a replaced image gets a new URL.
+    minimumCacheTTL: 2678400,
   },
   async redirects() {
     return [
       // The News section is now Analysis; keep live inbound links + search results working.
       { source: "/news", destination: "/analysis", permanent: true },
       { source: "/news/:slug", destination: "/analysis/:slug", permanent: true },
-      // The standalone People/Artists index is retired; per-person hubs (/artists/:slug) remain.
-      { source: "/artists", destination: "/", permanent: true },
     ];
   },
 };
