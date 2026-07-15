@@ -99,6 +99,18 @@ export const artists: Artist[] = [
       { platform: "instagram", url: "https://www.instagram.com/aespa_official/", handle: "@aespa_official" },
       { platform: "x", url: "https://x.com/aespa_official", handle: "@aespa_official" },
     ],
+    // Instagram-embed hero (no licensed photo yet): aespa's KISS N TELL album
+    // announcement, a real web-verified official post revealed on tap. 2026-07-16.
+    hero: {
+      id: "aespa-hero-kiss-n-tell",
+      kind: "embed",
+      platform: "instagram",
+      embedUrl: "https://www.instagram.com/p/DaQWW3kE0ue/",
+      alt: "aespa announce the *KISS N TELL* Japan mini album",
+      credit: { name: "@smtown", url: "https://www.instagram.com/p/DaQWW3kE0ue/", kind: "embed" },
+      date: "2026-07-01",
+      orientation: "landscape",
+    },
   },
   {
     slug: "cha-eunwoo",

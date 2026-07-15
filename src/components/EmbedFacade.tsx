@@ -1,11 +1,12 @@
 import { EMBED_PLATFORM_LABELS, type MediaItem } from "@/lib/types";
-import { IconArrowUpRight, IconCamera } from "./icons";
 import { stripEmphasis } from "@/lib/text";
+import FacadeTile from "./FacadeTile";
 
-// "Embed-first" facade: we DON'T rehost the photo and we DON'T load heavy
-// third-party scripts on the critical path. We render a lightweight placeholder
-// that links to the official post; the real oEmbed can hydrate on interaction
-// later. The photo stays on the source platform — the legally safest pattern.
+// "Embed-first" link-out facade: we DON'T rehost the photo and we DON'T load heavy
+// third-party scripts on the critical path. A lightweight tile that links to the
+// official post or account; the media stays on the source platform (the server
+// test). Used for YouTube/TikTok account link-outs and any unparseable embed.
+// (Instagram posts render the interactive reveal instead — see InstagramEmbed.)
 export default function EmbedFacade({
   item,
   className = "",
@@ -20,14 +21,9 @@ export default function EmbedFacade({
       target="_blank"
       rel="nofollow noopener noreferrer"
       aria-label={`${stripEmphasis(item.alt)}, view on ${platform}`}
-      className={`group flex h-full w-full flex-col items-center justify-center gap-3 bg-ink-2 text-bone ${className}`}
+      className={`group block ${className}`}
     >
-      <IconCamera size={26} className="text-muted-2" />
-      <span className="label">Official {platform} post</span>
-      <span className="label text-crimson inline-flex items-center gap-1">
-        View on {platform}
-        <IconArrowUpRight size={12} />
-      </span>
+      <FacadeTile item={item} cta={`View on ${platform}`} />
     </a>
   );
 }

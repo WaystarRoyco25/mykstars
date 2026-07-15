@@ -1,13 +1,15 @@
 import Image from "next/image";
 import type { MediaItem } from "@/lib/types";
-import EmbedFacade from "./EmbedFacade";
+import FacadeTile from "./FacadeTile";
 import { stripEmphasis } from "@/lib/text";
 import { IconCamera } from "./icons";
 
 const TONES = ["#141414", "#171717", "#1b1b1b", "#191617"];
 
 // Renders one media item to fill its (relatively-positioned) parent.
-// - embed      → lazy facade (photo stays on source)
+// - embed      → visual-only facade tile (photo stays on source; interactivity,
+//                if any, is owned by the caller — a cover <Link>, a filmstrip
+//                <button>, or the InstagramEmbed / LiveEmbed reveal wrappers)
 // - image      → next/image (AVIF/WebP negotiation handled by the pipeline)
 // - placeholder→ neutral tile standing in for licensed/embedded imagery, with a
 //                baked-in credit line (we never strip credits).
@@ -18,6 +20,7 @@ export default function PhotoMedia({
   showCredit = false,
   fit = "cover",
   position,
+  compact = false,
 }: {
   item: MediaItem;
   sizes?: string;
@@ -26,9 +29,11 @@ export default function PhotoMedia({
   fit?: "cover" | "contain";
   // object-position override (e.g. "50% 30%" to keep portrait faces in frame)
   position?: string;
+  // icon-only facade for tiny slots (e.g. the gallery filmstrip)
+  compact?: boolean;
 }) {
   if (item.kind === "embed") {
-    return <EmbedFacade item={item} className="absolute inset-0" />;
+    return <FacadeTile item={item} compact={compact} />;
   }
 
   if (item.kind === "image" && item.src) {

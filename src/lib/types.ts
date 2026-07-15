@@ -108,14 +108,17 @@ export interface Source {
 }
 
 export type MediaKind = "placeholder" | "image" | "embed";
-// Platforms the site still renders as live embeds — YouTube today, TikTok
-// reserved. Instagram and X embeds were retired in July 2026 (messy third-party
-// widgets); their official-account records live on as SocialLink data only.
-export type EmbedPlatform = "tiktok" | "youtube";
+// Platforms the site renders as live embeds. YouTube plays in place (TikTok is
+// reserved, same machinery). Instagram returned in July 2026 as a click-to-reveal
+// photo embed: the facade scrolls, and the real post mounts from instagram.com
+// only on tap (the server test, never rehosted). X stays retired, its
+// official-account record living on as SocialLink data only.
+export type EmbedPlatform = "tiktok" | "youtube" | "instagram";
 
 export const EMBED_PLATFORM_LABELS: Record<EmbedPlatform, string> = {
   tiktok: "TikTok",
   youtube: "YouTube",
+  instagram: "Instagram",
 };
 
 // Orientation drives the vertical-leaning masonry. Portrait dominates the grid;
@@ -224,10 +227,12 @@ export interface OfficialLink {
   url: string;
 }
 
-// A verified official account. Wider than EmbedPlatform on purpose: the retired
-// embed platforms (Instagram, X) keep their verified-handle records here as
-// documentation for the refresh/verification rituals, but only EmbedPlatform
-// accounts ever render (as sparse-grid link-out tiles).
+// A verified official account. Wider than EmbedPlatform on purpose: X stays a
+// retired embed platform, its handle kept here as a verification record that
+// never renders. Instagram, YouTube and TikTok are EmbedPlatforms; note the
+// account link-out tiles (see artistEmbeds) still cover only YouTube/TikTok,
+// while Instagram surfaces as curated post embeds in galleries, Pulse and
+// profiles rather than as a bare account tile.
 export type SocialPlatform = "instagram" | "x" | "tiktok" | "youtube";
 
 export interface SocialLink {

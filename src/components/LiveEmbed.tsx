@@ -5,6 +5,7 @@ import type { MediaItem } from "@/lib/types";
 import { stripEmphasis } from "@/lib/text";
 import { youtubeEmbedSrc, youtubeId, youtubeThumbnail } from "@/lib/embeds";
 import EmbedFacade from "./EmbedFacade";
+import InstagramEmbed from "./InstagramEmbed";
 import { IconPlay } from "./icons";
 
 // How a live embed fills its slot:
@@ -32,6 +33,12 @@ export default function LiveEmbed({
     // Click-to-play thumbnail; in flow mode it needs a sized box of its own.
     const yt = <YouTubeEmbed item={item} />;
     return layout === "flow" ? <div className={`relative ${flowAspect(item)}`}>{yt}</div> : yt;
+  }
+  if (item.platform === "instagram") {
+    // Facade that reveals the real post in a modal on tap (server test, no
+    // rehost). Fills its box; in flow mode it needs a sized box of its own.
+    const ig = <InstagramEmbed item={item} className="absolute inset-0" />;
+    return layout === "flow" ? <div className={`relative ${flowAspect(item)}`}>{ig}</div> : ig;
   }
   return <FacadeFallback item={item} layout={layout} />;
 }

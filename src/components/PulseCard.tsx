@@ -6,6 +6,7 @@ import { renderEmphasis } from "@/lib/text";
 import { aspectClass, orientationOf } from "@/lib/media";
 import AttributionBadge from "./AttributionBadge";
 import PhotoMedia from "./PhotoMedia";
+import LiveEmbed from "./LiveEmbed";
 
 // A Pulse rendered as a dark masonry tile, so the lightest feed format (a dated,
 // sourced text update) sits in the same grid as video (EmbedCard) and photo
@@ -27,6 +28,9 @@ export default function PulseCard({
       ? artists.map((artist) => artist.name).join(", ")
       : PILLAR_LABELS[pulse.pillar];
   const photo = pulse.media?.kind === "image" ? pulse.media : undefined;
+  // An embed lead (e.g. an Instagram post) reveals in place on tap rather than
+  // linking to the detail page, so the picture is one tap away in the feed.
+  const embed = pulse.media?.kind === "embed" ? pulse.media : undefined;
 
   return (
     <article className="group mb-2 break-inside-avoid overflow-hidden rounded-tile border border-line bg-ink-2 transition-colors hover:border-crimson md:mb-3">
@@ -43,6 +47,17 @@ export default function PulseCard({
           </Link>
           <AttributionBadge
             source={photo.credit}
+            className="absolute bottom-2 right-2 z-10 rounded-full bg-black/55 px-2 py-0.5 text-[10px] text-white/80 backdrop-blur-sm"
+          />
+        </div>
+      )}
+      {embed && (
+        <div className="relative">
+          <div className={`relative ${aspectClass(orientationOf(embed))}`}>
+            <LiveEmbed item={embed} />
+          </div>
+          <AttributionBadge
+            source={embed.credit}
             className="absolute bottom-2 right-2 z-10 rounded-full bg-black/55 px-2 py-0.5 text-[10px] text-white/80 backdrop-blur-sm"
           />
         </div>

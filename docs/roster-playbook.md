@@ -82,10 +82,15 @@ professional facts from official announcements only.
      source, and refreshes `lastVerified`. No silent flips.
    - Retire a catalog artist's open forecast questions in the same refresh (the
      `getOpenPredictions` filter is only a safety net).
-6. **The embed rules.** (Embeds are YouTube-only since July 2026: Instagram and X embeds were
-   retired. The official IG/X handles stay on each `Artist.social` as verification records and
-   never render.)
-   - **180-day rule:** every clip must be at most 180 days old vs `NOW`.
+6. **The embed rules.** (Video embeds are YouTube since July 2026, TikTok reserved. Instagram
+   returned that same month as click-to-reveal photo embeds: a dark facade in galleries, Pulse
+   and profiles, with the real post mounting from instagram.com only on tap (the server test,
+   never rehosted; see `src/lib/instagram-embed.ts`). X stays retired, its handle kept on
+   `Artist.social` as a verification record that never renders; the account link-out tiles
+   (`artistEmbeds`) still cover only YouTube/TikTok.)
+   - **180-day rule:** every clip must be at most 180 days old vs `NOW`. Instagram photo embeds
+     (galleries, Pulse, profiles) are archival: a real official permalink and TRUE upload date
+     are required, but they are not age-gated by the 180-day rule.
    - **True-date integrity:** a clip's `date` is the video's real upload date, verified at
      authoring time. Never edit a date to make an old post look current; find a genuinely new
      post or ship fewer clips. Fewer verified embeds always beat more plausible ones.

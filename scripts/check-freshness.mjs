@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// Embed-freshness guard (see docs/roster-playbook.md): MyKStars embeds are
-// YouTube-only and carry a freshness obligation measured against the site clock
-// NOW in src/content/now.ts — every clip must be at most 180 days old, unless it
-// carries a dated, still-future evergreenUntil exemption. Gallery-embedded
-// media (kind: "embed") is archival, so it is not age-gated, but its date must
-// exist, parse, and not sit in the future — a post dated after NOW is the
-// fabricated-date failure mode this guard exists to catch.
+// Embed-freshness guard (see docs/roster-playbook.md): the site clock NOW lives
+// in src/content/now.ts. Clips (the yt()/tv() factories, YouTube) carry a hard
+// freshness obligation: at most 180 days old, unless a dated, still-future
+// evergreenUntil exemption applies. Gallery- and Pulse-embedded media
+// (kind: "embed"), including the Instagram photo embeds reinstated in July 2026,
+// is archival: not age-gated, but its date must exist, parse, and not sit in the
+// future. A post dated after NOW is the fabricated-date failure mode this guard
+// exists to catch.
 //
 // Like check-style.mjs, this is a hand-rolled scanner, not an AST parser: the
 // clip factories yt()/tv() take positional string arguments whose order is
@@ -21,7 +22,7 @@ import { readFileSync } from "node:fs";
 import { CODE, contextMap, lineAt, lineStarts } from "./source-scanner.mjs";
 import { contentFiles, loadNow } from "./content-files.mjs";
 
-const MAX_AGE_DAYS = 180; // all clips are YouTube
+const MAX_AGE_DAYS = 180; // clips only (yt/tv factories, YouTube); gallery/Pulse/IG embeds are archival
 const NOW_DRIFT_WARN_DAYS = 14;
 const DAY_MS = 86_400_000;
 

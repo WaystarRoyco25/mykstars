@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MediaItem } from "@/lib/types";
 import PhotoMedia from "./PhotoMedia";
+import LiveEmbed from "./LiveEmbed";
 import AttributionBadge from "./AttributionBadge";
 import { IconChevronLeft, IconChevronRight } from "./icons";
 import { renderEmphasis } from "@/lib/text";
@@ -41,7 +42,11 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
           touchX.current = null;
         }}
       >
-        <PhotoMedia item={current} sizes="(max-width: 1024px) 100vw, 960px" preload showCredit fit="contain" />
+        {current.kind === "embed" ? (
+          <LiveEmbed item={current} />
+        ) : (
+          <PhotoMedia item={current} sizes="(max-width: 1024px) 100vw, 960px" preload showCredit fit="contain" />
+        )}
 
         <button
           type="button"
@@ -82,7 +87,7 @@ export default function GalleryViewer({ media }: { media: MediaItem[] }) {
               i === index ? "border-crimson" : "border-line hover:border-muted-2"
             }`}
           >
-            <PhotoMedia item={m} sizes="80px" />
+            <PhotoMedia item={m} sizes="80px" compact />
           </button>
         ))}
       </div>
