@@ -12,6 +12,7 @@ import {
   getOpenPredictions,
   getPredictions,
   getPredictionTallies,
+  getPulseBandFill,
   getPulses,
   getRankings,
   getSpotlightForDate,
@@ -26,6 +27,7 @@ import type {
   Clip,
   FeedEdition,
   Gallery,
+  MediaItem,
   Pillar,
   Prediction,
   PredictionTally,
@@ -38,13 +40,14 @@ import { NOW } from "@/lib/content";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";
 import GalleryGrid from "@/components/GalleryGrid";
+import EmbedCard from "@/components/EmbedCard";
 import LiveEmbed from "@/components/LiveEmbed";
 import { clipMedia } from "@/lib/media";
 import ClipCard from "@/components/ClipCard";
 import RankingTable from "@/components/RankingTable";
 import ArticleListItem from "@/components/ArticleListItem";
 import PredictionCard from "@/components/PredictionCard";
-import PulseItem from "@/components/PulseItem";
+import PulseCard from "@/components/PulseCard";
 import EventCard from "@/components/EventCard";
 import JsonLd from "@/components/JsonLd";
 import { renderEmphasis } from "@/lib/text";
@@ -60,6 +63,11 @@ const BAND_COUNT: Record<Pillar, number> = {
 
 // Up to this many of a pillar's articles interleave inside its chapter.
 const INTERLUDE_CAP = 3;
+
+// Video tiles mixed into each Pulse band so the text posts sit among clips (the
+// X-feed look) while permitted photography is archived. Deduped against the
+// edition's rails; set to 0 for Pulse-only tiles.
+const PULSE_BAND_FILL_CAP = 3;
 
 // Distributes the newest-first article list across the page: up to INTERLUDE_CAP
 // per rendered pillar chapter, while site-wide (no-pillar) pieces, overflow past
@@ -98,20 +106,18 @@ function AnalysisInterlude({
 }) {
   if (articles.length === 0) return null;
   return (
-    <section className="bg-bone text-ink mt-16">
-      <div className="mx-auto max-w-6xl px-5 py-10">
-        <div className="mb-6">
-          <Link href="/analysis" className="group inline-block">
-            <h2 className="kicker group-hover:text-ink transition-colors">
-              {PILLAR_LABELS[pillar]} analysis
-            </h2>
-          </Link>
-        </div>
-        <div className="flex flex-col gap-6">
-          {articles.map((a) => (
-            <ArticleListItem key={a.slug} article={a} on="light" />
-          ))}
-        </div>
+    <section className="mx-auto max-w-6xl px-5 mt-16">
+      <div className="mb-6">
+        <Link href="/analysis" className="group inline-block">
+          <h2 className="kicker group-hover:text-bone transition-colors">
+            {PILLAR_LABELS[pillar]} analysis
+          </h2>
+        </Link>
+      </div>
+      <div className="flex flex-col gap-6">
+        {articles.map((a) => (
+          <ArticleListItem key={a.slug} article={a} on="dark" />
+        ))}
       </div>
     </section>
   );
@@ -174,27 +180,29 @@ function ForecastRail({
 function PulseBand({
   pulses,
   artistsBySlug,
+  fillEmbeds = [],
 }: {
   pulses: Pulse[];
   artistsBySlug: ReadonlyMap<string, Artist>;
+  fillEmbeds?: MediaItem[];
 }) {
   if (pulses.length === 0) return null;
   return (
-    <section className="bg-bone text-ink mt-16">
-      <div className="mx-auto max-w-6xl px-5 py-10">
-        <h2 className="kicker mb-6">The pulse</h2>
-        <div className="flex flex-col gap-6">
-          {pulses.map((pulse) => (
-            <PulseItem
-              key={pulse.slug}
-              pulse={pulse}
-              artists={pulse.artistSlugs
-                .map((slug) => artistsBySlug.get(slug))
-                .filter((artist): artist is Artist => Boolean(artist))}
-              on="light"
-            />
-          ))}
-        </div>
+    <section className="mx-auto max-w-6xl px-5 mt-16">
+      <h2 className="kicker mb-6">The pulse</h2>
+      <div className="columns-1 sm:columns-2 md:columns-3 gap-2 md:gap-3">
+        {pulses.map((pulse) => (
+          <PulseCard
+            key={pulse.slug}
+            pulse={pulse}
+            artists={pulse.artistSlugs
+              .map((slug) => artistsBySlug.get(slug))
+              .filter((artist): artist is Artist => Boolean(artist))}
+          />
+        ))}
+        {fillEmbeds.map((m) => (
+          <EmbedCard key={m.id} item={m} />
+        ))}
       </div>
     </section>
   );
@@ -240,19 +248,17 @@ function EditionGalleryBand({ pillar, galleries }: { pillar: Pillar; galleries: 
 function AnalysisCloser({ articles }: { articles: Article[] }) {
   if (articles.length === 0) return null;
   return (
-    <section className="bg-bone text-ink mt-16">
-      <div className="mx-auto max-w-6xl px-5 py-14">
-        <div className="flex items-end justify-between mb-8">
-          <h2 className="kicker">Analysis</h2>
-          <Link href="/analysis" className="label text-muted-2 hover:text-ink transition-colors">
-            All analysis →
-          </Link>
-        </div>
-        <div className="flex flex-col gap-6">
-          {articles.map((article) => (
-            <ArticleListItem key={article.slug} article={article} on="light" />
-          ))}
-        </div>
+    <section className="mx-auto max-w-6xl px-5 mt-16">
+      <div className="flex items-end justify-between mb-8">
+        <h2 className="kicker">Analysis</h2>
+        <Link href="/analysis" className="label hover:text-bone transition-colors">
+          All analysis →
+        </Link>
+      </div>
+      <div className="flex flex-col gap-6">
+        {articles.map((article) => (
+          <ArticleListItem key={article.slug} article={article} on="dark" />
+        ))}
       </div>
     </section>
   );
@@ -404,6 +410,29 @@ async function EditionHomePage({ edition }: { edition: FeedEdition }) {
     [...musicClips, ...varietyClips].map((clip) => [clip.id, clip]),
   );
 
+  // Clips already shown in this edition's hero/rails, excluded from the Pulse
+  // band video fill so no clip appears twice on the page.
+  const railClipIds = new Set<string>();
+  for (const band of edition.bands) {
+    if (band.kind === "clip-rail") for (const id of band.clipIds) railClipIds.add(id);
+    if (band.kind === "hero" && band.clipId) railClipIds.add(band.clipId);
+  }
+  // Each Pulse band's video fill, threading a growing used-id set so a clip never
+  // repeats across two Pulse bands either.
+  const usedFillIds = new Set<string>(railClipIds);
+  const pulseFillByIndex = new Map<number, MediaItem[]>();
+  edition.bands.forEach((band, index) => {
+    if (band.kind !== "pulse-band") return;
+    const bandArtistSlugs = [
+      ...new Set(
+        band.pulseSlugs.flatMap((slug) => pulsesBySlug.get(slug)?.artistSlugs ?? []),
+      ),
+    ];
+    const fill = getPulseBandFill(bandArtistSlugs, usedFillIds, PULSE_BAND_FILL_CAP);
+    for (const m of fill) usedFillIds.add(m.id);
+    pulseFillByIndex.set(index, fill);
+  });
+
   return (
     <>
       <JsonLd
@@ -503,6 +532,7 @@ async function EditionHomePage({ edition }: { edition: FeedEdition }) {
                   requireReference(pulsesBySlug, slug, "pulse", edition.id),
                 )}
                 artistsBySlug={artistsBySlug}
+                fillEmbeds={pulseFillByIndex.get(index) ?? []}
               />
             );
           case "forecast-rail": {
@@ -755,19 +785,17 @@ async function FallbackHomePage() {
 
       {/* Analysis closer — the site-wide standards pieces plus anything past the interlude caps */}
       {closer.length > 0 && (
-        <section className="bg-bone text-ink mt-16">
-          <div className="mx-auto max-w-6xl px-5 py-14">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="kicker">Analysis</h2>
-              <Link href="/analysis" className="label text-muted-2 hover:text-ink transition-colors">
-                All analysis →
-              </Link>
-            </div>
-            <div className="flex flex-col gap-6">
-              {closer.slice(0, 8).map((a) => (
-                <ArticleListItem key={a.slug} article={a} on="light" />
-              ))}
-            </div>
+        <section className="mx-auto max-w-6xl px-5 mt-16">
+          <div className="flex items-end justify-between mb-8">
+            <h2 className="kicker">Analysis</h2>
+            <Link href="/analysis" className="label hover:text-bone transition-colors">
+              All analysis →
+            </Link>
+          </div>
+          <div className="flex flex-col gap-6">
+            {closer.slice(0, 8).map((a) => (
+              <ArticleListItem key={a.slug} article={a} on="dark" />
+            ))}
           </div>
         </section>
       )}

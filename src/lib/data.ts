@@ -398,6 +398,22 @@ export function clipFillMedia(cap: number, pillar?: Pillar): MediaItem[] {
     .map(clipMedia);
 }
 
+// The home Pulse band's mixed-media fill: a few of the featured artists' official
+// clips as grid-ready video tiles, so the band reads as text posts among video
+// (the X-feed grammar) while permitted photography sits archived. Deduped against
+// the clip ids already placed in this edition's rails (passed in) so no clip shows
+// twice on the page. Newest-first, capped. Sync — reads the loaded content.
+export function getPulseBandFill(
+  artistSlugs: string[],
+  excludeClipIds: ReadonlySet<string>,
+  cap: number,
+): MediaItem[] {
+  if (cap <= 0) return [];
+  return artistClipEmbeds(artistSlugs, cap + excludeClipIds.size)
+    .filter((m) => !excludeClipIds.has(m.id))
+    .slice(0, cap);
+}
+
 export async function getArticles(opts?: { pillar?: Pillar }): Promise<Article[]> {
   const list = byDateDesc(articles);
   if (opts?.pillar) return list.filter((a) => a.pillar === opts.pillar);
