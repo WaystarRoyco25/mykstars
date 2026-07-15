@@ -20,6 +20,9 @@ const YT_CHANNEL = {
   babymonster: { name: "BABYMONSTER", url: "https://www.youtube.com/@BABYMONSTER", kind: "embed" },
   jype: { name: "JYP Entertainment", url: "https://www.youtube.com/@JYPEntertainment", kind: "embed" },
   twice: { name: "TWICE", url: "https://www.youtube.com/@TWICE", kind: "embed" },
+  twiceJapan: { name: "TWICE JAPAN OFFICIAL YouTube Channel", url: "https://www.youtube.com/@twicejapan_official", kind: "embed" },
+  theBlackLabel: { name: "THEBLACKLABEL", url: "https://www.youtube.com/@THEBLACKLABEL", kind: "embed" },
+  kq: { name: "KQ ENTERTAINMENT", url: "https://www.youtube.com/@KQENT", kind: "embed" },
 } satisfies Record<string, Source>;
 
 // Official program / broadcaster / publisher channels for the On air rail (tv()
@@ -38,6 +41,13 @@ const PROGRAM_CHANNEL = {
   aespa: { name: "aespa", url: "https://www.youtube.com/@aespa", kind: "embed" },
   hearts2hearts: { name: "Hearts2Hearts", url: "https://www.youtube.com/@hearts2hearts.official", kind: "embed" },
   seventeen: { name: "SEVENTEEN", url: "https://www.youtube.com/@pledis17", kind: "embed" },
+  asianFeed: { name: "AsianFeed", url: "https://www.youtube.com/@asianfeed", kind: "embed" },
+  baeksang: { name: "백상예술대상", url: "https://www.youtube.com/@Baeksang", kind: "embed" },
+  pickcon: { name: "PICKCON / 픽콘", url: "https://www.youtube.com/@THESTAR", kind: "embed" },
+  jtbcNews: { name: "JTBC News", url: "https://www.youtube.com/@jtbc_news", kind: "embed" },
+  bazaarKorea: { name: "Harper's BAZAAR Korea", url: "https://www.youtube.com/@HarpersBAZAARKorea", kind: "embed" },
+  fairyJaehyung: { name: "요정재형", url: "https://www.youtube.com/@fairyjaehyung", kind: "embed" },
+  myGeumhee: { name: "이금희 '마이금희'", url: "https://www.youtube.com/@mygummy_2020", kind: "embed" },
 } satisfies Record<string, Source>;
 
 // Music clip (landscape player, k-pop pillar). videoId was oEmbed-verified on the
@@ -98,39 +108,52 @@ function tv(
 }
 
 export const clips: Clip[] = [
-  // --- Music: official music videos and clips (oEmbed re-verified 2026-07-05) ---
+  // --- Music: official music videos and clips (oEmbed re-verified through 2026-07-14) ---
   yt("clip-yt-seventeen-v8-singasong", "pBpr9TnhhkE", ["seventeen"], "2026-06-29T18:00:00+09:00", "V8, SEVENTEEN's new unit, drop 'singasong'", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-enhypen-well-be-fine", "n2bzA-ksXZI", ["enhypen"], "2026-06-29T00:00:07+09:00", "ENHYPEN, the 'We'll Be Fine' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-twice-what-is-love-tokyo-dome", "M83nVWOlQ0k", ["twice"], "2026-06-28T18:00:07+09:00", "TWICE bring 'What is Love?' to Tokyo Dome", YT_CHANNEL.twiceJapan),
+  yt("clip-yt-ateez-bad", "-q_S27LbNKU", ["ateez"], "2026-06-26T13:00:00+09:00", "ATEEZ, the 'BAD' music video", YT_CHANNEL.kq),
   yt("clip-yt-stray-kids-run-it", "Q7IFjVUUb_E", ["stray-kids"], "2026-06-24T13:00:00+09:00", "Stray Kids, the 'RUN IT' music video", YT_CHANNEL.jype),
+  yt("clip-yt-riize-do-your-dance", "HDGCTtuW-Yo", ["riize"], "2026-06-15T18:00:04+09:00", "RIIZE, the 'Do your dance' music video", YT_CHANNEL.smtown),
+  yt("clip-yt-boynextdoor-viral", "zGsj0fDHB_s", ["boynextdoor"], "2026-06-08T17:59:06+09:00", "BOYNEXTDOOR, the 'VIRAL' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-meovv-ddi-ro-ri", "aHM2RKeMaeM", ["meovv"], "2026-06-01T18:47:30+09:00", "MEOVV, the 'DDI RO RI' music video", YT_CHANNEL.theBlackLabel),
   yt("clip-yt-le-sserafim-boompala", "V1Lr-_AxeR8", ["le-sserafim"], "2026-05-22T13:00:00+09:00", "LE SSERAFIM, the 'BOOMPALA' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-nmixx-heavy-serenade", "6Ycn9qZK09I", ["nmixx"], "2026-05-11T18:00:04+09:00", "NMIXX, the 'Heavy Serenade' music video", YT_CHANNEL.jype),
   yt("clip-yt-aespa-wda", "iTJSbJtS8MU", ["aespa"], "2026-05-11T18:00:00+09:00", "aespa link up with G-Dragon for 'WDA'", YT_CHANNEL.smtown),
   yt("clip-yt-cortis-tnt", "kRpaqR5sbf0", ["cortis"], "2026-05-04T18:00:00+09:00", "CORTIS, the 'TNT' music video", YT_CHANNEL.hybeLabels),
   yt("clip-yt-babymonster-choom", "x3eqqoZPV_E", ["babymonster"], "2026-05-04T18:00:00+09:00", "BABYMONSTER, the 'CHOOM' music video", YT_CHANNEL.babymonster),
+  yt("clip-yt-illit-its-me", "bMhDJ0S0OBA", ["illit"], "2026-04-30T17:58:06+09:00", "ILLIT, the 'It's Me' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-tws-you-you", "MiO16KlMPaU", ["tws"], "2026-04-27T17:58:06+09:00", "TWS, the 'You, You' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-katseye-pinky-up", "7F1ET2XHQfk", ["katseye"], "2026-04-10T00:59:07+09:00", "KATSEYE, the 'PINKY UP' music video", YT_CHANNEL.hybeLabels),
   yt("clip-yt-bts-swim", "b4iVv91Z6lY", ["bts"], "2026-03-20T13:00:00+09:00", "BTS, the 'SWIM' music video", YT_CHANNEL.hybeLabels),
+  yt("clip-yt-allday-project-pubg", "LHUMzyMq084", ["allday-project"], "2026-03-09T18:40:00+09:00", "ALLDAY PROJECT and PUBG meet in the branded 'I DON'T BARGAIN' video", YT_CHANNEL.theBlackLabel),
   yt("clip-yt-blackpink-go", "2GJfWMYCWY0", ["blackpink"], "2026-02-27T13:30:00+09:00", "BLACKPINK return with 'GO'", YT_CHANNEL.blackpink),
   yt("clip-yt-ive-blackhole", "1Lmy7qwmSMc", ["ive"], "2026-02-23T18:00:00+09:00", "IVE, the 'BLACKHOLE' music video", YT_CHANNEL.starship),
   yt("clip-yt-hearts2hearts-rude", "F7sGJVUrkjQ", ["hearts2hearts"], "2026-02-20T18:00:00+09:00", "Hearts2Hearts, the 'RUDE!' music video", YT_CHANNEL.smtown),
-  // Dated evergreen: the tour's title track anchors the THIS IS FOR finale run at
-  // KSPO Dome and expires with it (July 12), forcing a fresh look next refresh.
-  yt("clip-yt-twice-this-is-for", "eHHQaoEW30Q", ["twice"], "2025-07-11T18:00:00+09:00", "TWICE, the *This Is For* title track", YT_CHANNEL.twice, "2026-07-12T23:59:00+09:00"),
 
   // --- Variety: comedy / variety / talk appearances on official program channels
-  //     (On air rail; oEmbed-verified 2026-07-05, upload dates from watch-page
+  //     (On air rail; oEmbed-verified through 2026-07-14, upload dates from watch-page
   //     metadata cross-checked against dated press). Honest gaps this pass:
-  //     Lee Min-ho had no qualifying in-window appearance (only 2026 re-cuts of a
-  //     2024 You Quiz visit, which would fake freshness), and NewJeans are skipped
-  //     under the red-flag rule. The Daily Show clip sits a day inside the 180-day
-  //     window; the next NOW bump replaces it. ---
+  //     Lee Min-ho had no qualifying in-window appearance, and NewJeans are skipped
+  //     under the red-flag rule. Park Ji-hu and Han So-hee had no qualifying clips
+  //     that stay fresh through August. Bong Joon-ho's only fresh upload was an
+  //     archival 2019 conversation, so the rail keeps an honest gap. ---
+  tv("clip-tv-roh-yoon-seo-nam-joo-hyuk-asianfeed", "wjbXh6SYzqQ", ["roh-yoon-seo", "nam-joo-hyuk"], "k-drama", "2026-07-14T00:00:19+09:00", "Roh Yoon-seo and Nam Joo-hyuk compare notes on *The East Palace*", PROGRAM_CHANNEL.asianFeed),
+  tv("clip-tv-kim-min-ha-jtbc-news", "1AXUSVWnlQE", ["kim-min-ha"], "k-drama", "2026-07-12T21:22:55+09:00", "Kim Min-ha sits for a career interview with JTBC News", PROGRAM_CHANNEL.jtbcNews),
+  tv("clip-tv-choo-young-woo-pickcon", "2EuB3v-bCkQ", ["choo-young-woo"], "k-drama", "2026-07-07T12:31:50+09:00", "Choo Young-woo turns a Blue Dragon handprinting session into ensemble comedy", PROGRAM_CHANNEL.pickcon),
   tv("clip-tv-jung-hoyeon-pinggyego", "vXiBTHJI1SY", ["jung-hoyeon"], "k-movie", "2026-07-04T09:00:00+09:00", "Jung Ho-yeon joins the *Hope* cast on Yoo Jae-suk's *Pinggyego*", PROGRAM_CHANNEL.ddeunddeun),
   tv("clip-tv-aespa-aesparty", "yZlQYtzAjPc", ["aespa"], "k-pop", "2026-06-26T20:00:00+09:00", "aespa reopen *aesParty* with the 'Dopamine Party' special", PROGRAM_CHANNEL.aespa),
+  tv("clip-tv-lee-chae-min-baeksang", "RPASzIlOTVc", ["lee-chae-min"], "k-drama", "2026-06-19T18:00:37+09:00", "Lee Chae-min reviews his Baeksang rookie win in an AI interview", PROGRAM_CHANNEL.baeksang),
   tv("clip-tv-park-eun-bin-mmtg", "B0xsyiT5Du4", ["park-eun-bin"], "k-drama", "2026-05-21T18:30:00+09:00", "Park Eun-bin fields JaeJae's rapid questions on *MMTG*, honors degree included", PROGRAM_CHANNEL.mmtg),
   tv("clip-tv-cha-eunwoo-wonderfools", "4bFm34ojMfQ", ["cha-eunwoo", "park-eun-bin"], "k-drama", "2026-05-18T18:00:00+09:00", "Cha Eun-woo and Park Eun-bin react to *The Wonderfools* highlights for Netflix Korea", PROGRAM_CHANNEL.netflixKorea),
+  tv("clip-tv-park-chan-wook-mygeumhee", "CoWLvgNOiM8", ["park-chan-wook"], "k-movie", "2026-05-01T19:00:15+09:00", "Park Chan-wook joins Lee Geum-hee for a long conversation on filmmaking", PROGRAM_CHANNEL.myGeumhee),
   tv("clip-tv-cortis-muply", "IAS8BhLdpZc", ["cortis"], "k-pop", "2026-04-30T20:00:00+09:00", "CORTIS fight the giggles through *Silence of the Idols* pajama drills", PROGRAM_CHANNEL.muply),
+  tv("clip-tv-ahn-hyo-seop-fairy-jaehyung", "cbGvG2uMZeo", ["ahn-hyo-seop"], "k-drama", "2026-04-26T17:00:25+09:00", "Ahn Hyo-seop settles in for a full talk with Jung Jae-hyung", PROGRAM_CHANNEL.fairyJaehyung),
   tv("clip-tv-bts-run-bts", "wu6bA3zK_us", ["bts"], "k-pop", "2026-04-23T21:00:00+09:00", "BTS reopen *Run BTS* 2.0 with a full-group trip special", PROGRAM_CHANNEL.bangtantv),
   tv("clip-tv-byeon-woo-seok-iu-pinggyego", "UV1P4a8_dz4", ["byeon-woo-seok", "iu"], "k-drama", "2026-04-04T09:00:00+09:00", "Byeon Woo-seok makes his *Pinggyego* debut alongside IU, ten years after *Moon Lovers*", PROGRAM_CHANNEL.ddeunddeun),
+  tv("clip-tv-kim-seon-ho-bazaar", "lJRnup3XfhI", ["kim-seon-ho"], "k-drama", "2026-03-31T17:00:00+09:00", "Kim Seon-ho answers *Harper's BAZAAR Korea* in a remote interview", PROGRAM_CHANNEL.bazaarKorea),
   tv("clip-tv-stray-kids-skz-code", "uB-XPe1K7SU", ["stray-kids"], "k-pop", "2026-03-12T19:59:00+09:00", "Stray Kids open a community center class on *SKZ CODE*", PROGRAM_CHANNEL.strayKids),
   tv("clip-tv-seventeen-going", "TJWUc875kpU", ["seventeen"], "k-pop", "2026-03-11T21:00:00+09:00", "SEVENTEEN set the 2026 *Going Seventeen* agenda in an emergency meeting", PROGRAM_CHANNEL.seventeen),
   tv("clip-tv-hearts2hearts-chase", "rQjzc2FMov4", ["hearts2hearts"], "k-pop", "2026-03-02T20:01:00+09:00", "Hearts2Hearts turn sauna day into a comedy battle on *Hearts Chase*", PROGRAM_CHANNEL.hearts2hearts),
   tv("clip-tv-kim-tae-ri-taerissaem", "1ZMfNReuu-U", ["kim-tae-ri"], "k-drama", "2026-02-11T10:00:00+09:00", "Kim Tae-ri turns rookie teacher in *After School Taeri-ssaem*, her first fixed variety show", PROGRAM_CHANNEL.tvnJoy),
-  tv("clip-tv-bong-joon-ho-gkids", "ehfEBUheNQI", ["bong-joon-ho"], "k-movie", "2026-01-14T04:00:00+09:00", "Bong Joon-ho sits with Lee Sang-il to champion *Kokuho* for GKIDS", PROGRAM_CHANNEL.gkids),
-  tv("clip-tv-park-chan-wook-daily-show", "Jj0N63qglbI", ["park-chan-wook"], "k-movie", "2026-01-07T13:33:00+09:00", "Park Chan-wook takes *No Other Choice* to *The Daily Show* couch", PROGRAM_CHANNEL.dailyShow),
 ];

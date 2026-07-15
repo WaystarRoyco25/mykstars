@@ -1,4 +1,68 @@
 import type { MediaAsset } from "@/lib/types";
 
 export const mediaAssets: MediaAsset[] = [
+  {
+    id: "choo-young-woo-2022-portrait",
+    credit: {
+      name: "SBS Radio 에라오",
+      url: "https://commons.wikimedia.org/wiki/File:Choo_Young-woo_%EC%B6%94%EC%98%81%EC%9A%B0_in_2022.png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Choo_Young-woo_%EC%B6%94%EC%98%81%EC%9A%B0_in_2022.png",
+    acquisitionDate: "2026-07-14",
+    reviewDate: "2027-07-14",
+    width: 725,
+    height: 868,
+    checksum: "1a29d325061ed8d1726d048788501a1469fc7d62421bda7afc17aa1a708c8309",
+    storagePath: "profiles/choo-young-woo/2026/choo-young-woo-2022-portrait.png",
+  },
+  {
+    id: "kim-min-ha-2024-love-your-w",
+    credit: {
+      name: "티비텐 TV10",
+      url: "https://commons.wikimedia.org/wiki/File:Kim_Min-ha_in_October_2024.png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Kim_Min-ha_in_October_2024.png",
+    acquisitionDate: "2026-07-14",
+    reviewDate: "2027-07-14",
+    width: 2588,
+    height: 3604,
+    checksum: "f04c6a29f5a571784d3a1110cfc37ba8d4fe0f5d098a770bde1239b3c2fe5e9e",
+    storagePath: "profiles/kim-min-ha/2026/kim-min-ha-2024-love-your-w.png",
+  },
+  {
+    id: "park-ji-hu-2022-blue-dragon",
+    credit: {
+      name: "BH Entertainment",
+      url: "https://commons.wikimedia.org/wiki/File:20220719_Park_Ji-hu_(%EB%B0%95%EC%A7%80%ED%9B%84)_1st_Blue_Dragon_Series_Awards.jpg",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:20220719_Park_Ji-hu_(%EB%B0%95%EC%A7%80%ED%9B%84)_1st_Blue_Dragon_Series_Awards.jpg",
+    acquisitionDate: "2026-07-14",
+    reviewDate: "2027-07-14",
+    width: 752,
+    height: 938,
+    checksum: "c74e27a1c0808f1c964f6d6abff17524d35463a215fac49dbe5852ecd05ce5e9",
+    storagePath: "profiles/park-ji-hu/2026/park-ji-hu-2022-blue-dragon.jpg",
+  },
+  {
+    id: "han-so-hee-2025-dior-departure",
+    credit: {
+      name: "티비텐 TV10",
+      url: "https://commons.wikimedia.org/wiki/File:250525_Han_So_Hee_(%ED%95%9C%EC%86%8C%ED%9D%AC).png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:250525_Han_So_Hee_(%ED%95%9C%EC%86%8C%ED%9D%AC).png",
+    acquisitionDate: "2026-07-14",
+    reviewDate: "2027-07-14",
+    width: 1350,
+    height: 1080,
+    checksum: "1fc518fb0bcd3111d6147a16aea107a7dcc926d733bd8eb6fa2e6a811ce8e84e",
+    storagePath: "profiles/han-so-hee/2026/han-so-hee-2025-dior-departure.png",
+  },
 ];

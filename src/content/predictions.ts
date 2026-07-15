@@ -7,21 +7,29 @@ import { BILLBOARD, STAR_NEWS, STUDIO } from "./sources";
 // A curated set of vote-only questions on PROFESSIONAL outcomes (awards, charts,
 // comebacks, box office, tours, campaigns) — never private lives. Each resolves
 // against an objective, public, dated source. Vote tallies are LIVE from Supabase
-// (see data.ts) and start at zero — real fan votes only. Broad roster coverage:
-// one question per featured artist across all four pillars. Anchored to NOW
-// (2026-07-05) and still spanning every lifecycle state — open questions and
-// resolved ones (Park Chan-wook, Bong Joon-ho). Every premise below was
-// web-verified on 2026-07-05 per docs/roster-playbook.md.
+// (see data.ts) and start at zero — real fan votes only. The portfolio spans all
+// four pillars and every lifecycle state. It is anchored to NOW (2026-07-15),
+// with premises and completed outcomes reverified through 2026-07-15 per
+// docs/roster-playbook.md.
 // Wording follows docs/forecast-playbook.md: hype within the editorial-noir voice.
 const MAMA_AWARDS: Source = { name: "MAMA Awards", url: "https://www.mnetplus.world", kind: "official" };
 const KOBIS: Source = { name: "KOBIS · Korean Film Council", url: "https://www.kobis.or.kr", kind: "official" };
 const YONHAP: Source = { name: "Yonhap News", url: "https://en.yna.co.kr", kind: "wire" };
 const NETFLIX: Source = { name: "Netflix Top 10", url: "https://www.netflix.com/tudum/top10", kind: "official" };
-const LOUIS_VUITTON: Source = { name: "Louis Vuitton", url: "https://www.louisvuitton.com", kind: "official" };
 const ADOR: Source = { name: "ADOR (official)", url: "https://weverse.io/newjeans", kind: "official" };
 const FANTAGIO: Source = { name: "Fantagio (official)", url: "https://fantagio.kr", kind: "official" };
 const HANTEO: Source = { name: "Hanteo Chart", url: "https://www.hanteochart.com", kind: "official" };
 const CIRCLE: Source = { name: "Circle Chart", url: "https://circlechart.kr", kind: "official" };
+const HANTEO_V8_600K: Source = {
+  name: "Hanteo Chart via Sports Kyunghyang",
+  url: "https://sports.khan.co.kr/en/article/202607070216007",
+  kind: "press",
+};
+const LOUIS_VUITTON_HOYEON_CAMPAIGN: Source = {
+  name: "Louis Vuitton via Sports Kyunghyang",
+  url: "https://sports.khan.co.kr/en/article/202606190530007",
+  kind: "press",
+};
 
 export const predictions: Prediction[] = [
   // ===================== K-POP =====================
@@ -41,7 +49,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the Billboard 200 chart covering *THIS & THAT*'s debut week.",
     resolutionSource: BILLBOARD,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "aespa-daesang-mama-2026",
@@ -59,7 +67,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the official 2026 MAMA Awards winners announcement.",
     resolutionSource: MAMA_AWARDS,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "blackpink-daesang-mama-2026",
@@ -77,28 +85,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the official 2026 MAMA Awards winners announcement.",
     resolutionSource: MAMA_AWARDS,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
-  },
-  {
-    // 2026-07-05: replaced an anniversary-album question whose premise could not
-    // be verified (no such release exists); test votes reset per the playbook.
-    // The finale run is confirmed: three nights at KSPO Dome, July 10 to 12.
-    slug: "twice-this-is-for-finale-sellout",
-    pillar: "k-pop",
-    category: "tour",
-    question: "Will TWICE close the *This Is For* world tour with all three Seoul finale nights sold out?",
-    framing: "Eighty-one shows come home to KSPO Dome. ONCE want the send-off standing-room only.",
-    opensAt: "2026-07-05T00:00:00+09:00",
-    closesAt: "2026-07-10T18:00:00+09:00",
-    status: "open",
-    options: [
-      { id: "yes", label: "Yes, a triple sellout", artistSlug: "twice" },
-      { id: "no", label: "No, seats remain" },
-    ],
-    resolutionSourceLabel: "Resolves on official JYP or ticketing confirmation for the three finale nights.",
-    resolutionSource: STAR_NEWS,
-    tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     // 2026-07-05: replaced an unverifiable Goyang Stadium question (her verified
@@ -119,7 +106,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on the official EDAM release announcement and the actual drop date.",
     resolutionSource: STAR_NEWS,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "cha-eunwoo-post-service-comeback-2026",
@@ -137,7 +124,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official Fantagio announcement of post-service plans.",
     resolutionSource: FANTAGIO,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "newjeans-return-official-word-2026",
@@ -155,11 +142,11 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official ADOR announcement about NewJeans' return.",
     resolutionSource: ADOR,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
 
-  // --- 2026-07-05 roster expansion: one question per new artist, premises
-  // web-verified same day (see docs/roster-playbook.md) ---
+  // --- Questions added during the 2026-07-05 roster expansion, with premises
+  // reverified through 2026-07-15 (see docs/roster-playbook.md). ---
   {
     slug: "bts-arirang-global-top10-summer",
     pillar: "k-pop",
@@ -176,25 +163,31 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Billboard Global 200 charts published through the Los Angeles nights.",
     resolutionSource: BILLBOARD,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "seventeen-v8-600k-july",
     pillar: "k-pop",
     category: "chart",
     question: "Will V8's mini album pass 600,000 copies before July ends?",
-    framing: "Vernon and The8's unit stood at 559,904 on July 1. CARAT math says this is already done.",
+    framing: "Resolved: *V8* cleared 600,000 copies in Hanteo's first-week tally.",
     opensAt: "2026-07-05T00:00:00+09:00",
     closesAt: "2026-07-31T23:59:00+09:00",
-    status: "open",
+    status: "resolved",
     options: [
       { id: "yes", label: "Yes, 600k inside July", artistSlug: "seventeen" },
       { id: "no", label: "No, it lands in August" },
     ],
-    resolutionSourceLabel: "Resolves on Hanteo and Circle cumulative sales through July 31.",
-    resolutionSource: HANTEO,
+    resolutionSourceLabel: "Resolved on Hanteo's first-week sales tally for *V8*.",
+    resolutionSource: HANTEO_V8_600K,
+    resolution: {
+      winningOptionId: "yes",
+      resolvedAt: "2026-07-06T10:00:00+09:00",
+      source: HANTEO_V8_600K,
+      note: "Hanteo's first-week chart recorded 622,214 copies for *V8*, clearing 600,000 before July ended.",
+    },
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "ive-seventh-all-kill-tour-window",
@@ -212,7 +205,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Korean chart trackers' perfect all-kill records through August 9.",
     resolutionSource: CIRCLE,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "cortis-greengreen-ten-weeks-billboard",
@@ -230,7 +223,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on weekly Billboard 200 charts through early September.",
     resolutionSource: BILLBOARD,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "hearts2hearts-lemon-tang-circle-top10-august",
@@ -248,7 +241,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Circle Chart weekly digital rankings through August.",
     resolutionSource: CIRCLE,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "babymonster-choom-first-week-record-q3",
@@ -266,27 +259,8 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Hanteo first-week tallies for 2026 girl-group releases through Q3.",
     resolutionSource: HANTEO,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
-  {
-    slug: "le-sserafim-pureflow-incheon-sellout",
-    pillar: "k-pop",
-    category: "tour",
-    question: "Will PUREFLOW's Incheon opener sell out both nights?",
-    framing: "The 23-city run opens at home. FEARNOT want the first stamp to read full house.",
-    opensAt: "2026-07-05T00:00:00+09:00",
-    closesAt: "2026-07-11T18:00:00+09:00",
-    status: "open",
-    options: [
-      { id: "yes", label: "Yes, both nights full", artistSlug: "le-sserafim" },
-      { id: "no", label: "No, seats remain" },
-    ],
-    resolutionSourceLabel: "Resolves on official Source Music or ticketing confirmation for the opening nights.",
-    resolutionSource: STAR_NEWS,
-    tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
-  },
-
   // ===================== K-DRAMA =====================
   {
     slug: "park-eun-bin-spooky-in-love-netflix-top10",
@@ -304,7 +278,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Netflix's official global Top 10 for the premiere week.",
     resolutionSource: NETFLIX,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "lee-min-ho-next-drama-confirmed-2026",
@@ -322,7 +296,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official network or agency casting announcement.",
     resolutionSource: YONHAP,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "kim-tae-ri-next-role-announced-2026",
@@ -340,7 +314,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on an official agency announcement of her next role.",
     resolutionSource: YONHAP,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     slug: "byeon-woo-seok-netflix-top10-july",
@@ -358,7 +332,7 @@ export const predictions: Prediction[] = [
     resolutionSourceLabel: "Resolves on Netflix's official weekly Top 10 for South Korea covering July.",
     resolutionSource: NETFLIX,
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
 
   // ===================== K-MOVIE =====================
@@ -384,7 +358,7 @@ export const predictions: Prediction[] = [
       note: "Finished at ~2.94 million admissions, among 2025's biggest Korean releases, per KOBIS.",
     },
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
   {
     // 2026-07-05: resolved. Bong confirmed at Cannes in May that *Ally* is
@@ -410,7 +384,7 @@ export const predictions: Prediction[] = [
       note: "At Cannes in May, Bong confirmed *Ally* is aiming for a 2027 worldwide release.",
     },
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
 
   // ===================== FASHION & BEAUTY =====================
@@ -419,17 +393,23 @@ export const predictions: Prediction[] = [
     pillar: "fashion-beauty",
     category: "campaign",
     question: "Will Jung Ho-yeon front a new Louis Vuitton campaign before the end of 2026?",
-    framing: "Front-row fixture, house muse: fans expect another campaign to drop.",
+    framing: "Resolved: Louis Vuitton released a new Jung Ho-yeon-led campaign chapter on June 19.",
     opensAt: "2026-06-12T00:00:00+09:00",
     closesAt: "2026-12-15T00:00:00+09:00",
-    status: "open",
+    status: "resolved",
     options: [
       { id: "yes", label: "Yes, a new campaign", artistSlug: "jung-hoyeon" },
       { id: "no", label: "Not this year" },
     ],
-    resolutionSourceLabel: "Resolves on an official Louis Vuitton campaign announcement.",
-    resolutionSource: LOUIS_VUITTON,
+    resolutionSourceLabel: "Resolved on Louis Vuitton's June 19 *Spirit of Travel* campaign release.",
+    resolutionSource: LOUIS_VUITTON_HOYEON_CAMPAIGN,
+    resolution: {
+      winningOptionId: "yes",
+      resolvedAt: "2026-06-19T05:30:00+09:00",
+      source: LOUIS_VUITTON_HOYEON_CAMPAIGN,
+      note: "Louis Vuitton released the Jung Ho-yeon-led 'Destiny is a Journey' installment of its *Spirit of Travel* project on June 19.",
+    },
     tallyVisibleThreshold: 25,
-    asOf: "2026-07-05T00:00:00+09:00",
+    asOf: "2026-07-15T00:00:00+09:00",
   },
 ];

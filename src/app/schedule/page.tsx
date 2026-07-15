@@ -61,7 +61,7 @@ function EventRow({ event }: { event: StarEvent }) {
         </div>
 
         {/* Tickets + source */}
-        <div className="shrink-0 flex flex-col items-end gap-2 text-right">
+        <div className="min-w-0 max-w-[40%] flex flex-col items-end gap-2 text-right sm:max-w-none sm:shrink-0">
           {event.ticketUrl && (
             <a
               href={event.ticketUrl}
@@ -72,7 +72,7 @@ function EventRow({ event }: { event: StarEvent }) {
               Tickets <IconArrowUpRight size={12} />
             </a>
           )}
-          <AttributionBadge source={event.source} />
+          <AttributionBadge source={event.source} className="max-w-full justify-end break-words" />
         </div>
       </article>
     </li>

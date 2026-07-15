@@ -1,10 +1,104 @@
-import type { Article } from "@/lib/types";
+import type { Article, Source } from "@/lib/types";
 import { FESTIVAL, NEWS1, NEWSEN, OSEN, STAR_NEWS, STUDIO, VOGUE_KOREA } from "./sources";
+
+const ATEEZ_BILLBOARD_WEEK_TWO: Source = {
+  name: "Star News · Billboard 200 week two",
+  url: "https://www.starnewskorea.com/music/2026/07/15/2026071509182154700",
+  kind: "press",
+};
+const KATSEYE_WILD_CAMPAIGN: Source = {
+  name: "Universal Music Japan · KATSEYE",
+  url: "https://www.universal-music.co.jp/katseye/news/2026-05-27/",
+  kind: "official",
+};
+const JYP_FY26_Q1: Source = {
+  name: "JYP Entertainment · FY26 Q1 Earnings Note",
+  url: "https://www.jype.com/Board/Detail?gubun=irdata&jbst_sq=6985",
+  kind: "official",
+};
+const KOBIS_2026_YEARLY: Source = {
+  name: "KOBIS · 2026 yearly box office",
+  url: "https://www.koreanfilm.or.kr/eng/news/boxOffice_Yearly.jsp?mode=BOXOFFICE_YEAR&selectDt=2026",
+  kind: "official",
+};
 
 // ---------------------------------------------------------------------------
 // ARTICLES
 // ---------------------------------------------------------------------------
 export const articles: Article[] = [
+  // --- 2026-07-15 Analysis run: two artist calls, one company and one industry flagship ---
+  {
+    slug: "katseye-wild-catalogue-win",
+    title: "KATSEYE can turn *WILD* into a catalogue win",
+    dek: "*BEAUTIFUL CHAOS* paired a No. 4 opening with 19 weeks of chart life. Three AMA wins and a 31-date arena sellout give the follow-up room to raise both the debut and the hold.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "MyKStars",
+    date: "2026-07-15T13:30:00+09:00",
+    body: [
+      "*BEAUTIFUL CHAOS* already paired a No. 4 opening with 19 weeks of chart life. Three American Music Award wins and a 31-date arena sellout give *WILD* enough expanded demand to raise both the debut and the hold.",
+      "*Billboard Brasil* reported on July 6, 2025, that *BEAUTIFUL CHAOS* opened with 44,000 album-equivalent units: 30,000 album sales and 14,000 streaming-equivalent units from 21.36 million on-demand streams. *Billboard Japan* then recorded the EP at No. 43 in its nineteenth Billboard 200 week on the chart dated November 15, 2025. KATSEYE has already shown that its audience can keep listening after release week.",
+      "The campaign is larger now. Universal Music Japan reported on May 27, 2026, that KATSEYE won all three of its nominated American Music Award categories and sold out all 31 dates of THE WILDWORLD TOUR in under 48 hours. Awards and arena sales measure attention and live demand, while preorder incentives can still concentrate album consumption in week one.",
+      "The bullish call requires two results. *WILD* must open with at least 60,000 units and a top three rank on the Billboard 200 dated August 29, then remain in the top 50 in week four on September 19.",
+    ],
+    source: KATSEYE_WILD_CAMPAIGN,
+    related: { artistSlugs: ["katseye"] },
+  },
+  {
+    slug: "ateez-number-one-listening-test",
+    title: "ATEEZ has mastered the No. 1 debut. The next test is listening",
+    dek: "*GOLDEN HOUR : Part.5* set a career peak through sales, then fell to No. 19 in week two. Recurring US listening now carries the growth test.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "MyKStars",
+    date: "2026-07-15T12:00:00+09:00",
+    body: [
+      "*GOLDEN HOUR : Part.5* converted ATEEZ's collector base into a record Billboard 200 No. 1, but a 97.8 percent sales share and a fall from No. 1 to No. 19 in week two leave the group's next US growth test in recurring listening.",
+      "On July 6, 2026, *Billboard Japan* reported 228,000 album-equivalent units for the chart dated July 11: 223,000 traditional sales and 5,000 streaming-equivalent units from 4.96 million on-demand streams. Yonhap reported on July 3 that Hanteo first-week sales exceeded 1.88 million, another group record.",
+      "The strongest opposing case is durable demand. ATEEZ has nine Billboard 200 top 10 releases, while *GOLDEN HOUR : Part.5* remained No. 1 on World Albums and No. 2 on Top Album Sales in its second week, according to the July 15 *Star News* chart report. Those results confirm repeat purchasing strength. Multiweek Billboard 200 retention offers the clearer test of listening beyond the collector base.",
+      "The checkpoint is the Billboard 200 dated September 12, the EP's tenth chart week. A top 100 rank overturns this bearish call. A position below No. 100, or an earlier exit, supports it.",
+    ],
+    source: ATEEZ_BILLBOARD_WEEK_TWO,
+    related: { artistSlugs: ["ateez"] },
+  },
+  {
+    slug: "jyp-tour-shop-release-calendar",
+    title: "JYP's tour shops are becoming a second release calendar",
+    dek: "Q1 revenue rose 32.1 percent without a major artist album. The next quarter will show whether tour-linked city shops can keep Blue Garage above a double-digit margin.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "MyKStars",
+    date: "2026-07-15T10:30:00+09:00",
+    body: [
+      "JYP Entertainment's first quarter shows that tour-linked city popups can create a profitable sales calendar between major-artist albums. The bullish call is that Blue Garage can keep double-digit margins after delayed online-order recognition rolls off.",
+      "JYP's FY26 Q1 Earnings Note, published May 15, 2026, recorded KRW 186.0 billion in consolidated revenue, up 32.1 percent from the prior-year quarter. Operating profit reached KRW 33.4 billion, up 70.0 percent, for a 17.9 percent operating margin. The quarter carried no major-artist album, and physical-recording revenue fell 15.1 percent to KRW 25.2 billion.",
+      "Touring commerce filled that gap. Merchandise revenue reached KRW 60.6 billion, up 85.2 percent, while concert revenue reached KRW 40.9 billion, up 88.7 percent. Together they supplied KRW 101.5 billion, or 54.6 percent of consolidated revenue. Blue Garage raised revenue 180.5 percent to KRW 40.9 billion and posted an 11.1 percent operating margin. JYP mapped TWICE-linked popups across five cities in late 2025 and seven in Q1, with nine more planned for Q2.",
+      "That cadence gives one tour several local sales windows and spreads product drops across months. It also makes touring a second release calendar, with merchandise tied to a live event rather than one album week. The model can keep intellectual property earning while the recording slate is light, and Q1 shows that fans will follow the schedule across markets.",
+      "The strongest counterargument sits in recognition timing and artist concentration. JYP said part of Q1 Blue Garage revenue came from online deliveries completed after Stray Kids' October 2025 encore and TWICE's tenth-anniversary popup. Its November 14, 2025, FY25 Q3 Earnings Note also recorded a 20.5 percent merchandise decline to KRW 40.0 billion when large project sales were absent. Blue Garage's cumulative operating margin then sat near 9 percent. Those figures expose the volatility behind a quarter led by TWICE and Stray Kids.",
+      "JYP's FY26 Q2 Earnings Note, assessed by August 31, 2026, is the checkpoint. The bullish call holds if at least two of three marks are met: merchandise revenue of KRW 50 billion or more, a Blue Garage operating margin of at least 10 percent, and a consolidated operating margin of at least 17 percent. The nine planned Q2 popup cities make that report the direct test of repeatability.",
+    ],
+    source: JYP_FY26_Q1,
+    related: { artistSlugs: ["twice", "stray-kids", "nmixx"] },
+  },
+  {
+    slug: "korean-cinema-distributor-concentration",
+    title: "Korean cinema's record quarter belongs to one distributor",
+    dek: "Admissions reached a post-2020 Q1 high, while Showbox captured 55.4 percent of revenue. Its hold on 2026's three biggest Korean releases keeps the recovery concentrated.",
+    status: "analysis",
+    pillar: "k-movie",
+    author: "MyKStars",
+    date: "2026-07-15T09:00:00+09:00",
+    body: [
+      "Korean theatrical demand has rebounded, but Showbox's control of the three biggest 2026 Korean releases means the recovery is still a distributor concentration story rather than a broad market recovery.",
+      "The Korean Film Council's annual report, published February 27, 2026, put 2025 box-office revenue at KRW 1.047 trillion and admissions at 106.09 million. Revenue fell 12.4 percent from 2024, while admissions fell 13.8 percent. That weak base made the first-quarter rebound welcome and left breadth as the harder test.",
+      "KOFIC's April 29 report recorded KRW 318.0 billion in first-quarter revenue and 31.9 million admissions, the strongest Q1 results since 2020. Korean films captured 73.4 percent of revenue. Showbox releases generated KRW 176.3 billion, equal to 55.4 percent of the entire market, while second-place Disney Korea took KRW 43.1 billion and 13.6 percent. Audience demand returned around a concentrated slate.",
+      "The live KOBIS yearly table on July 15 places *The King's Warden*, *Colony* and *Salmokji* as the three leading 2026 Korean releases, with 16.91 million, 5.90 million and 3.24 million admissions. Showbox distributed all three. The run gives the recovery real force, while one distributor's command of the largest titles leaves rival pipelines with little evidence of comparable scale.",
+      "The strongest counterargument is the range inside Showbox's run. Romance, historical drama, horror and zombie action have all found audiences, which points to demand across genres rather than a single-film anomaly. Genre breadth within one distributor still leaves financing and distribution breadth narrow. A durable national recovery needs multiple companies to turn multiple films into events.",
+      "KOBIS results through August 31, 2026, provide the checkpoint. This bearish call is overturned only if at least two of the five highest-grossing Korean films released in 2026 come from non-Showbox distributors and each exceeds three million admissions. Any result below that mark supports the concentration thesis.",
+    ],
+    source: KOBIS_2026_YEARLY,
+    related: {},
+  },
   // --- 2026-07-05 roster expansion: multi-artist analysis for the new subjects ---
   {
     slug: "arirang-numbers-reading",
