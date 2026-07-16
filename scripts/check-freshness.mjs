@@ -3,10 +3,9 @@
 // in src/content/now.ts. Clips (the yt()/tv() factories, YouTube) carry a hard
 // freshness obligation: at most 180 days old, unless a dated, still-future
 // evergreenUntil exemption applies. Gallery- and Pulse-embedded media
-// (kind: "embed"), including the Instagram photo embeds reinstated in July 2026,
-// is archival: not age-gated, but its date must exist, parse, and not sit in the
-// future. A post dated after NOW is the fabricated-date failure mode this guard
-// exists to catch.
+// (kind: "embed") is archival: not age-gated, but its date must exist, parse, and
+// not sit in the future. A post dated after NOW is the fabricated-date failure
+// mode this guard exists to catch.
 //
 // Like check-style.mjs, this is a hand-rolled scanner, not an AST parser: the
 // clip factories yt()/tv() take positional string arguments whose order is

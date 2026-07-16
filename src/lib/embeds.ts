@@ -1,9 +1,8 @@
 // Helpers for the live, lazy embeds (see components/LiveEmbed.tsx). Pure URL
 // parsing only: no DOM access, no third-party scripts, so the file stays safe to
-// import anywhere (server or client). Instagram returned in July 2026 as a
-// click-to-reveal embed; its permalink parser lives here, but the embed.js loader
-// (DOM + script work) lives in lib/instagram-embed.ts so this module stays
-// server-safe. (X stays retired.)
+// import anywhere (server or client). YouTube is the only live embed: Instagram
+// and X are both retired, and photography comes from the permitted MediaAsset
+// registry instead. (TikTok reserved.)
 
 import type { MediaItem } from "./types";
 
@@ -51,29 +50,6 @@ export function youtubeThumbnail(id: string): string {
   return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
 
-// A public Instagram post/reel/tv shortcode: URL-safe characters only. We never
-// fabricate these — every embedded permalink is a real, verified post.
-const IG_SHORTCODE = /^[A-Za-z0-9_-]+$/;
-
-// Canonical permalink for a public Instagram post, or null when the URL is not a
-// parseable post permalink (a bare profile URL, a story, an unparseable string).
-// embed.js needs the /p|reel|tv/{shortcode}/ permalink form; we normalize to it
-// so a trailing query string or missing slash never breaks the reveal. Callers
-// fall back to a plain link-out when this returns null (never a broken embed).
-export function instagramPermalink(url: string | undefined): string | null {
-  if (!url) return null;
-  try {
-    const u = new URL(url);
-    const host = u.hostname.replace(/^www\./, "");
-    if (host !== "instagram.com" && host !== "instagr.am") return null;
-    const m = u.pathname.match(/^\/(?:[^/]+\/)?(p|reel|tv)\/([^/?#]+)/);
-    if (!m || !IG_SHORTCODE.test(m[2])) return null;
-    return `https://www.instagram.com/${m[1]}/${m[2]}/`;
-  } catch {
-    return null;
-  }
-}
-
 // Whether a media item points at a specific, embeddable post (not a bare channel
 // or an unparseable URL). The grid uses this to choose a live embed over the
 // link-out facade. Mirrors the per-platform parsers above.
@@ -82,8 +58,6 @@ export function isEmbeddablePost(item: MediaItem): boolean {
   switch (item.platform) {
     case "youtube":
       return youtubeId(item.embedUrl) != null;
-    case "instagram":
-      return instagramPermalink(item.embedUrl) != null;
     default:
       return false;
   }

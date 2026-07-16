@@ -28,8 +28,8 @@ export default function PulseCard({
       ? artists.map((artist) => artist.name).join(", ")
       : PILLAR_LABELS[pulse.pillar];
   const photo = pulse.media?.kind === "image" ? pulse.media : undefined;
-  // An embed lead (e.g. an Instagram post) reveals in place on tap rather than
-  // linking to the detail page, so the picture is one tap away in the feed.
+  // An embed lead (an official video) plays in place on tap rather than linking
+  // to the detail page, so the clip is one tap away in the feed.
   const embed = pulse.media?.kind === "embed" ? pulse.media : undefined;
 
   return (

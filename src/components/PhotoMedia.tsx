@@ -7,9 +7,9 @@ import { IconCamera } from "./icons";
 const TONES = ["#141414", "#171717", "#1b1b1b", "#191617"];
 
 // Renders one media item to fill its (relatively-positioned) parent.
-// - embed      → visual-only facade tile (photo stays on source; interactivity,
+// - embed      → visual-only facade tile (video stays on source; interactivity,
 //                if any, is owned by the caller — a cover <Link>, a filmstrip
-//                <button>, or the InstagramEmbed / LiveEmbed reveal wrappers)
+//                <button>, or the LiveEmbed player wrapper)
 // - image      → next/image (AVIF/WebP negotiation handled by the pipeline)
 // - placeholder→ neutral tile standing in for licensed/embedded imagery, with a
 //                baked-in credit line (we never strip credits).

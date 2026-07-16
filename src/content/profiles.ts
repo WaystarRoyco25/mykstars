@@ -99,18 +99,6 @@ export const artists: Artist[] = [
       { platform: "instagram", url: "https://www.instagram.com/aespa_official/", handle: "@aespa_official" },
       { platform: "x", url: "https://x.com/aespa_official", handle: "@aespa_official" },
     ],
-    // Instagram-embed hero (no licensed photo yet): aespa's KISS N TELL album
-    // announcement, a real web-verified official post revealed on tap. 2026-07-16.
-    hero: {
-      id: "aespa-hero-kiss-n-tell",
-      kind: "embed",
-      platform: "instagram",
-      embedUrl: "https://www.instagram.com/p/DaQWW3kE0ue/",
-      alt: "aespa announce the *KISS N TELL* Japan mini album",
-      credit: { name: "@smtown", url: "https://www.instagram.com/p/DaQWW3kE0ue/", kind: "embed" },
-      date: "2026-07-01",
-      orientation: "landscape",
-    },
   },
   {
     slug: "cha-eunwoo",
@@ -407,6 +395,7 @@ export const artists: Artist[] = [
   {
     slug: "katseye",
     name: "KATSEYE",
+    koreanName: "캣츠아이",
     type: "group",
     careerStage: "rising",
     coverageLevel: "active",
@@ -438,6 +427,7 @@ export const artists: Artist[] = [
   {
     slug: "illit",
     name: "ILLIT",
+    koreanName: "아일릿",
     type: "group",
     careerStage: "rising",
     coverageLevel: "active",
@@ -469,6 +459,7 @@ export const artists: Artist[] = [
   {
     slug: "riize",
     name: "RIIZE",
+    koreanName: "라이즈",
     type: "group",
     careerStage: "rising",
     coverageLevel: "active",
@@ -500,6 +491,7 @@ export const artists: Artist[] = [
   {
     slug: "nmixx",
     name: "NMIXX",
+    koreanName: "엔믹스",
     type: "group",
     careerStage: "established",
     coverageLevel: "active",
@@ -531,6 +523,7 @@ export const artists: Artist[] = [
   {
     slug: "tws",
     name: "TWS",
+    koreanName: "투어스",
     type: "group",
     careerStage: "rising",
     coverageLevel: "active",
@@ -562,6 +555,7 @@ export const artists: Artist[] = [
   {
     slug: "allday-project",
     name: "ALLDAY PROJECT",
+    koreanName: "올데이 프로젝트",
     type: "group",
     careerStage: "rookie",
     coverageLevel: "active",
@@ -593,6 +587,7 @@ export const artists: Artist[] = [
   {
     slug: "boynextdoor",
     name: "BOYNEXTDOOR",
+    koreanName: "보이넥스트도어",
     type: "group",
     careerStage: "rising",
     coverageLevel: "active",
@@ -624,6 +619,7 @@ export const artists: Artist[] = [
   {
     slug: "meovv",
     name: "MEOVV",
+    koreanName: "미야오",
     type: "group",
     careerStage: "rookie",
     coverageLevel: "active",
@@ -655,6 +651,7 @@ export const artists: Artist[] = [
   {
     slug: "enhypen",
     name: "ENHYPEN",
+    koreanName: "엔하이픈",
     type: "group",
     careerStage: "established",
     coverageLevel: "active",
@@ -686,6 +683,7 @@ export const artists: Artist[] = [
   {
     slug: "ateez",
     name: "ATEEZ",
+    koreanName: "에이티즈",
     type: "group",
     careerStage: "established",
     coverageLevel: "active",
@@ -717,6 +715,7 @@ export const artists: Artist[] = [
   {
     slug: "roh-yoon-seo",
     name: "Roh Yoon-seo",
+    koreanName: "노윤서",
     type: "individual",
     careerStage: "rising",
     coverageLevel: "active",
@@ -748,6 +747,7 @@ export const artists: Artist[] = [
   {
     slug: "lee-chae-min",
     name: "Lee Chae-min",
+    koreanName: "이채민",
     type: "individual",
     careerStage: "rising",
     coverageLevel: "active",
@@ -779,6 +779,7 @@ export const artists: Artist[] = [
   {
     slug: "choo-young-woo",
     name: "Choo Young-woo",
+    koreanName: "추영우",
     type: "individual",
     careerStage: "rising",
     coverageLevel: "active",
@@ -812,6 +813,7 @@ export const artists: Artist[] = [
   {
     slug: "kim-min-ha",
     name: "Kim Min-ha",
+    koreanName: "김민하",
     type: "individual",
     careerStage: "established",
     coverageLevel: "active",
@@ -845,6 +847,7 @@ export const artists: Artist[] = [
   {
     slug: "park-ji-hu",
     name: "Park Ji-hu",
+    koreanName: "박지후",
     type: "individual",
     careerStage: "rising",
     coverageLevel: "active",
@@ -878,6 +881,7 @@ export const artists: Artist[] = [
   {
     slug: "nam-joo-hyuk",
     name: "Nam Joo-hyuk",
+    koreanName: "남주혁",
     type: "individual",
     careerStage: "established",
     coverageLevel: "active",
@@ -909,6 +913,7 @@ export const artists: Artist[] = [
   {
     slug: "kim-seon-ho",
     name: "Kim Seon-ho",
+    koreanName: "김선호",
     type: "individual",
     careerStage: "established",
     coverageLevel: "active",
@@ -940,6 +945,7 @@ export const artists: Artist[] = [
   {
     slug: "han-so-hee",
     name: "Han So-hee",
+    koreanName: "한소희",
     type: "individual",
     careerStage: "established",
     coverageLevel: "active",
@@ -973,6 +979,7 @@ export const artists: Artist[] = [
   {
     slug: "ahn-hyo-seop",
     name: "Ahn Hyo-seop",
+    koreanName: "안효섭",
     type: "individual",
     careerStage: "established",
     coverageLevel: "active",

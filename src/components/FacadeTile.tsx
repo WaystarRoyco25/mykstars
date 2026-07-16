@@ -1,5 +1,5 @@
 import { EMBED_PLATFORM_LABELS, type MediaItem } from "@/lib/types";
-import { IconArrowUpRight, IconCamera, IconInstagram } from "./icons";
+import { IconArrowUpRight, IconCamera } from "./icons";
 import { stripEmphasis } from "@/lib/text";
 
 // The shared visual for an embed facade: a branded dark tile shown before a
@@ -18,10 +18,9 @@ export default function FacadeTile({
   compact?: boolean;
 }) {
   const platform = item.platform ? EMBED_PLATFORM_LABELS[item.platform] : "source";
-  const Icon = item.platform === "instagram" ? IconInstagram : IconCamera;
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-ink-2 to-ink px-4 text-center text-bone">
-      <Icon
+      <IconCamera
         size={compact ? 20 : 26}
         className="text-muted-2 transition-colors duration-500 group-hover:text-crimson"
       />

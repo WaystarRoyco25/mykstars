@@ -90,16 +90,6 @@ export function IconClose(p: IconProps) {
   );
 }
 
-export function IconInstagram(p: IconProps) {
-  return (
-    <svg {...base(p)}>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="16.5" cy="7.5" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 export function IconGlobe(p: IconProps) {
   return (
     <svg {...base(p)}>

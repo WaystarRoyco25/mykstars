@@ -64,65 +64,6 @@ function placeMixed(
 export const galleries: Gallery[] = [
   // ===================== K-POP =====================
   {
-    // First live Instagram set (2026-07-16): aespa's KISS N TELL concept run,
-    // reinstating Instagram as click-to-reveal photo embeds (server test, never
-    // rehosted). Every permalink is a real, web-verified official post carrying
-    // its TRUE upload date. See docs/roster-playbook.md and lib/instagram-embed.ts.
-    slug: "aespa-kiss-n-tell",
-    publicationState: "published",
-    title: "aespa count down to *KISS N TELL*",
-    pillar: "k-pop",
-    category: "comeback",
-    artistSlugs: ["aespa"],
-    event: "Japan mini-album countdown",
-    date: "2026-07-02T18:00:00+09:00",
-    source: { name: "aespa on Instagram", url: "https://www.instagram.com/aespa_official/", kind: "embed" },
-    excerpt:
-      "aespa's first Japan mini album *KISS N TELL* arrives July 24, and the official concept run rolls out member by member on Instagram.",
-    cover: {
-      id: "aespa-kiss-n-tell-cover",
-      kind: "embed",
-      platform: "instagram",
-      embedUrl: "https://www.instagram.com/p/DaQWW3kE0ue/",
-      alt: "aespa announce the *KISS N TELL* Japan mini album, out July 24",
-      credit: { name: "@smtown", url: "https://www.instagram.com/p/DaQWW3kE0ue/", kind: "embed" },
-      date: "2026-07-01",
-      orientation: "square",
-    },
-    media: [
-      {
-        id: "aespa-kiss-n-tell-ningning",
-        kind: "embed",
-        platform: "instagram",
-        embedUrl: "https://www.instagram.com/p/DaS3i0JlFRk/",
-        alt: "aespa's Ningning in the *KISS N TELL* concept photos",
-        credit: { name: "@aespa_official", url: "https://www.instagram.com/p/DaS3i0JlFRk/", kind: "embed" },
-        date: "2026-07-02",
-        orientation: "portrait",
-      },
-      {
-        id: "aespa-kiss-n-tell-karina",
-        kind: "embed",
-        platform: "instagram",
-        embedUrl: "https://www.instagram.com/p/DaS5rjxT5x6/",
-        alt: "aespa's Karina in the *KISS N TELL* concept photos",
-        credit: { name: "@smtown", url: "https://www.instagram.com/p/DaS5rjxT5x6/", kind: "embed" },
-        date: "2026-07-02",
-        orientation: "portrait",
-      },
-      {
-        id: "aespa-kiss-n-tell-announce",
-        kind: "embed",
-        platform: "instagram",
-        embedUrl: "https://www.instagram.com/p/DaQWW3kE0ue/",
-        alt: "aespa announce the *KISS N TELL* Japan mini album, out July 24",
-        credit: { name: "@smtown", url: "https://www.instagram.com/p/DaQWW3kE0ue/", kind: "embed" },
-        date: "2026-07-01",
-        orientation: "square",
-      },
-    ],
-  },
-  {
     // 2026-07-05 correction: the prior "comeback showcase" set described an event
     // that never happened (and embedded a 2024 reel). Re-anchored to the verified
     // real moment: ADOR-confirmed pre-production sessions in Copenhagen, April
