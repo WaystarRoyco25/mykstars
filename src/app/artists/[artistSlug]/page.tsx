@@ -19,6 +19,7 @@ import LiveEmbed from "@/components/LiveEmbed";
 import PhotoMedia from "@/components/PhotoMedia";
 import { IconArrowUpRight } from "@/components/icons";
 import { absoluteDate, eventDateRange } from "@/lib/format";
+import { orientationOf } from "@/lib/media";
 import { roleLabel } from "@/lib/people";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
 import CompanyLogo from "@/components/CompanyLogo";
@@ -173,7 +174,17 @@ export default async function ArtistPage({
           {artist.hero.kind === "embed" ? (
             <LiveEmbed item={artist.hero} />
           ) : (
-            <PhotoMedia item={artist.hero} sizes="100vw" preload />
+            <PhotoMedia
+              item={artist.hero}
+              sizes="100vw"
+              preload
+              // The hero box is a wide letterbox, so a portrait photo overflows
+              // it vertically and a centred crop lands on the chest, cutting the
+              // face off. Bias the crop toward the upper third, where the face
+              // sits in a press or red-carpet frame. Landscape heroes fill the
+              // box closely and stay centred.
+              position={orientationOf(artist.hero) === "portrait" ? "50% 22%" : undefined}
+            />
           )}
         </div>
       )}
