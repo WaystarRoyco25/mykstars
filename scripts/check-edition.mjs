@@ -79,6 +79,7 @@ function collectObjectArray(registry, file, name, format, options = {}) {
       : keyStringList(loaded.src, loaded.map, object.open, object.close, "artistSlugs");
     const pillar = keyString(loaded.src, loaded.map, object.open, object.close, "pillar")?.value;
     const state = keyString(loaded.src, loaded.map, object.open, object.close, "publicationState")?.value;
+    const date = keyString(loaded.src, loaded.map, object.open, object.close, options.dateKey ?? "date")?.value;
     const hasPlaceholder = format === "gallery" && (
       hasCodePattern(loaded.src, loaded.map, object.open, object.close, /\bkind\s*:\s*"placeholder"/g) ||
       hasCodePattern(loaded.src, loaded.map, object.open, object.close, /\bplace(?:Set|Mixed)?\s*\(/g)
@@ -88,6 +89,7 @@ function collectObjectArray(registry, file, name, format, options = {}) {
       artists: [...new Set(artists ?? [])],
       ...(pillar ? { pillar } : {}),
       ...(state ? { publicationState: state } : {}),
+      ...(date ? { date } : {}),
       ...(hasPlaceholder ? { hasPlaceholder: true } : {}),
     }, file, lineAt(loaded.starts, id.idx));
   }
@@ -146,11 +148,13 @@ function collectClips(registry) {
     const artistArg = args[2] ?? "";
     const artists = [...artistArg.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((item) => item[1]);
     const pillar = match[1] === "yt" ? "k-pop" : unquote(args[3] ?? "");
+    // yt(id, videoId, artistSlugs, date, ...); tv(id, videoId, artistSlugs, pillar, date, ...).
+    const date = unquote((match[1] === "yt" ? args[3] : args[4]) ?? "");
     if (!id || !pillar) {
       fail(file, lineAt(starts, match.index), "malformed clip", "clip id, artist list, or pillar is not a plain literal");
       continue;
     }
-    record(registry, `clip:${id}`, { format: "clip", artists: [...new Set(artists)], pillar }, file, lineAt(starts, match.index));
+    record(registry, `clip:${id}`, { format: "clip", artists: [...new Set(artists)], pillar, ...(date ? { date } : {}) }, file, lineAt(starts, match.index));
   }
 }
 
@@ -172,8 +176,8 @@ function buildRegistry() {
   collectObjectArray(registry, GALLERIES_FILE, "galleries", "gallery");
   collectClips(registry);
   collectObjectArray(registry, EVENTS_FILE, "events", "event");
-  collectObjectArray(registry, PREDICTIONS_FILE, "predictions", "forecast", { artistKey: "singular" });
-  collectObjectArray(registry, RANKINGS_FILE, "rankings", "ranking", { artistKey: "singular" });
+  collectObjectArray(registry, PREDICTIONS_FILE, "predictions", "forecast", { artistKey: "singular", dateKey: "opensAt" });
+  collectObjectArray(registry, RANKINGS_FILE, "rankings", "ranking", { artistKey: "singular", dateKey: "asOf" });
   collectObjectArray(registry, ARTICLES_FILE, "articles", "article");
   return registry;
 }
@@ -319,6 +323,31 @@ function resolveItem(file, key, registry) {
   return { key, ...facts };
 }
 
+// An item dated after the edition was generated can never be in it: the engine
+// drops those candidates, so content that already shipped in its content file
+// stays off the home page with nothing else to flag it. Events are exempt
+// because the engine keeps them forward-looking (src/lib/edition/engine.ts).
+// This catches content dated at authoring time; a backfilled clip carrying an
+// older true upload date still needs the reviewer's eye.
+function warnIfStale(file, edition, registry) {
+  const publishedMs = Date.parse(edition.publishedAt);
+  const missed = [];
+  for (const [key, facts] of registry) {
+    if (facts.format === "event" || !facts.date || facts.date.slice(0, 7) !== edition.id) continue;
+    const dateMs = Date.parse(facts.date);
+    if (!Number.isNaN(dateMs) && dateMs > publishedMs) missed.push({ key, date: facts.date, dateMs });
+  }
+  if (missed.length === 0) return;
+  missed.sort((a, b) => b.dateMs - a.dateMs);
+  const newest = missed[0];
+  warn(
+    file,
+    "stale edition",
+    `${missed.length} item${missed.length === 1 ? "" : "s"} dated after publishedAt ${edition.publishedAt} ` +
+    `cannot appear in ${edition.id} (newest: ${newest.key}, ${newest.date}). Regenerate with npm run gen:edition.`,
+  );
+}
+
 function validateEdition(file, edition, registry, active, knownProfiles) {
   const filenameId = basename(file, ".ts");
   if (!edition || typeof edition !== "object") {
@@ -330,6 +359,8 @@ function validateEdition(file, edition, registry, active, knownProfiles) {
     fail(file, 1, "bad publishedAt", "publishedAt must be a parseable plain string");
   } else if (edition.publishedAt.slice(0, 7) !== edition.id) {
     fail(file, 1, "published month mismatch", `${edition.publishedAt} does not fall in ${edition.id}`);
+  } else {
+    warnIfStale(file, edition, registry);
   }
   if (!Array.isArray(edition.bands)) {
     fail(file, 1, "malformed bands", "bands must be an array");
