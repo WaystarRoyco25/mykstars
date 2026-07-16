@@ -83,14 +83,14 @@ professional facts from official announcements only.
    - Retire a catalog artist's open forecast questions in the same refresh (the
      `getOpenPredictions` filter is only a safety net).
 6. **The embed rules.** (Video embeds are YouTube since July 2026, TikTok reserved. Instagram
-   returned that same month as click-to-reveal photo embeds: a dark facade in galleries, Pulse
-   and profiles, with the real post mounting from instagram.com only on tap (the server test,
-   never rehosted; see `src/lib/instagram-embed.ts`). X stays retired, its handle kept on
-   `Artist.social` as a verification record that never renders; the account link-out tiles
-   (`artistEmbeds`) still cover only YouTube/TikTok.)
-   - **180-day rule:** every clip must be at most 180 days old vs `NOW`. Instagram photo embeds
-     (galleries, Pulse, profiles) are archival: a real official permalink and TRUE upload date
-     are required, but they are not age-gated by the 180-day rule.
+   was briefly reinstated that month as click-to-reveal photo embeds and retired again on
+   2026-07-16: photography now comes from the permitted `MediaAsset` registry instead, so no
+   third-party photo embed exists. Instagram and X are both retired, their handles kept on
+   `Artist.social` as verification records that never render; the account link-out tiles
+   (`artistEmbeds`) cover only YouTube/TikTok.)
+   - **180-day rule:** every clip must be at most 180 days old vs `NOW`. Gallery- and
+     Pulse-embedded media is archival: a real official permalink and TRUE upload date are
+     required, but it is not age-gated by the 180-day rule.
    - **True-date integrity:** a clip's `date` is the video's real upload date, verified at
      authoring time. Never edit a date to make an old post look current; find a genuinely new
      post or ship fewer clips. Fewer verified embeds always beat more plausible ones.
@@ -110,13 +110,42 @@ professional facts from official announcements only.
      content, and avoid it on the On air rail entirely (that rail is a currency surface).
    - Gallery-embedded media (`kind: "embed"`) is archival and not age-gated, but must carry its
      true `date`, and that date can never sit in the site's future.
-7. **Verification methods that work here** (no logins, no paid APIs):
+7. **Sourcing permitted photography.** Photos come from Wikimedia Commons, re-hosted once to the
+   Supabase media bucket with a `MediaAsset` rights record. Run `node scripts/find-photos.mjs`
+   (no arguments sweeps every active artist with no asset yet; pass slugs to target; `--all`
+   re-checks the covered ones).
+   - **Search both names.** The finder queries the English `name` and the hangul `koreanName`
+     and unions the results, because Korean outlets (티비텐 TV10, Ten Asia, K-POPIT) publish to
+     YouTube under CC BY and those frames reach Commons under Korean-titled filenames. Measured
+     2026-07-16: RIIZE 10 usable files under English, 49 with Korean added; NMIXX 41 to 70. The
+     deeper reason is romanization drift, Commons files Roh Yoon-seo under "Noh", so only
+     `intitle:노윤서` finds her. Every artist therefore carries a `koreanName`.
+   - **Permitted bases only:** `cc-by`, `cc-by-sa`, `public-domain`, `agency-press-kit`. NC is
+     refused as non-commercial. ND is refused too, despite allowing commercial reuse: Commons
+     will not host it, and `PhotoMedia` crops every photo `object-cover` into a fixed aspect box,
+     which is a CC adaptation. (The `next/image` re-encode alone would be fine, CC 4.0 §2(a)(4)
+     exempts technical and format changes.)
+   - **The finder prints leads, never clearances.** Commons full-text matches any page mentioning
+     a name, so a human confirms each pick on its Commons page and by looking at the image.
+     Known traps, all hit in the 2026-07-16 pass: namesakes (the actor Lee Min-ho vs Stray Kids'
+     Lee Know; the actor Kim Seon-ho vs the Defense Minister and a footballer), fan photographs
+     of photocards or album art whose uploader's CC tag cannot clear the agency's underlying
+     copyright, AI-upscaled screengrabs (check the wikitext for `{{AI upscaled}}`), files under
+     an open deletion request for license laundering, and single-member crops standing in for a
+     group. Prefer files with a passed `{{LicenseReview}}`.
+   - **Re-host verbatim.** Download the original, sha256 it, upload those exact bytes, and read
+     back to confirm the stored object matches. `sourceUrl` and `credit.url` are the Commons
+     **File:** page (the licence trail), never `upload.wikimedia.org`. Give a replacement image a
+     new `assetId`: URLs are content-addressed and cached for ~31 days.
+   - Commons throttles bursts with HTTP 429 on `upload.wikimedia.org`. Pace the downloads; a
+     throttle is not a missing file.
+8. **Verification methods that work here** (no logins, no paid APIs):
    - YouTube: `https://www.youtube.com/oembed?url=<watch-url>&format=json` proves existence and
      the exact channel name. Reject anything not on the named official channel.
    - The true upload date comes from the watch page's own metadata (`datePublished` /
      `uploadDate`) or a dated press article that corroborates it; never from a search snippet
      alone (see Red flags).
-8. **Run the checks before calling a refresh done** (see Check commands below).
+9. **Run the checks before calling a refresh done** (see Check commands below).
 
 ## Roster reference (as of 2026-07-05)
 

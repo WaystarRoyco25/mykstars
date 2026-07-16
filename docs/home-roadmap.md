@@ -99,6 +99,12 @@ still carry the time-urgent inventory. (Instagram and X embeds were retired in S
   script loaders and `useInView` went with them; the `twitter-widget` CSS patch is gone.
   The official IG/X handles stay in seed as unrendered `SocialLink` records (the type
   split is `SocialPlatform` vs `EmbedPlatform`).
+- **Postscript (2026-07-16).** Instagram was reinstated on 2026-07-16 as click-to-reveal photo
+  embeds and erased again the same day, so this section reads as current once more. The retry
+  is worth recording: it was tried because several artists had no licensed photo, and it was
+  dropped once a bilingual Commons search showed licensed photography did exist for them (the
+  "no licensed photo yet" note on aespa's Instagram hero was simply stale). Photos now come from
+  the `MediaAsset` registry; see rule 7 of `docs/roster-playbook.md` and `scripts/find-photos.mjs`.
 - `Clip.format` (never meaningful) replaced by `Clip.genre` (`"music" | "variety"`), with
   a second seed factory `tv()` for variety clips (program/broadcaster official channels,
   pillar as a parameter). Accessors `getMusicClips()` / `getVarietyClips()` replace

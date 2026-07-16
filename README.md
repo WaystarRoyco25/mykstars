@@ -33,7 +33,7 @@ npm run check:style && npm run check:articles && npm run check:fresh && npm run 
 
 Aggregation is engineered to **survive**, not just to repost:
 
-- **Embed-first** — official YouTube embeds (TikTok-ready) so video stays on the source; Instagram/X embeds were retired in July 2026 in favor of two YouTube rails.
+- **Embed-first for video, licensed for photos** — official YouTube embeds (TikTok-ready) so video stays on the source, split across two rails; Instagram/X embeds were retired in July 2026. Photography is openly licensed (Wikimedia Commons CC-BY/CC-BY-SA/public domain) or an agency press kit, re-hosted once with a rights record.
 - **Attribution as infrastructure** — every `MediaItem` *requires* a credit; we link back and never strip credit lines.
 - **DMCA/takedown in v1** — `/legal/dmca` + `/api/takedown`.
 - **Licensed-spine on-ramp** — wire/agency/stock feeds (Getty *imazins*, Yonhap, News1, Newsen…) drop in behind the same data layer when ad revenue justifies it.
