@@ -21,11 +21,112 @@ const KOBIS_2026_YEARLY: Source = {
   url: "https://www.koreanfilm.or.kr/eng/news/boxOffice_Yearly.jsp?mode=BOXOFFICE_YEAR&selectDt=2026",
   kind: "official",
 };
+const SUNMI_FOREVER_JULY: Source = {
+  name: "The Korea Times · Sunmi 'Forever July'",
+  url: "https://www.koreatimes.co.kr/entertainment/k-pop/20260715/sunmi-returns-with-rainy-summer-single-forever-july",
+  kind: "press",
+};
+const YG_CONCERT_ACCESSIBILITY: Source = {
+  name: "YG Entertainment · 2026 Sustainable Concert Report",
+  url: "https://ygfamily.com/contents/attachments/2026/06/YG_Entertainment_2026_%2BSustainable%2BConcert%2BReport_ENG.pdf",
+  kind: "official",
+};
+const KOCCA_2025_WEBTOON_SURVEY: Source = {
+  name: "KOCCA · 2025 Webtoon Industry Survey, public edition",
+  url: "https://welcon.kocca.kr/ko/info/report/1956900",
+  kind: "official",
+};
+const KOFIC_SOUTHEAST_ASIA_STRATEGY: Source = {
+  name: "KOFIC · Southeast Asia co-production strategy",
+  url: "https://magazine.kofic.or.kr/webzine/web2/2833/pdsView.do",
+  kind: "official",
+};
 
 // ---------------------------------------------------------------------------
 // ARTICLES
 // ---------------------------------------------------------------------------
 export const articles: Article[] = [
+  // 2026-07-16 reactive Analysis run
+  {
+    slug: "sunmi-forever-july-monsoon-pop",
+    title: "Sunmi makes the monsoon a summer-pop advantage",
+    dek: "'Forever July' treats rain, humidity and uncertainty as the season's real texture. Its chart life will test whether cultural precision can create durable pop demand.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "MyKStars",
+    date: "2026-07-16T14:30:00+09:00",
+    body: [
+      "Sunmi's 'Forever July' makes a bullish bet on cultural precision. The single uses monsoon rain, wet air and emotional uncertainty as the sound and image of a Korean summer. That choice gives a veteran soloist a sharper position than another bright seasonal hook. The song can become a durable summer record because it names the season people actually live through.",
+      "*The Korea Times* reported on July 15, 2026, that 'Forever July' arrived eight months after Sunmi's first full-length album, *Heart Maid*. Abyss Company described the song as a love story shaped by a sudden downpour. A UK garage rhythm carries the track, and Sunmi took part in both writing and composing it. The concept, sound and authorship therefore point in the same direction.",
+      "Her earlier summer records give the idea a credible base. The same July 15 report noted that 'pporappippam' reached the Circle Digital Chart top 10 in 2020 and identified 'Heart Burn' as another seasonal hit in 2022. Both songs favored mood over a crowded beach-party formula. 'Forever July' pushes that distinction further by making unstable weather the central image.",
+      "The cultural value sits in that weather. Korea's rainy season changes commutes, clothing, street light and the pace of daily life. Pop often turns summer into a universal postcard of blue sky and escape. Sunmi keeps the season local and unsettled. The damp visual world also gives the song an emotional language for attraction that feels exciting and difficult at once. The artistic wager is that this specificity will make the record easier to recognize across borders by giving listeners a complete point of view.",
+      "The strongest counterargument is simple. Summer listeners may want release from humidity instead of a reminder of it. A digital single also lacks the physical-sales engine, collectible versions and concentrated fandom purchases that support many current K-pop chart debuts. A strong concept can earn attention on release day, while durable demand still depends on repeated listening after the visual campaign slows.",
+      "Sunmi's career stage makes that risk useful. She has less reason to imitate the release volume of younger groups. A seasonal record that carries her writing and composing credits can deepen a recognizable catalogue and return every July if the public adopts it. That recurring value matters more than one crowded week of promotional clips. The strategy works when authorship, image and listening occasion reinforce one another, as they do here.",
+      "Circle Digital Chart results provide the checkpoint. The bullish call holds if 'Forever July' reaches the top 30 by the chart week ending August 15, 2026, and remains in the top 100 for the week ending September 5. Missing both marks would show that the monsoon concept created a memorable campaign without creating a durable summer song.",
+    ],
+    source: SUNMI_FOREVER_JULY,
+    related: {},
+  },
+  {
+    slug: "yg-concert-accessibility-standard",
+    title: "YG's accessibility work can reset the concert standard",
+    dek: "Captioning, sensory bags and trained support staff move inclusion into concert operations. Measurable coverage across every Korean show is the next test.",
+    status: "analysis",
+    pillar: "k-pop",
+    author: "MyKStars",
+    date: "2026-07-16T13:00:00+09:00",
+    body: [
+      "YG Entertainment's concert accessibility program can reset the concert standard in Korea. Its *2026 Sustainable Concert Report* treats captions, navigation, sensory support and staff training as production work. The bullish call depends on repeatable coverage beyond selected pilots.",
+      "The report, dated May 2026, describes an independent review at AKMU's 10th-anniversary 10VE concert in June 2024. Six people with disabilities assessed the journey from ticket booking through the end of the show. They found gaps in screen-reader support, alternative text, keyboard navigation and accessibility inquiry channels. They also sought clear venue information on drop-off zones, accessible routes, elevators, braille and large-print materials, and evacuation procedures.",
+      "YG changed the journey. It added pre-concert information for visually impaired users, a way to request accessibility staff and links in booking confirmation messages. It trained support staff and expanded accessibility maps. Real-time captioning was offered at 10VE. Sensory bags were introduced for sensory-sensitive guests at BLACKPINK WORLD TOUR DEADLINE IN GOYANG in July 2025. YG's 2024 sustainability report also said more than 80.9 percent of surveyed fans rated BLACKPINK's Seoul accessibility guide video positively.",
+      "Those details matter because concert culture often asks fans to prove devotion through endurance. Long queues, dense crowds, bright light, loud sound and unfamiliar routes can turn participation into a physical test. Accessible information gives people more control before they arrive. Captions and sensory support widen the meaning of a shared performance once the show begins. A concert becomes culturally larger when more people can enter it on equal terms.",
+      "The strongest counterargument is the evidence base. YG reports its own work and highlights a small number of shows. The documents do not state how many guests used each service, what share of concerts received the full package, how many accessible seats were available or how accessibility complaints were resolved. A well-made guide at one flagship event does not establish an agency-wide standard. The current record shows serious design work and incomplete accountability.",
+      "The mechanism for scale is operational. An agency can place accessibility requirements in venue contracts, production checklists, ticketing pages and tour briefs. That makes support less dependent on one artist or one local promoter. It also gives vendors a stable specification they can improve. YG has already connected user testing to concrete changes, which is the hardest part of the cycle to begin.",
+      "YG's published roadmap sets the checkpoint. Its 2024 roadmap set a 2027 milestone for all concerts in Korea and selected overseas shows. The 2026 report says the framework should cover every YG concert in Korea and abroad by 2030. The next report, assessed by June 30, 2027, should disclose a concert-by-concert coverage table with services, gaps and usage measures. This bullish call holds if the table shows that every Korean YG show staged in the first half of 2027 delivered accessible booking information, trained support, route guides, captioning and sensory support. Another report built only around selected examples would overturn it.",
+    ],
+    source: YG_CONCERT_ACCESSIBILITY,
+    related: { artistSlugs: ["blackpink"] },
+  },
+  {
+    slug: "webtoon-tv-creator-transparency",
+    title: "Webtoon television wins are outrunning creator transparency",
+    dek: "*Agent Kim Reactivated* and *Teach You a Lesson* became global television hits. Industry reporting still says too little about how adaptation value reaches original creators.",
+    status: "analysis",
+    pillar: "k-drama",
+    author: "MyKStars",
+    date: "2026-07-16T11:30:00+09:00",
+    body: [
+      "Korean webtoons have become television's most efficient story laboratory. Creator participation reporting trails their adaptation value. The bearish call is that another year of global screen hits will deepen a specific transparency gap unless official statistics isolate creators' adaptation income and continuing financial participation.",
+      "Netflix reported that *Agent Kim Reactivated*, adapted from *Manager Kim*, led its non-English television list with 10.5 million views for June 29 through July 5, 2026. On June 17, Netflix said *Teach You a Lesson*, another webtoon adaptation, recorded 21.1 million views in one week. It ranked first in 46 countries and reached the top 10 in 91. Both arrived with proven characters, visual grammar and ready audiences.",
+      "KOCCA's public edition of the *2025 Webtoon Industry Survey*, registered January 2, 2026, put 2024 industry revenue at KRW 2.286 trillion and reported a 4.4 percent increase. Japan accounted for 49.5 percent of exports and North America for 21.0 percent. The report found a KRW 42 million median annual income among creators who serialized throughout 2024, averages of 9.4 hours per creative day and 5.8 creative days weekly. KOCCA warned that new industry methods and a changed creator sample limit comparisons with earlier surveys.",
+      "The screen pipeline explains the business appeal. A serialized webtoon tests characters and pacing in public before a producer commits a television budget. Panels already provide a visual development record. Episode endings supply a map for streaming structure. Existing readership lowers the cost of explaining a new title. Each hit can also send viewers back to the original work and open games, merchandise or foreign remake rights.",
+      "The strongest counterargument is that the new survey already gives useful contract visibility. Among businesses that secured secondary-work rights during serialization agreements, 57.9 percent used a license, 17.8 percent a transfer and 9.2 percent shared rights. Private deal-level disclosure could weaken negotiations or expose personal income. Anonymized reporting protects that information. The remaining gap is narrower: public tables show how businesses secure secondary rights and what legal forms they use, while creator-level adaptation income and continuing financial participation stay unmeasured.",
+      "This is also a cultural question. Webtoon artists and writers build stories inside a distinctly Korean digital reading form, then television carries those stories worldwide. Clear credit is essential, and visible economic participation gives creators time to make the next work. An adaptation system that celebrates the screen result while leaving the originating labor statistically invisible weakens its own supply of ideas.",
+      "KOCCA's next annual survey is the checkpoint. By December 31, 2026, it should isolate creator income from screen adaptations and other secondary rights, plus the share of screen deals that provide continuing financial participation. This bearish call is overturned if the report publishes both creator-level measures, defines its sample and separates television, film, games and merchandise. A survey that repeats only business-side rights structures would leave the success story incomplete.",
+    ],
+    source: KOCCA_2025_WEBTOON_SURVEY,
+    related: {},
+  },
+  {
+    slug: "korean-cinema-southeast-asia-local-leadership",
+    title: "Korean cinema grows abroad when local creators lead",
+    dek: "*Mansion of Mr. Hua* topped Vietnam's box office with a Vietnamese creative team and Korean financing support. Shared production offers a durable export model.",
+    status: "analysis",
+    pillar: "k-movie",
+    author: "MyKStars",
+    date: "2026-07-16T10:00:00+09:00",
+    body: [
+      "Korean cinema's strongest route into Southeast Asia places local creators in charge of the story and uses Korean expertise as supporting infrastructure. The June success of *Mansion of Mr. Hua* makes that a bullish industry call. Shared development and ownership can travel further than a Korean format transplanted into another culture.",
+      "KOFIC's *Korean Film* magazine reported on July 13, 2026, that *Mansion of Mr. Hua* reached No. 1 at the Vietnamese box office six days after release. Runup Vietnam and Korea's Hive Media Corp. co-produced the found-footage horror film. Vietnamese filmmakers led story development, production, direction, acting and marketing. Hive Media supplied planning experience, production support and financing. The film drew its premise from a real Ho Chi Minh City mansion and local ghost stories.",
+      "That division of work is the important result. Korean participation did not require visible Korean characters or a borrowed Korean plot. Local knowledge shaped the fear, space and folklore on screen. Korean capital and production systems helped the project reach market scale. The partnership therefore expanded what Korean cinema can do abroad while preserving the cultural authority of the people closest to the material.",
+      "A second model is forming in Indonesia. KOFIC cited *Ghost in the Cell*, co-produced by Korea's Barunson E&A and Indonesian director Joko Anwar's Come and See Pictures. Barunson also handled international sales. The film drew 3.36 million admissions in Indonesia and premiered at the 2026 Berlin International Film Festival. Both cases treat relationships and skills as the export, with the finished film rooted in its own culture.",
+      "The strongest counterargument concerns power. Financing, sales access and intellectual-property contracts can still give the Korean partner more control than the credits suggest. A locally cast film can reproduce extraction behind the camera. Fast expansion can also flatten distinct Southeast Asian cultures into one market category. The article's own evidence is early: one Vietnamese box-office leader and one Indonesian festival selection do not yet prove a durable regional system.",
+      "KOFIC's policy response creates a measurable next step. Its 2026 International Co-production Pilot Program offers up to KRW 500 million per selected project. The first-half call drew 19 applications, including 11 involving Southeast Asian partners. KOFIC also plans a development-support program for 2027. Public funding should require clear creative leadership, shared rights and transparent local spending. Those terms would make cultural respect part of the production structure.",
+      "Results through June 30, 2027, provide the checkpoint. The bullish call holds if at least two pilot-backed Southeast Asian co-productions reach production with local writers and directors, disclosed shared-IP terms, and either a top-five local box-office finish or official selection at Berlin, Cannes or Venice. If the program mainly finances Korean remakes or leaves ownership undisclosed, *Mansion of Mr. Hua* will look like an exception instead of a new model.",
+    ],
+    source: KOFIC_SOUTHEAST_ASIA_STRATEGY,
+    related: {},
+  },
   // --- 2026-07-15 Analysis run: two artist calls, one company and one industry flagship ---
   {
     slug: "katseye-wild-catalogue-win",
