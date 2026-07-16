@@ -39,6 +39,10 @@ const MIN_CLIPS = 15;
 const EVENT_RAIL_SIZE = 8;
 const MIN_FORECASTS = 6;
 const MIN_ARTICLES = 4;
+// The Analysis floor is 4 (docs/analysis-playbook.md); the ceiling lets a heavy
+// news cycle scale up rather than stranding verified pieces off the home page.
+// Each slot past the floor comes out of the Pulse and clip core.
+const MAX_ARTICLES = 8;
 const MIN_RANKINGS = 1;
 const EDITORIAL_TARGET_ITEMS = 75;
 
@@ -347,7 +351,7 @@ function secondaryOptions(total: number, groups: Record<ContentFeedFormat, Candi
   const forecastMax = Math.min(12, groups.forecast.length - (groups.forecast.length % 3));
   for (let forecast = MIN_FORECASTS; forecast <= forecastMax; forecast += 3) {
     for (let ranking = MIN_RANKINGS; ranking <= Math.min(2, groups.ranking.length); ranking++) {
-      for (let article = MIN_ARTICLES; article <= Math.min(6, groups.article.length); article++) {
+      for (let article = MIN_ARTICLES; article <= Math.min(MAX_ARTICLES, groups.article.length); article++) {
         const count = EVENT_RAIL_SIZE + forecast + ranking + article;
         options.push({
           event: EVENT_RAIL_SIZE,

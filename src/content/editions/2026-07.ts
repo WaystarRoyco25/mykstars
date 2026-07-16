@@ -33,14 +33,14 @@ export const edition202607: FeedEdition = {
     {
       "kind": "event-rail",
       "eventSlugs": [
-        "aespa-synk-complexity-taipei",
         "stray-kids-world-tour-seoul-aug-1-2",
-        "enhypen-blood-saga-oakland",
+        "cortis-lollapalooza-chicago",
         "stray-kids-world-tour-seoul-jul-29",
-        "cortis-put-your-phone-down-incheon",
+        "enhypen-blood-saga-oakland",
+        "stray-kids-world-tour-seoul",
         "ive-show-what-i-am-newark",
         "bts-arirang-paris",
-        "stray-kids-world-tour-seoul"
+        "cortis-put-your-phone-down-incheon"
       ]
     },
     {
@@ -54,9 +54,9 @@ export const edition202607: FeedEdition = {
     },
     {
       "kind": "analysis",
-      "pillar": "k-pop",
+      "pillar": "k-movie",
       "articleSlugs": [
-        "girl-group-brand-race-2026"
+        "festival-circuit-explained"
       ]
     },
     {
@@ -87,6 +87,100 @@ export const edition202607: FeedEdition = {
       ]
     },
     {
+      "kind": "forecast-rail",
+      "predictionSlugs": [
+        "ive-seventh-all-kill-tour-window",
+        "kim-tae-ri-next-role-announced-2026",
+        "babymonster-choom-first-week-record-q3"
+      ]
+    },
+    {
+      "kind": "analysis",
+      "pillar": "k-drama",
+      "articleSlugs": [
+        "webtoon-tv-creator-transparency"
+      ]
+    },
+    {
+      "kind": "pulse-band",
+      "pulseSlugs": [
+        "2026-07-twice-stray-kids-recording-academy",
+        "2026-07-east-palace-press-conference",
+        "2026-07-kim-min-ha-hana-korea-interview",
+        "2026-07-hearts2hearts-music-station-debut"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "Now playing",
+      "description": "Current official videos from across MyKStars.",
+      "clipIds": [
+        "clip-yt-enhypen-well-be-fine",
+        "clip-tv-park-eun-bin-mmtg"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "Now playing",
+      "description": "Current official videos from across MyKStars.",
+      "clipIds": [
+        "clip-yt-ateez-bad",
+        "clip-tv-kim-seon-ho-bazaar"
+      ]
+    },
+    {
+      "kind": "analysis",
+      "pillar": "k-pop",
+      "articleSlugs": [
+        "jyp-tour-shop-release-calendar"
+      ]
+    },
+    {
+      "kind": "spotlight-strip"
+    },
+    {
+      "kind": "forecast-rail",
+      "predictionSlugs": [
+        "hearts2hearts-lemon-tang-circle-top10-august",
+        "lee-min-ho-next-drama-confirmed-2026",
+        "blackpink-daesang-mama-2026"
+      ]
+    },
+    {
+      "kind": "pulse-band",
+      "pulseSlugs": [
+        "2026-07-ive-circle-midyear",
+        "2026-07-byeon-woo-seok-secret-library-seoul",
+        "2026-07-blackpink-jennie-dracula-hot-100",
+        "2026-07-bts-london-return"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "Now playing",
+      "description": "Current official videos from across MyKStars.",
+      "clipIds": [
+        "clip-yt-stray-kids-run-it",
+        "clip-tv-lee-chae-min-baeksang"
+      ]
+    },
+    {
+      "kind": "analysis",
+      "pillar": "k-pop",
+      "articleSlugs": [
+        "girl-group-brand-race-2026"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "Now playing",
+      "description": "Current official videos from across MyKStars.",
+      "clipIds": [
+        "clip-yt-boynextdoor-viral",
+        "clip-tv-cha-eunwoo-wonderfools"
+      ]
+    },
+    {
       "kind": "ranking",
       "slug": "idol-brand-reputation"
     },
@@ -95,8 +189,68 @@ export const edition202607: FeedEdition = {
       "title": "Now playing",
       "description": "Current official videos from across MyKStars.",
       "clipIds": [
-        "clip-yt-enhypen-well-be-fine",
-        "clip-tv-park-chan-wook-mygeumhee"
+        "clip-yt-riize-do-your-dance",
+        "clip-tv-byeon-woo-seok-iu-pinggyego"
+      ]
+    },
+    {
+      "kind": "pulse-band",
+      "pulseSlugs": [
+        "2026-07-seventeen-v8-goyang-live",
+        "2026-07-twice-tour-finale-seoul",
+        "2026-07-illit-aespa-hanteo-country-charts",
+        "2026-07-bts-british-museum-gallery-trail"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "Now playing",
+      "description": "Current official videos from across MyKStars.",
+      "clipIds": [
+        "clip-tv-ahn-hyo-seop-fairy-jaehyung",
+        "clip-yt-nmixx-heavy-serenade"
+      ]
+    },
+    {
+      "kind": "analysis",
+      "pillar": "k-movie",
+      "articleSlugs": [
+        "korean-cinema-southeast-asia-local-leadership"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "In motion",
+      "description": "Official music videos and performances.",
+      "clipIds": [
+        "clip-yt-le-sserafim-boompala",
+        "clip-yt-meovv-ddi-ro-ri"
+      ]
+    },
+    {
+      "kind": "forecast-rail",
+      "predictionSlugs": [
+        "cha-eunwoo-post-service-comeback-2026",
+        "cortis-greengreen-ten-weeks-billboard",
+        "newjeans-return-official-word-2026"
+      ]
+    },
+    {
+      "kind": "pulse-band",
+      "pulseSlugs": [
+        "2026-07-le-sserafim-pureflow-incheon",
+        "2026-07-ateez-golden-hour-part5-first-week",
+        "2026-07-hearts2hearts-lemon-tang-first-win",
+        "2026-07-babymonster-i-like-it-video"
+      ]
+    },
+    {
+      "kind": "clip-rail",
+      "title": "In motion",
+      "description": "Official music videos and performances.",
+      "clipIds": [
+        "clip-yt-aespa-wda",
+        "clip-yt-babymonster-choom"
       ]
     },
     {
@@ -108,124 +262,11 @@ export const edition202607: FeedEdition = {
     },
     {
       "kind": "clip-rail",
-      "title": "Now playing",
-      "description": "Current official videos from across MyKStars.",
+      "title": "In motion",
+      "description": "Official music videos and performances.",
       "clipIds": [
-        "clip-yt-ateez-bad",
-        "clip-tv-park-eun-bin-mmtg"
-      ]
-    },
-    {
-      "kind": "pulse-band",
-      "pulseSlugs": [
-        "2026-07-ive-circle-midyear",
-        "2026-07-east-palace-press-conference",
-        "2026-07-kim-min-ha-hana-korea-interview",
-        "2026-07-seventeen-v8-goyang-live"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "Now playing",
-      "description": "Current official videos from across MyKStars.",
-      "clipIds": [
-        "clip-tv-lee-chae-min-baeksang",
-        "clip-yt-boynextdoor-viral"
-      ]
-    },
-    {
-      "kind": "spotlight-strip"
-    },
-    {
-      "kind": "forecast-rail",
-      "predictionSlugs": [
-        "hearts2hearts-lemon-tang-circle-top10-august",
-        "lee-min-ho-next-drama-confirmed-2026",
-        "cortis-greengreen-ten-weeks-billboard"
-      ]
-    },
-    {
-      "kind": "analysis",
-      "pillar": "k-movie",
-      "articleSlugs": [
-        "festival-circuit-explained"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "Now playing",
-      "description": "Current official videos from across MyKStars.",
-      "clipIds": [
-        "clip-yt-stray-kids-run-it",
-        "clip-tv-cha-eunwoo-wonderfools"
-      ]
-    },
-    {
-      "kind": "pulse-band",
-      "pulseSlugs": [
-        "2026-07-twice-stray-kids-recording-academy",
-        "2026-07-byeon-woo-seok-secret-library-seoul",
-        "2026-07-blackpink-jennie-dracula-hot-100",
-        "2026-07-hearts2hearts-music-station-debut"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "Now playing",
-      "description": "Current official videos from across MyKStars.",
-      "clipIds": [
-        "clip-yt-meovv-ddi-ro-ri",
-        "clip-tv-ahn-hyo-seop-fairy-jaehyung"
-      ]
-    },
-    {
-      "kind": "forecast-rail",
-      "predictionSlugs": [
-        "ive-seventh-all-kill-tour-window",
-        "kim-tae-ri-next-role-announced-2026",
-        "babymonster-choom-first-week-record-q3"
-      ]
-    },
-    {
-      "kind": "analysis",
-      "pillar": "k-pop",
-      "articleSlugs": [
-        "jyp-tour-shop-release-calendar"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "Now playing",
-      "description": "Current official videos from across MyKStars.",
-      "clipIds": [
-        "clip-yt-babymonster-choom",
-        "clip-tv-byeon-woo-seok-iu-pinggyego"
-      ]
-    },
-    {
-      "kind": "pulse-band",
-      "pulseSlugs": [
-        "2026-07-twice-tour-finale-seoul",
-        "2026-07-le-sserafim-pureflow-incheon",
-        "2026-07-bts-british-museum-gallery-trail",
-        "2026-07-hearts2hearts-lemon-tang-first-win"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "Now playing",
-      "description": "Current official videos from across MyKStars.",
-      "clipIds": [
-        "clip-yt-cortis-tnt",
-        "clip-tv-kim-seon-ho-bazaar"
-      ]
-    },
-    {
-      "kind": "forecast-rail",
-      "predictionSlugs": [
-        "newjeans-return-official-word-2026",
-        "cha-eunwoo-post-service-comeback-2026",
-        "blackpink-daesang-mama-2026"
+        "clip-yt-allday-project-pubg",
+        "clip-yt-katseye-pinky-up"
       ]
     },
     {
@@ -233,42 +274,6 @@ export const edition202607: FeedEdition = {
       "pillar": "k-pop",
       "articleSlugs": [
         "rookie-class-2026-first-week-curve"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "In motion",
-      "description": "Official music videos and performances.",
-      "clipIds": [
-        "clip-yt-riize-do-your-dance",
-        "clip-yt-katseye-pinky-up"
-      ]
-    },
-    {
-      "kind": "pulse-band",
-      "pulseSlugs": [
-        "2026-07-illit-aespa-hanteo-country-charts",
-        "2026-07-babymonster-i-like-it-video",
-        "2026-07-bts-london-return",
-        "2026-07-ateez-golden-hour-part5-first-week"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "In motion",
-      "description": "Official music videos and performances.",
-      "clipIds": [
-        "clip-yt-le-sserafim-boompala",
-        "clip-yt-allday-project-pubg"
-      ]
-    },
-    {
-      "kind": "clip-rail",
-      "title": "In motion",
-      "description": "Official music videos and performances.",
-      "clipIds": [
-        "clip-yt-aespa-wda",
-        "clip-yt-nmixx-heavy-serenade"
       ]
     }
   ],
