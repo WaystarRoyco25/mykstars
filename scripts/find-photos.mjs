@@ -38,7 +38,7 @@ const DEFAULT_LIMIT = 12;
 const SEARCH_LIMIT = 50;
 
 // Rights bases a stored image may publish under. Mirrors STORED_IMAGE_BASES in
-// check-media.mjs: whatever this prints must be able to pass that gate.
+// check-media.ts: whatever this prints must be able to pass that gate.
 //
 // CC BY-ND is absent deliberately, and not only because Commons refuses to host
 // it ("Publication of derivative work must be allowed"). PhotoMedia renders
@@ -211,7 +211,7 @@ function loadArtists() {
 }
 
 // Slugs that already own at least one MediaAsset. Asset ids are slug-prefixed
-// (e.g. "ive-2026-golden-disc"), the same convention check-media.mjs relies on
+// (e.g. "ive-2026-golden-disc"), the same convention check-media.ts relies on
 // for storage paths.
 function slugsWithAssets(artists) {
   const src = readFileSync(MEDIA_ASSETS_FILE, "utf8");
@@ -341,5 +341,6 @@ Commons page, because this list is known to carry:
     rights in the artwork underneath.
   - Group shots and crops where the roster artist is incidental or absent.
 Confirm the file shows the artist, then re-host it and author the MediaAsset with
-the File: page as sourceUrl.`,
+the File: page as credit.url. Omit sourceUrl when that is also the acquisition
+source; author sourceUrl only when the acquisition or license page is different.`,
 );

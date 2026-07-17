@@ -99,14 +99,14 @@ that substitutes for a specific claim, and they read as generated copy:
 | `at the end of the day`                | delete; the sentence survives                |
 
 The canonical machine-checked list is the `BANNED_PHRASES` table in
-`scripts/check-style.mjs`; grow it there when a new tell shows up. Deliberate
+`scripts/check-style.ts`; grow it there when a new tell shows up. Deliberate
 exclusions, which stay legal: bare `landscape` (a real orientation value in seed
 data) and native fashion-desk vocabulary like `iconic` or `elevated`. Hedges like
 `arguably` are discouraged in Analysis (take a side) but not machine-banned.
 
 ## Enforcement
 
-`npm run check:style` (`scripts/check-style.mjs`) scans the string literals in
+`npm run check:style` (`scripts/check-style.ts`) scans the string literals in
 `src/lib/seed.ts` and fails on any em/en dash (Rule 1), negation-reveal construction
 (Rule 3), or banned phrase (Rule 4). It is comment-aware, so developer comments are
 not flagged. Run it after editing seed content — it is the same surface the Fan

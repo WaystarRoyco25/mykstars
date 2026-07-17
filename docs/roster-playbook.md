@@ -193,9 +193,9 @@ major activity, reason, and the reactivation trigger to watch.
   phrases in content strings; docs/style-guide.md)
 - `npm run check:articles` (analysis bylines, article dates vs `NOW`, related slugs;
   docs/analysis-playbook.md)
-- `npm run check:fresh` (this playbook's 180-day + true-date gates; scripts/check-freshness.mjs)
+- `npm run check:fresh` (this playbook's 180-day + true-date gates; scripts/check-freshness.ts)
 - `npm run check:profiles` (this playbook's profile fields, verification cadence, relationships,
-  hero requirement and pre-debut guardrails; scripts/check-profiles.mjs)
+  hero requirement and pre-debut guardrails; scripts/check-profiles.ts)
 - `npm run lint`
 - `npx tsc --noEmit`
 - `npm run build` before shipping a roster change (catches dangling slugs that nothing else does)

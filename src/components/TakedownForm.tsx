@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { submitTakedown } from "@/app/legal/dmca/actions";
 
 type State = "idle" | "sending" | "done" | "error";
 
@@ -15,14 +16,9 @@ export default function TakedownForm() {
     e.preventDefault();
     setState("sending");
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
     try {
-      const res = await fetch("/api/takedown", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error("Request failed");
+      const result = await submitTakedown(new FormData(form));
+      if (!result.ok) throw new Error("Request failed");
       setState("done");
       form.reset();
     } catch {

@@ -124,25 +124,70 @@ export const EMBED_PLATFORM_LABELS: Record<EmbedPlatform, string> = {
 // derived from width/height at ingest; placeholders set it explicitly.
 export type Orientation = "portrait" | "landscape" | "square";
 
-export interface MediaItem {
+interface MediaItemBase {
   id: string;
-  kind: MediaKind;
   alt: string;
   credit: Source; // attribution is required — no exceptions
-  src?: string; // when kind === "image"
-  width?: number;
-  height?: number;
   orientation?: Orientation; // explicit; falls back to width/height, then portrait
-  embedUrl?: string; // when kind === "embed"
-  platform?: EmbedPlatform; // when kind === "embed"
-  tone?: number; // 0..3, decorative variety for placeholders
+}
+
+export interface ImageMediaItem extends MediaItemBase {
+  kind: "image";
+  src: string;
+  width: number;
+  height: number;
+  orientation: Orientation;
+  assetId: string;
+  embedUrl?: never;
+  platform?: never;
+  tone?: never;
+  date?: never;
+}
+
+export interface EmbedMediaItem extends MediaItemBase {
+  kind: "embed";
+  embedUrl: string;
+  platform: EmbedPlatform;
+  src?: never;
+  width?: never;
+  height?: never;
+  assetId?: never;
+  tone?: never;
   // The post's TRUE publish date (ISO). Required when kind === "embed" — enforced
   // by npm run check:fresh (script-level, like check:style), not the type system.
   date?: string;
-  // Links a kind:"image" item to its MediaAsset rights record (src/content/
-  // media-assets.ts). check:media enforces that every image resolves one.
-  assetId?: string;
 }
+
+export interface PlaceholderMediaItem extends MediaItemBase {
+  kind: "placeholder";
+  orientation: Orientation;
+  tone?: number; // 0..3, decorative variety for placeholders
+  src?: never;
+  width?: never;
+  height?: never;
+  assetId?: never;
+  embedUrl?: never;
+  platform?: never;
+  date?: never;
+}
+
+export type MediaItem = ImageMediaItem | EmbedMediaItem | PlaceholderMediaItem;
+
+// Authored stored images carry only contextual presentation data. The resolver
+// joins these references to the rights registry before anything reaches a
+// component. A crop can override the orientation inferred from intrinsic size;
+// all current references use the asset default.
+export interface ImageRef {
+  kind: "image";
+  assetId: string;
+  alt: string;
+  id?: string;
+  crop?: Readonly<{
+    orientation?: Orientation;
+  }>;
+}
+
+export type AuthoredMediaItem = ImageRef | EmbedMediaItem | PlaceholderMediaItem;
 
 // ---------------------------------------------------------------------------
 // Clips — standalone official YouTube videos that render as live, click-to-play
@@ -263,14 +308,9 @@ export interface Artist {
   // Permitted hero for the profile page: kind "image" backed by a MediaAsset
   // (assetId) under an allowed rights basis, or an official embed (the
   // embed-as-hero basis). Required for newly published profiles — the original
-  // roster is allowlisted in scripts/check-profiles.mjs.
+  // roster is allowlisted in the typed profile checker.
   hero?: MediaItem;
 }
-
-// The plan-level name for a person/group record. Same shape as Artist — the
-// alias exists so new code and docs can speak the StarProfile vocabulary without
-// renaming the type across every consumer.
-export type StarProfile = Artist;
 
 // ---------------------------------------------------------------------------
 // Galleries — a gallery has one home pillar + one tag, plus optional extra tags
@@ -506,7 +546,9 @@ export interface MediaAsset {
   id: string;
   credit: Source;
   rightsBasis: RightsBasis;
-  sourceUrl: string; // where the asset was obtained (license page, press kit URL)
+  // Defaults to credit.url. Set only when acquisition came from a different
+  // license page or press-kit location.
+  sourceUrl?: string;
   acquisitionDate: string; // ISO date the asset was acquired and verified
   reviewDate: string; // ISO date the rights record must be re-reviewed by (check:media)
   width: number;
@@ -539,21 +581,41 @@ export interface Pulse {
 // (diversity caps, coverage floors); EditionBand is the render unit. Both
 // REFERENCE content by slug/id — nothing is duplicated.
 // ---------------------------------------------------------------------------
-export type FeedItem =
+export type ContentRef =
   | { format: "pulse"; slug: string }
   | { format: "gallery"; slug: string }
   | { format: "clip"; id: string }
   | { format: "event"; slug: string }
   | { format: "forecast"; slug: string }
   | { format: "ranking"; slug: string }
-  | { format: "article"; slug: string }
+  | { format: "article"; slug: string };
+
+export type FeedItem =
+  | ContentRef
   | { format: "spotlight"; artistSlug: string };
 
+export type ClipRailPresentation =
+  | "music"
+  | "variety"
+  | "mixed"
+  | "fallback-music"
+  | "fallback-variety";
+
+export type EditionClipRailPresentation = Exclude<
+  ClipRailPresentation,
+  "fallback-music" | "fallback-variety"
+>;
+
 export type EditionBand =
-  | { kind: "hero"; gallerySlug?: string; clipId?: string }
+  | { kind: "hero"; gallerySlug: string; clipId?: never }
+  | { kind: "hero"; clipId: string; gallerySlug?: never }
   | { kind: "event-rail"; eventSlugs: string[] }
   | { kind: "gallery-band"; pillar: Pillar; gallerySlugs: string[] }
-  | { kind: "clip-rail"; title: string; description: string; clipIds: string[] }
+  | {
+      kind: "clip-rail";
+      presentation: EditionClipRailPresentation;
+      clipIds: string[];
+    }
   | { kind: "ranking"; slug: string }
   | { kind: "analysis"; pillar?: Pillar; articleSlugs: string[] }
   | { kind: "pulse-band"; pulseSlugs: string[] }
@@ -569,9 +631,20 @@ export interface SpotlightSchedule {
   weeks: string[][]; // 4 weekly cohorts of artist slugs
 }
 
-export interface FeedEdition {
+export interface EditionProvenance {
+  activeArtistSlugs: string[];
+  inventoryHash: string;
+}
+
+export interface EditionPlan {
   id: string; // "2026-08" — one edition per month
   publishedAt: string; // ISO datetime the edition went live
   bands: EditionBand[]; // the committed, approved order the home page renders
   spotlight: SpotlightSchedule;
+}
+
+export interface FeedEdition extends EditionPlan {
+  // Selection-time facts are non-rendered. Historical validation must never
+  // reinterpret an approved edition against a future roster or inventory.
+  provenance: EditionProvenance;
 }

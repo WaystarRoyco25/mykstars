@@ -4,10 +4,8 @@ import { notFound } from "next/navigation";
 import {
   allArtistSlugs,
   getArtist,
-  getGalleriesByArtist,
-  getProfileTimeline,
+  getArtistCatalogPageData,
   getSpotlightForDate,
-  sparseFill,
 } from "@/lib/data";
 import type { TimelineEntry } from "@/lib/data";
 import { CAREER_STAGE_LABELS, EVENT_TYPE_LABELS } from "@/lib/types";
@@ -125,26 +123,21 @@ export default async function ArtistPage({
   params,
 }: PageProps<"/artists/[artistSlug]">) {
   const { artistSlug } = await params;
-  const artist = await getArtist(artistSlug);
-  if (!artist) notFound();
-
-  const [galleries, timeline, spotlight] = await Promise.all([
-    getGalleriesByArtist(artistSlug),
-    getProfileTimeline(artistSlug),
+  const [profileData, spotlight] = await Promise.all([
+    getArtistCatalogPageData(artistSlug),
     getSpotlightForDate(NOW),
   ]);
-  const isInSpotlight = spotlight.some((profile) => profile.slug === artistSlug);
-  // Keep the visual grid from looking empty: top up a sparse grid with the
-  // artist's curated posts (live embeds) and official-account tiles, then related
-  // same-pillar sets (credited; never rehosted or fabricated).
-  const { embeds: fillEmbeds, galleries: fillGalleries } = await sparseFill(
+  if (!profileData) notFound();
+  const {
     artist,
     galleries,
-  );
-  const groupProfile = artist.memberOf ? await getArtist(artist.memberOf) : undefined;
-  const memberProfiles = (
-    await Promise.all((artist.members ?? []).map((s) => getArtist(s)))
-  ).filter((a): a is NonNullable<typeof a> => Boolean(a));
+    timeline,
+    fillEmbeds,
+    fillGalleries,
+    groupProfile,
+    memberProfiles,
+  } = profileData;
+  const isInSpotlight = spotlight.some((profile) => profile.slug === artistSlug);
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-10">

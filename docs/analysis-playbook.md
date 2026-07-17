@@ -140,7 +140,7 @@ outcomes, or drop the piece. A run with 10 clean pieces beats a run with 14 and 
 - `npm run check:style` (house style: em/en dashes, negation-reveal constructions, AI-tell
   phrases in content strings; docs/style-guide.md)
 - `npm run check:articles` (this playbook's mechanical floor: bylines, article dates vs `NOW`,
-  question-mark titles, dangling `related` slugs, duplicate slugs; scripts/check-articles.mjs)
+  question-mark titles, dangling `related` slugs, duplicate slugs; scripts/check-articles.ts)
 - `npm run check:fresh` (embed freshness; docs/roster-playbook.md)
 - `npm run lint`
 - `npx tsc --noEmit`

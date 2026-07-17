@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allPulseSlugs, getArtist, getPulse } from "@/lib/data";
+import { allPulseSlugs, getPulse, getPulsePageData } from "@/lib/data";
 import { absoluteDate } from "@/lib/format";
 import { aspectClass, orientationOf } from "@/lib/media";
 import { PILLAR_LABELS } from "@/lib/types";
@@ -38,12 +38,9 @@ export default async function PulsePage({
   params,
 }: PulsePageProps) {
   const { slug } = await params;
-  const pulse = await getPulse(slug);
-  if (!pulse) notFound();
-
-  const artists = (
-    await Promise.all(pulse.artistSlugs.map((artistSlug) => getArtist(artistSlug)))
-  ).filter((artist): artist is NonNullable<typeof artist> => Boolean(artist));
+  const pageData = await getPulsePageData(slug);
+  if (!pageData) notFound();
+  const { pulse, artists } = pageData;
   const title = stripEmphasis(pulse.heading);
   const description = stripEmphasis(pulse.body);
 

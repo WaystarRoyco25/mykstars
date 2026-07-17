@@ -1,10 +1,15 @@
-import type { Artist } from "@/lib/types";
+import { resolveAuthoredMediaItem } from "@/lib/media-assets";
+import type { Artist, AuthoredMediaItem } from "@/lib/types";
+
+type AuthoredArtist = Omit<Artist, "hero"> & {
+  hero?: AuthoredMediaItem;
+};
 
 // ---------------------------------------------------------------------------
 // PEOPLE — idols, actors, directors and models. Cross-pillar people carry more
 // than one pillar/discipline (an idol who acts; an actor who works in film too).
 // ---------------------------------------------------------------------------
-export const artists: Artist[] = [
+export const authoredArtists: AuthoredArtist[] = [
   {
     slug: "newjeans",
     name: "NewJeans",
@@ -25,19 +30,10 @@ export const artists: Artist[] = [
       { platform: "x", url: "https://x.com/NewJeans_ADOR", handle: "@NewJeans_ADOR" },
     ],
     hero: {
-      id: "newjeans-2024-seoul-fashion-week-hero",
       kind: "image",
-      alt: "NewJeans at Seoul Fashion Week in September 2024",
-      credit: {
-        name: "TVTEN",
-        url: "https://commons.wikimedia.org/wiki/File:NewJeans_240903.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/newjeans/2026/newjeans-2024-seoul-fashion-week.png",
-      width: 1518,
-      height: 737,
-      orientation: "landscape",
       assetId: "newjeans-2024-seoul-fashion-week",
+      alt: "NewJeans at Seoul Fashion Week in September 2024",
+      id: "newjeans-2024-seoul-fashion-week-hero",
     },
   },
   {
@@ -78,19 +74,10 @@ export const artists: Artist[] = [
       { platform: "x", url: "https://x.com/_IUofficial", handle: "@_IUofficial" },
     ],
     hero: {
-      id: "iu-2025-j-estina-hero",
       kind: "image",
-      alt: "IU at a J.Estina event in November 2025",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:IU_at_J_Estina_event_on_26112025_%2811%29.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/iu/2026/iu-2025-j-estina.png",
-      width: 3065,
-      height: 2160,
-      orientation: "landscape",
       assetId: "iu-2025-j-estina",
+      alt: "IU at a J.Estina event in November 2025",
+      id: "iu-2025-j-estina-hero",
     },
   },
   {
@@ -111,19 +98,10 @@ export const artists: Artist[] = [
       { platform: "instagram", url: "https://www.instagram.com/realstraykids/", handle: "@realstraykids" },
     ],
     hero: {
-      id: "stray-kids-2026-golden-disc-hero",
       kind: "image",
-      alt: "Stray Kids on the red carpet at the 40th Golden Disc Awards",
-      credit: {
-        name: "K-POPIT 케이팝잇",
-        url: "https://commons.wikimedia.org/wiki/File:Stray_Kids_at_the_40th_Golden_Disc_Awards%2C_January_10%2C_2026_%281%29.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/stray-kids/2026/stray-kids-2026-golden-disc.png",
-      width: 3750,
-      height: 1860,
-      orientation: "landscape",
       assetId: "stray-kids-2026-golden-disc",
+      alt: "Stray Kids on the red carpet at the 40th Golden Disc Awards",
+      id: "stray-kids-2026-golden-disc-hero",
     },
   },
   {
@@ -145,19 +123,10 @@ export const artists: Artist[] = [
       { platform: "x", url: "https://x.com/aespa_official", handle: "@aespa_official" },
     ],
     hero: {
-      id: "aespa-2026-mise-en-scene-hero",
       kind: "image",
-      alt: "aespa at a Mise-en-Scene brand event in February 2026",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Aespa_at_Mise-en-Scene_event_on_19022026_(3).png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/aespa/2026/aespa-2026-mise-en-scene.png",
-      width: 3840,
-      height: 2160,
-      orientation: "landscape",
       assetId: "aespa-2026-mise-en-scene",
+      alt: "aespa at a Mise-en-Scene brand event in February 2026",
+      id: "aespa-2026-mise-en-scene-hero",
     },
   },
   {
@@ -179,19 +148,10 @@ export const artists: Artist[] = [
       { platform: "youtube", url: "https://www.youtube.com/@offclCHAEUNWOO", handle: "@offclCHAEUNWOO" },
     ],
     hero: {
-      id: "cha-eunwoo-2025-saint-laurent-hero",
       kind: "image",
-      alt: "Cha Eun-woo at a Saint Laurent store opening in March 2025",
-      credit: {
-        name: "K-POPIT 케이팝잇",
-        url: "https://commons.wikimedia.org/wiki/File:Cha_Eun-woo%2C_March_31%2C_2025.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/cha-eunwoo/2026/cha-eunwoo-2025-saint-laurent.png",
-      width: 1518,
-      height: 1992,
-      orientation: "portrait",
       assetId: "cha-eunwoo-2025-saint-laurent",
+      alt: "Cha Eun-woo at a Saint Laurent store opening in March 2025",
+      id: "cha-eunwoo-2025-saint-laurent-hero",
     },
   },
   {
@@ -231,19 +191,10 @@ export const artists: Artist[] = [
       { platform: "instagram", url: "https://www.instagram.com/actorleeminho/", handle: "@actorleeminho" },
     ],
     hero: {
-      id: "lee-min-ho-2026-mise-en-scene-festival-hero",
       kind: "image",
-      alt: "Lee Min-ho at the Mise-en-scene Short Film Festival in June 2026",
-      credit: {
-        name: "K-POPIT 케이팝잇",
-        url: "https://commons.wikimedia.org/wiki/File:Lee_Min-ho_in_June_2026.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/lee-min-ho/2026/lee-min-ho-2026-mise-en-scene-festival.png",
-      width: 780,
-      height: 1080,
-      orientation: "portrait",
       assetId: "lee-min-ho-2026-mise-en-scene-festival",
+      alt: "Lee Min-ho at the Mise-en-scene Short Film Festival in June 2026",
+      id: "lee-min-ho-2026-mise-en-scene-festival-hero",
     },
   },
   {
@@ -278,19 +229,10 @@ export const artists: Artist[] = [
       { platform: "instagram", url: "https://www.instagram.com/kimtaeri_official/", handle: "@kimtaeri_official" },
     ],
     hero: {
-      id: "kim-tae-ri-2026-prada-beauty-hero",
       kind: "image",
-      alt: "Kim Tae-ri at a Prada beauty event in April 2026",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Kim_Tae-ri_in_April_2026.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/kim-tae-ri/2026/kim-tae-ri-2026-prada-beauty.png",
-      width: 736,
-      height: 1031,
-      orientation: "portrait",
       assetId: "kim-tae-ri-2026-prada-beauty",
+      alt: "Kim Tae-ri at a Prada beauty event in April 2026",
+      id: "kim-tae-ri-2026-prada-beauty-hero",
     },
   },
   // --- K-Movie directors ---
@@ -307,19 +249,10 @@ export const artists: Artist[] = [
     pillars: ["k-movie"],
     bio: "Film director and a recurring figure on the international festival circuit.",
     hero: {
-      id: "park-chan-wook-2026-cannes-hero",
       kind: "image",
-      alt: "Park Chan-wook at the 2026 Cannes Film Festival",
-      credit: {
-        name: "YantsImages",
-        url: "https://commons.wikimedia.org/wiki/File:Park_Chan-wook_at_the_2026_Cannes_Film_Festival_by_YantsImages_02_%28cropped%29.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/park-chan-wook/2026/park-chan-wook-2026-cannes.jpg",
-      width: 3508,
-      height: 4680,
-      orientation: "portrait",
       assetId: "park-chan-wook-2026-cannes",
+      alt: "Park Chan-wook at the 2026 Cannes Film Festival",
+      id: "park-chan-wook-2026-cannes-hero",
     },
   },
   {
@@ -335,19 +268,10 @@ export const artists: Artist[] = [
     pillars: ["k-movie"],
     bio: "Film director widely covered at international festivals and premieres.",
     hero: {
-      id: "bong-joon-ho-2025-busan-hero",
       kind: "image",
-      alt: "Bong Joon-ho at the Busan International Film Festival in September 2025",
-      credit: {
-        name: "Jay Dixit",
-        url: "https://commons.wikimedia.org/wiki/File:Bong_Joon_Ho_at_the_Busan_Film_Festival%2C_2025_-_cropped.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/bong-joon-ho/2026/bong-joon-ho-2025-busan.jpg",
-      width: 2627,
-      height: 3000,
-      orientation: "square",
       assetId: "bong-joon-ho-2025-busan",
+      alt: "Bong Joon-ho at the Busan International Film Festival in September 2025",
+      id: "bong-joon-ho-2025-busan-hero",
     },
   },
   // --- Fashion & Beauty (model/actor) ---
@@ -546,19 +470,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://www.katseye.world/story-of-katseye/" },
     ],
     hero: {
-      id: "katseye-2025-wango-tango-hero",
       kind: "image",
-      alt: "KATSEYE on stage at Wango Tango in May 2025",
-      credit: {
-        name: "Warmtoned",
-        url: "https://commons.wikimedia.org/wiki/File:Katseye_at_Wango_Tango_2025.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/katseye/2026/katseye-2025-wango-tango.jpg",
-      width: 2404,
-      height: 1987,
-      orientation: "landscape",
       assetId: "katseye-2025-wango-tango",
+      alt: "KATSEYE on stage at Wango Tango in May 2025",
+      id: "katseye-2025-wango-tango-hero",
     },
   },
   {
@@ -580,19 +495,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://beliftlab.com/artist/profile/ILLIT" },
     ],
     hero: {
-      id: "illit-2024-canada-goose-hero",
       kind: "image",
-      alt: "ILLIT at a Canada Goose event in December 2024",
-      credit: {
-        name: "K-POPIT 케이팝잇",
-        url: "https://commons.wikimedia.org/wiki/File:250221_ILLIT.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/illit/2026/illit-2024-canada-goose.png",
-      width: 1920,
-      height: 971,
-      orientation: "landscape",
       assetId: "illit-2024-canada-goose",
+      alt: "ILLIT at a Canada Goose event in December 2024",
+      id: "illit-2024-canada-goose-hero",
     },
   },
   {
@@ -614,19 +520,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://www.riizeofficial.jp/profile/" },
     ],
     hero: {
-      id: "riize-2024-melon-music-awards-hero",
       kind: "image",
-      alt: "RIIZE on the red carpet at the 2024 Melon Music Awards",
-      credit: {
-        name: "Ten Asia",
-        url: "https://commons.wikimedia.org/wiki/File:Riize_at_the_2024_Melon_Music_Awards.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/riize/2026/riize-2024-melon-music-awards.png",
-      width: 3206,
-      height: 1544,
-      orientation: "landscape",
       assetId: "riize-2024-melon-music-awards",
+      alt: "RIIZE on the red carpet at the 2024 Melon Music Awards",
+      id: "riize-2024-melon-music-awards-hero",
     },
   },
   {
@@ -648,19 +545,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://nmixx.jype.com/Default/Profile" },
     ],
     hero: {
-      id: "nmixx-2026-oakland-hero",
       kind: "image",
-      alt: "NMIXX performing in Oakland in April 2026",
-      credit: {
-        name: "David Lee",
-        url: "https://commons.wikimedia.org/wiki/File:NMIXX_%2855196181133%29.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/nmixx/2026/nmixx-2026-oakland.jpg",
-      width: 1963,
-      height: 1104,
-      orientation: "landscape",
       assetId: "nmixx-2026-oakland",
+      alt: "NMIXX performing in Oakland in April 2026",
+      id: "nmixx-2026-oakland-hero",
     },
   },
   {
@@ -682,19 +570,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://www.pledis.co.kr/en/artist/detail/TWS/profile/" },
     ],
     hero: {
-      id: "tws-2024-melon-music-awards-hero",
       kind: "image",
-      alt: "TWS on the red carpet at the 2024 Melon Music Awards",
-      credit: {
-        name: "Ten Asia",
-        url: "https://commons.wikimedia.org/wiki/File:TWS_at_the_2024_Melon_Music_Awards.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/tws/2026/tws-2024-melon-music-awards.png",
-      width: 3050,
-      height: 1550,
-      orientation: "landscape",
       assetId: "tws-2024-melon-music-awards",
+      alt: "TWS on the red carpet at the 2024 Melon Music Awards",
+      id: "tws-2024-melon-music-awards-hero",
     },
   },
   {
@@ -716,19 +595,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://en.tblshop.com/allday-project/profile.html" },
     ],
     hero: {
-      id: "allday-project-2026-golden-disc-hero",
       kind: "image",
-      alt: "ALLDAY PROJECT on the red carpet at the 40th Golden Disc Awards",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Allday_Project_40th_GDA_1.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/allday-project/2026/allday-project-2026-golden-disc.jpg",
-      width: 1720,
-      height: 981,
-      orientation: "landscape",
       assetId: "allday-project-2026-golden-disc",
+      alt: "ALLDAY PROJECT on the red carpet at the 40th Golden Disc Awards",
+      id: "allday-project-2026-golden-disc-hero",
     },
   },
   {
@@ -750,19 +620,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://kozofficial.com/artist/profile/BOYNEXTDOOR?lang=en" },
     ],
     hero: {
-      id: "boynextdoor-2026-golden-disc-hero",
       kind: "image",
-      alt: "BOYNEXTDOOR on the red carpet at the 40th Golden Disc Awards",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_01.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/boynextdoor/2026/boynextdoor-2026-golden-disc.png",
-      width: 2560,
-      height: 1440,
-      orientation: "landscape",
       assetId: "boynextdoor-2026-golden-disc",
+      alt: "BOYNEXTDOOR on the red carpet at the 40th Golden Disc Awards",
+      id: "boynextdoor-2026-golden-disc-hero",
     },
   },
   {
@@ -784,19 +645,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://en.tblshop.com/meovv/profile.html" },
     ],
     hero: {
-      id: "meovv-2025-tiktok-awards-hero",
       kind: "image",
-      alt: "MEOVV at the TikTok Awards Korea in October 2025",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:251025_MEOVV.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/meovv/2026/meovv-2025-tiktok-awards.jpg",
-      width: 1137,
-      height: 556,
-      orientation: "landscape",
       assetId: "meovv-2025-tiktok-awards",
+      alt: "MEOVV at the TikTok Awards Korea in October 2025",
+      id: "meovv-2025-tiktok-awards-hero",
     },
   },
   {
@@ -818,19 +670,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://beliftlab.com/artist/profile/ENHYPEN?lang=en" },
     ],
     hero: {
-      id: "enhypen-2026-golden-disc-hero",
       kind: "image",
-      alt: "ENHYPEN on the red carpet at the 40th Golden Disc Awards",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Enhypen_at_Golden_disc_awards.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/enhypen/2026/enhypen-2026-golden-disc.png",
-      width: 1919,
-      height: 934,
-      orientation: "landscape",
       assetId: "enhypen-2026-golden-disc",
+      alt: "ENHYPEN on the red carpet at the 40th Golden Disc Awards",
+      id: "enhypen-2026-golden-disc-hero",
     },
   },
   {
@@ -884,19 +727,10 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "https://www.maa.co.kr/artists/roh-yoonseo" },
     ],
     hero: {
-      id: "roh-yoon-seo-2022-biff-hero",
       kind: "image",
-      alt: "Roh Yoon-seo at the BIFF Asia Star Awards in October 2022",
-      credit: {
-        name: "Marie Claire Korea",
-        url: "https://commons.wikimedia.org/wiki/File:20221012_Noh_Yoon-seo_%EB%85%B8%EC%9C%A4%EC%84%9C_BIFF_Asia_Star_Awards_%281%29.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/roh-yoon-seo/2026/roh-yoon-seo-2022-biff.jpg",
-      width: 1080,
-      height: 1350,
-      orientation: "portrait",
       assetId: "roh-yoon-seo-2022-biff",
+      alt: "Roh Yoon-seo at the BIFF Asia Star Awards in October 2022",
+      id: "roh-yoon-seo-2022-biff-hero",
     },
   },
   {
@@ -918,19 +752,10 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "https://varoent.co.kr/chaemin/" },
     ],
     hero: {
-      id: "lee-chae-min-2025-cashero-hero",
       kind: "image",
-      alt: "Lee Chae-min at the *Cashero* production presentation in December 2025",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Lee_Chae-min_20251222.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/lee-chae-min/2026/lee-chae-min-2025-cashero.png",
-      width: 2368,
-      height: 3292,
-      orientation: "portrait",
       assetId: "lee-chae-min-2025-cashero",
+      alt: "Lee Chae-min at the *Cashero* production presentation in December 2025",
+      id: "lee-chae-min-2025-cashero-hero",
     },
   },
   {
@@ -952,19 +777,10 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "http://www.jwide.co.kr/bbs/board.php?bo_table=21&wr_id=44" },
     ],
     hero: {
-      id: "choo-young-woo-2022-portrait-hero",
       kind: "image",
-      alt: "Choo Young-woo at SBS Radio in 2022",
-      credit: {
-        name: "SBS Radio 에라오",
-        url: "https://commons.wikimedia.org/wiki/File:Choo_Young-woo_%EC%B6%94%EC%98%81%EC%9A%B0_in_2022.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/choo-young-woo/2026/choo-young-woo-2022-portrait.png",
-      width: 725,
-      height: 868,
-      orientation: "portrait",
       assetId: "choo-young-woo-2022-portrait",
+      alt: "Choo Young-woo at SBS Radio in 2022",
+      id: "choo-young-woo-2022-portrait-hero",
     },
   },
   {
@@ -986,19 +802,10 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "http://www.nooncompany.kr/artists_profile.php?artist=30" },
     ],
     hero: {
-      id: "kim-min-ha-2024-love-your-w-hero",
       kind: "image",
-      alt: "Kim Min-ha at the Love Your W event in October 2024",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Kim_Min-ha_in_October_2024.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/kim-min-ha/2026/kim-min-ha-2024-love-your-w.png",
-      width: 2588,
-      height: 3604,
-      orientation: "portrait",
       assetId: "kim-min-ha-2024-love-your-w",
+      alt: "Kim Min-ha at the Love Your W event in October 2024",
+      id: "kim-min-ha-2024-love-your-w-hero",
     },
   },
   {
@@ -1020,19 +827,10 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "https://bhent.co.kr/artist/park-ji-hu/" },
     ],
     hero: {
-      id: "park-ji-hu-2022-blue-dragon-hero",
       kind: "image",
-      alt: "Park Ji-hu at the first Blue Dragon Series Awards in 2022",
-      credit: {
-        name: "BH Entertainment",
-        url: "https://commons.wikimedia.org/wiki/File:20220719_Park_Ji-hu_(%EB%B0%95%EC%A7%80%ED%9B%84)_1st_Blue_Dragon_Series_Awards.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/park-ji-hu/2026/park-ji-hu-2022-blue-dragon.jpg",
-      width: 752,
-      height: 938,
-      orientation: "portrait",
       assetId: "park-ji-hu-2022-blue-dragon",
+      alt: "Park Ji-hu at the first Blue Dragon Series Awards in 2022",
+      id: "park-ji-hu-2022-blue-dragon-hero",
     },
   },
   {
@@ -1054,19 +852,10 @@ export const artists: Artist[] = [
       { label: "Korean Film Council profile", url: "https://www.koreanfilm.or.kr/eng/films/index/peopleView.jsp?peopleCd=20279929" },
     ],
     hero: {
-      id: "nam-joo-hyuk-2026-east-palace-hero",
       kind: "image",
-      alt: "Nam Joo-hyuk at the *The East Palace* press conference in July 2026",
-      credit: {
-        name: "K-POPIT 케이팝잇",
-        url: "https://commons.wikimedia.org/wiki/File:Nam_Joo-hyuk_in_July_2026.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/nam-joo-hyuk/2026/nam-joo-hyuk-2026-east-palace.png",
-      width: 780,
-      height: 1080,
-      orientation: "portrait",
       assetId: "nam-joo-hyuk-2026-east-palace",
+      alt: "Nam Joo-hyuk at the *The East Palace* press conference in July 2026",
+      id: "nam-joo-hyuk-2026-east-palace-hero",
     },
   },
   {
@@ -1088,19 +877,10 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "http://www.fantagio.kr/profiles/355136/" },
     ],
     hero: {
-      id: "kim-seon-ho-2026-top-10-awards-hero",
       kind: "image",
-      alt: "Kim Seon-ho with his Best Actor trophy at the Top 10 Awards in May 2026",
-      credit: {
-        name: "Ten Asia",
-        url: "https://commons.wikimedia.org/wiki/File:Kim_Seon-ho_Top_10_Awards_2026_B.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/kim-seon-ho/2026/kim-seon-ho-2026-top-10-awards.jpg",
-      width: 911,
-      height: 1139,
-      orientation: "portrait",
       assetId: "kim-seon-ho-2026-top-10-awards",
+      alt: "Kim Seon-ho with his Best Actor trophy at the Top 10 Awards in May 2026",
+      id: "kim-seon-ho-2026-top-10-awards-hero",
     },
   },
   {
@@ -1122,19 +902,10 @@ export const artists: Artist[] = [
       { label: "Official profile", url: "https://www.kjmana-ent.com/hansohee" },
     ],
     hero: {
-      id: "han-so-hee-2025-dior-departure-hero",
       kind: "image",
-      alt: "Han So-hee departing Incheon for the Dior Cruise 2026 show in May 2025",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:250525_Han_So_Hee_(%ED%95%9C%EC%86%8C%ED%9D%AC).png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/han-so-hee/2026/han-so-hee-2025-dior-departure.png",
-      width: 1350,
-      height: 1080,
-      orientation: "landscape",
       assetId: "han-so-hee-2025-dior-departure",
+      alt: "Han So-hee departing Incheon for the Dior Cruise 2026 show in May 2025",
+      id: "han-so-hee-2025-dior-departure-hero",
     },
   },
   {
@@ -1156,19 +927,15 @@ export const artists: Artist[] = [
       { label: "Agency profile", url: "https://www.thepresentcompany.kr/default/artist/ahnhyoseop/" },
     ],
     hero: {
-      id: "ahn-hyo-seop-2024-lacoste-hero",
       kind: "image",
-      alt: "Ahn Hyo-seop at a Lacoste event in May 2024",
-      credit: {
-        name: "K-POPIT 케이팝잇",
-        url: "https://commons.wikimedia.org/wiki/File:20240514_Ahn_Hyo-seop_%EC%95%88%ED%9A%A8%EC%84%AD_02.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/ahn-hyo-seop/2026/ahn-hyo-seop-2024-lacoste.jpg",
-      width: 796,
-      height: 720,
-      orientation: "square",
       assetId: "ahn-hyo-seop-2024-lacoste",
+      alt: "Ahn Hyo-seop at a Lacoste event in May 2024",
+      id: "ahn-hyo-seop-2024-lacoste-hero",
     },
   },
 ];
+
+export const artists: Artist[] = authoredArtists.map(
+  ({ hero, ...artist }): Artist =>
+    hero ? { ...artist, hero: resolveAuthoredMediaItem(hero) } : artist,
+);

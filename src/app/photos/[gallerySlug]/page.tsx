@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allGallerySlugs, getArtist, getGallery } from "@/lib/data";
+import { allGallerySlugs, getGallery, getGalleryPageData } from "@/lib/data";
 import { PILLAR_LABELS, TAG_LABELS, pillarSlug } from "@/lib/types";
 import { absoluteDate, relativeTime } from "@/lib/format";
 import { NOW } from "@/lib/content";
@@ -38,12 +38,9 @@ export default async function GalleryPage({
   params,
 }: PageProps<"/photos/[gallerySlug]">) {
   const { gallerySlug } = await params;
-  const gallery = await getGallery(gallerySlug);
-  if (!gallery) notFound();
-
-  const artists = (
-    await Promise.all(gallery.artistSlugs.map((s) => getArtist(s)))
-  ).filter((a): a is NonNullable<typeof a> => Boolean(a));
+  const pageData = await getGalleryPageData(gallerySlug);
+  if (!pageData) notFound();
+  const { gallery, artists } = pageData;
 
   return (
     <article className="mx-auto max-w-4xl px-5 py-10">

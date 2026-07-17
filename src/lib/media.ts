@@ -1,17 +1,11 @@
 import type { Clip, MediaItem, Orientation } from "./types";
 
 // Resolve a media item's orientation for the vertical-leaning masonry.
-// Explicit `orientation` wins; otherwise derive from intrinsic width/height
-// (with a small tolerance band → "square"); default to portrait so the grid
-// leans vertical even when an item carries no dimensions.
+// Stored images arrive with an orientation derived by the asset resolver.
+// Embeds and placeholders may provide a contextual orientation; otherwise the
+// grid defaults to portrait so its existing vertical rhythm stays intact.
 export function orientationOf(m: MediaItem): Orientation {
-  if (m.orientation) return m.orientation;
-  if (m.width && m.height) {
-    if (m.width > m.height * 1.15) return "landscape";
-    if (m.height > m.width * 1.15) return "portrait";
-    return "square";
-  }
-  return "portrait";
+  return m.orientation ?? "portrait";
 }
 
 // Tailwind aspect-ratio class per orientation for the column-balanced masonry.

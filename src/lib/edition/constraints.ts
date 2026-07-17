@@ -1,4 +1,5 @@
-import type { EditionBand, FeedEdition, FeedItem, Pillar, SpotlightSchedule } from "../types";
+import type { EditionBand, EditionPlan, FeedItem, Pillar, SpotlightSchedule } from "../types";
+import { contentRefKey, describeBand } from "./descriptors";
 
 export const MIN_EDITION_ITEMS = 60;
 export const MAX_EDITION_ITEMS = 90;
@@ -42,66 +43,19 @@ function overlaps(a: readonly string[], b: readonly string[]): boolean {
 }
 
 export function itemKey(item: FeedItem): string {
-  switch (item.format) {
-    case "clip":
-      return `clip:${item.id}`;
-    case "spotlight":
-      return `spotlight:${item.artistSlug}`;
-    default:
-      return `${item.format}:${item.slug}`;
-  }
+  return item.format === "spotlight" ? `spotlight:${item.artistSlug}` : contentRefKey(item);
 }
 
 export function flattenBand(band: EditionBand): FeedItem[] {
-  switch (band.kind) {
-    case "hero":
-      if (band.gallerySlug) return [{ format: "gallery", slug: band.gallerySlug }];
-      if (band.clipId) return [{ format: "clip", id: band.clipId }];
-      return [];
-    case "event-rail":
-      return band.eventSlugs.map((slug) => ({ format: "event" as const, slug }));
-    case "gallery-band":
-      return band.gallerySlugs.map((slug) => ({ format: "gallery" as const, slug }));
-    case "clip-rail":
-      return band.clipIds.map((id) => ({ format: "clip" as const, id }));
-    case "ranking":
-      return [{ format: "ranking", slug: band.slug }];
-    case "analysis":
-      return band.articleSlugs.map((slug) => ({ format: "article" as const, slug }));
-    case "pulse-band":
-      return band.pulseSlugs.map((slug) => ({ format: "pulse" as const, slug }));
-    case "forecast-rail":
-      return band.predictionSlugs.map((slug) => ({ format: "forecast" as const, slug }));
-    case "spotlight-strip":
-      return [];
-  }
+  return [...describeBand(band).refs];
 }
 
-export function flattenEdition(edition: FeedEdition): FeedItem[] {
+export function flattenEdition(edition: EditionPlan): FeedItem[] {
   return edition.bands.flatMap(flattenBand);
 }
 
 export function bandFormat(band: EditionBand): string {
-  switch (band.kind) {
-    case "gallery-band":
-      return "gallery";
-    case "clip-rail":
-      return "clip";
-    case "event-rail":
-      return "event";
-    case "forecast-rail":
-      return "forecast";
-    case "pulse-band":
-      return "pulse";
-    case "analysis":
-      return "article";
-    case "ranking":
-      return "ranking";
-    case "hero":
-      return "hero";
-    case "spotlight-strip":
-      return "spotlight";
-  }
+  return describeBand(band).format;
 }
 
 export function validateItemFacts(items: readonly EditionItemFacts[]): ConstraintViolation[] {

@@ -1,62 +1,44 @@
 import type {
-  Article,
   Artist,
-  Clip,
   ClipGenre,
   EditionBand,
-  FeedEdition,
+  EditionPlan,
   FeedItem,
-  Gallery,
   Pillar,
-  Prediction,
-  Pulse,
-  Ranking,
-  StarEvent,
 } from "../types";
+import { isPromotedArtist } from "../editorial-policy";
 import {
   CELEBRITY_CAP_RATIO,
   EditionConstraintError,
   MAX_EDITION_ITEMS,
   MIN_EDITION_ITEMS,
   assertNoViolations,
-  bandFormat,
   flattenEdition,
   itemKey,
-  validateBandFacts,
-  validateItemFacts,
-  validateSpotlight,
   type ContentFeedFormat,
-  type EditionBandFacts,
-  type EditionItemFacts,
 } from "./constraints";
+import { clipRailPresentation } from "./descriptors";
+import {
+  EDITORIAL_TARGET_ITEMS,
+  EVENT_RAIL_SIZE,
+  MAX_ARTICLES,
+  MIN_ARTICLES,
+  MIN_CLIPS,
+  MIN_FORECASTS,
+  MIN_PULSES,
+  MIN_RANKINGS,
+  activeRosterSnapshot,
+  assertUniqueInventory,
+  buildInventoryFacts,
+  isInventoryFactEligible,
+  parseEditionDate,
+  type EditionInventoryInput,
+} from "./inventory";
+import { validateEditionSemantics } from "./semantic";
 
-const DAY_MS = 86_400_000;
-const MAX_CLIP_AGE_DAYS = 180;
-const ARTICLE_WINDOW_DAYS = 45;
-const RANKING_WINDOW_DAYS = 62;
-const MIN_PULSES = 18;
-const MIN_CLIPS = 15;
-const EVENT_RAIL_SIZE = 8;
-const MIN_FORECASTS = 6;
-const MIN_ARTICLES = 4;
-// The Analysis floor is 4 (docs/analysis-playbook.md); the ceiling lets a heavy
-// news cycle scale up rather than stranding verified pieces off the home page.
-// Each slot past the floor comes out of the Pulse and clip core.
-const MAX_ARTICLES = 8;
-const MIN_RANKINGS = 1;
-const EDITORIAL_TARGET_ITEMS = 75;
-
-export interface EditionEngineInput {
+export interface EditionEngineInput extends EditionInventoryInput {
   publishedAt: string;
-  artists: readonly Artist[];
-  pulses: readonly Pulse[];
-  clips: readonly Clip[];
-  galleries: readonly Gallery[];
-  predictions: readonly Prediction[];
-  events: readonly StarEvent[];
-  rankings: readonly Ranking[];
-  articles: readonly Article[];
-  trailingEditions: readonly FeedEdition[];
+  trailingEditions: readonly EditionPlan[];
 }
 
 interface Candidate {
@@ -109,178 +91,11 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-function parseDate(value: string, label: string): number {
-  const parsed = Date.parse(value);
-  if (Number.isNaN(parsed)) {
-    throw new EditionConstraintError("inventory-date", `${label} has an unparseable date: ${value}`);
-  }
-  return parsed;
-}
-
-function unique(values: readonly string[] | undefined): string[] {
-  return [...new Set(values ?? [])];
-}
-
-function makeCandidateDrafts(input: EditionEngineInput): CandidateDraft[] {
-  const drafts: CandidateDraft[] = [];
-  for (const pulse of input.pulses) {
-    drafts.push({
-      item: { format: "pulse", slug: pulse.slug },
-      key: `pulse:${pulse.slug}`,
-      format: "pulse",
-      artistSlugs: unique(pulse.artistSlugs),
-      pillar: pulse.pillar,
-      dateMs: parseDate(pulse.date, `pulse ${pulse.slug}`),
-    });
-  }
-  for (const gallery of input.galleries) {
-    drafts.push({
-      item: { format: "gallery", slug: gallery.slug },
-      key: `gallery:${gallery.slug}`,
-      format: "gallery",
-      artistSlugs: unique(gallery.artistSlugs),
-      pillar: gallery.pillar,
-      dateMs: parseDate(gallery.date, `gallery ${gallery.slug}`),
-    });
-  }
-  for (const clip of input.clips) {
-    drafts.push({
-      item: { format: "clip", id: clip.id },
-      key: `clip:${clip.id}`,
-      format: "clip",
-      artistSlugs: unique(clip.artistSlugs),
-      pillar: clip.pillar,
-      dateMs: parseDate(clip.date, `clip ${clip.id}`),
-      clipGenre: clip.genre,
-    });
-  }
-  for (const event of input.events) {
-    drafts.push({
-      item: { format: "event", slug: event.slug },
-      key: `event:${event.slug}`,
-      format: "event",
-      artistSlugs: unique(event.artistSlugs),
-      dateMs: parseDate(event.date, `event ${event.slug}`),
-    });
-  }
-  for (const prediction of input.predictions) {
-    drafts.push({
-      item: { format: "forecast", slug: prediction.slug },
-      key: `forecast:${prediction.slug}`,
-      format: "forecast",
-      artistSlugs: unique(prediction.options.flatMap((option) => option.artistSlug ? [option.artistSlug] : [])),
-      pillar: prediction.pillar,
-      dateMs: parseDate(prediction.opensAt, `forecast ${prediction.slug}`),
-    });
-  }
-  for (const ranking of input.rankings) {
-    drafts.push({
-      item: { format: "ranking", slug: ranking.slug },
-      key: `ranking:${ranking.slug}`,
-      format: "ranking",
-      artistSlugs: unique(ranking.rows.flatMap((row) => row.artistSlug ? [row.artistSlug] : [])),
-      pillar: ranking.pillar,
-      dateMs: parseDate(ranking.asOf, `ranking ${ranking.slug}`),
-    });
-  }
-  for (const article of input.articles) {
-    drafts.push({
-      item: { format: "article", slug: article.slug },
-      key: `article:${article.slug}`,
-      format: "article",
-      artistSlugs: unique(article.related?.artistSlugs),
-      pillar: article.pillar,
-      dateMs: parseDate(article.date, `article ${article.slug}`),
-    });
-  }
-  return drafts;
-}
-
 function attachTies(drafts: CandidateDraft[], editionId: string): Candidate[] {
   const random = mulberry32(hash32(editionId));
   const ties = new Map<string, number>();
   for (const key of drafts.map((draft) => draft.key).sort()) ties.set(key, random());
   return drafts.map((draft) => ({ ...draft, tie: ties.get(draft.key) ?? 0 }));
-}
-
-function ensureUniqueInventory(candidates: readonly Candidate[]): void {
-  const seen = new Set<string>();
-  for (const candidate of candidates) {
-    if (seen.has(candidate.key)) {
-      throw new EditionConstraintError("unique-inventory", `${candidate.key} appears more than once`);
-    }
-    seen.add(candidate.key);
-  }
-}
-
-function eligibleCandidates(
-  input: EditionEngineInput,
-  editionId: string,
-  publishedMs: number,
-  all: readonly Candidate[],
-): Candidate[] {
-  const pulseBySlug = new Map(input.pulses.map((pulse) => [pulse.slug, pulse]));
-  const galleryBySlug = new Map(input.galleries.map((gallery) => [gallery.slug, gallery]));
-  const clipById = new Map(input.clips.map((clip) => [clip.id, clip]));
-  const predictionBySlug = new Map(input.predictions.map((prediction) => [prediction.slug, prediction]));
-  const eventBySlug = new Map(input.events.map((event) => [event.slug, event]));
-  const articleBySlug = new Map(input.articles.map((article) => [article.slug, article]));
-  const rankingBySlug = new Map(input.rankings.map((ranking) => [ranking.slug, ranking]));
-  const artistBySlug = new Map(input.artists.map((artist) => [artist.slug, artist]));
-  const publishedDate = input.publishedAt.slice(0, 10);
-
-  return all.filter((candidate) => {
-    // Events are intentionally forward-looking. Every other format must have
-    // published on or before the edition's fixed publication clock.
-    if (candidate.format !== "event" && candidate.dateMs > publishedMs) return false;
-    // Match the data layer's promotion semantics: untagged and unknown subjects
-    // remain eligible, while a fully known catalog/draft subject set stays off
-    // home promotion surfaces.
-    const hasPromotedSubject = candidate.artistSlugs.length === 0 || candidate.artistSlugs.some((slug) => {
-      const artist = artistBySlug.get(slug);
-      return !artist || (artist.coverageLevel === "active" && artist.publicationState === "published");
-    });
-    if (!hasPromotedSubject) return false;
-    switch (candidate.format) {
-      case "pulse":
-        return pulseBySlug.get((candidate.item as { slug: string }).slug)?.date.slice(0, 7) === editionId;
-      case "gallery": {
-        const gallery = galleryBySlug.get((candidate.item as { slug: string }).slug);
-        return Boolean(
-          gallery &&
-          gallery.publicationState !== "archived" &&
-          gallery.cover.kind !== "placeholder" &&
-          gallery.media.length > 0 &&
-          gallery.media.every((media) => media.kind !== "placeholder") &&
-          (gallery.cover.kind === "image" || gallery.media.some((media) => media.kind === "image")),
-        );
-      }
-      case "clip": {
-        const clip = clipById.get((candidate.item as { id: string }).id);
-        if (!clip) return false;
-        const evergreenMs = clip.evergreenUntil ? parseDate(clip.evergreenUntil, `clip ${clip.id} evergreenUntil`) : 0;
-        return evergreenMs >= publishedMs || publishedMs - candidate.dateMs <= MAX_CLIP_AGE_DAYS * DAY_MS;
-      }
-      case "event": {
-        const event = eventBySlug.get((candidate.item as { slug: string }).slug);
-        return Boolean(event && event.status !== "postponed" && (event.endDate ?? event.date) >= publishedDate);
-      }
-      case "forecast": {
-        const prediction = predictionBySlug.get((candidate.item as { slug: string }).slug);
-        if (!prediction || prediction.status !== "open" || prediction.resolution) return false;
-        return parseDate(prediction.opensAt, `forecast ${prediction.slug} opensAt`) <= publishedMs &&
-          parseDate(prediction.closesAt, `forecast ${prediction.slug} closesAt`) > publishedMs;
-      }
-      case "ranking": {
-        const ranking = rankingBySlug.get((candidate.item as { slug: string }).slug);
-        return Boolean(ranking && publishedMs - candidate.dateMs <= RANKING_WINDOW_DAYS * DAY_MS);
-      }
-      case "article": {
-        const article = articleBySlug.get((candidate.item as { slug: string }).slug);
-        return Boolean(article && article.status === "analysis" && publishedMs - candidate.dateMs <= ARTICLE_WINDOW_DAYS * DAY_MS);
-      }
-    }
-  });
 }
 
 function byFormat(candidates: readonly Candidate[]): Record<ContentFeedFormat, Candidate[]> {
@@ -311,7 +126,7 @@ function inventoryMinimums(groups: Record<ContentFeedFormat, Candidate[]>): void
 }
 
 function contentCoverage(
-  edition: FeedEdition,
+  edition: EditionPlan,
   candidateByKey: ReadonlyMap<string, Candidate>,
 ): Set<string> {
   const covered = new Set<string>();
@@ -658,10 +473,10 @@ function renderBand(spec: ChunkSpec, candidates: Candidate[], pillar?: Pillar): 
       return { kind: "gallery-band", pillar: spec.fixedPillar, gallerySlugs: candidates.map(slug) };
     }
     case "clip-rail": {
-      const genres = new Set(candidates.map((candidate) => candidate.clipGenre));
-      const title = genres.size === 1 && genres.has("music") ? "In motion" : genres.size === 1 && genres.has("variety") ? "On air" : "Now playing";
-      const description = title === "In motion" ? "Official music videos and performances." : title === "On air" ? "Talk, comedy and variety appearances on official channels." : "Current official videos from across MyKStars.";
-      return { kind: "clip-rail", title, description, clipIds: candidates.map(clipId) };
+      const presentation = clipRailPresentation(
+        candidates.map((candidate) => candidate.clipGenre),
+      );
+      return { kind: "clip-rail", presentation, clipIds: candidates.map(clipId) };
     }
     case "ranking": return { kind: "ranking", slug: slug(candidates[0]) };
     case "analysis": return { kind: "analysis", ...(pillar ? { pillar } : {}), articleSlugs: candidates.map(slug) };
@@ -743,7 +558,7 @@ function assignBands(schedule: readonly ChunkSpec[], selected: readonly Candidat
   return undefined;
 }
 
-function makeSpotlight(activeArtists: readonly Artist[], unseen: ReadonlySet<string>, editionId: string): FeedEdition["spotlight"] {
+function makeSpotlight(activeArtists: readonly Artist[], unseen: ReadonlySet<string>, editionId: string): EditionPlan["spotlight"] {
   const ordered = [...activeArtists].sort((a, b) => {
     const unseenDifference = Number(unseen.has(b.slug)) - Number(unseen.has(a.slug));
     return unseenDifference || hash32(`${editionId}:spotlight:${a.slug}`) - hash32(`${editionId}:spotlight:${b.slug}`);
@@ -755,47 +570,42 @@ function makeSpotlight(activeArtists: readonly Artist[], unseen: ReadonlySet<str
   return { anchors, weeks };
 }
 
-function validateBuiltEdition(
-  edition: FeedEdition,
-  assigned: readonly AssignedBand[],
-  activeSlugs: readonly string[],
-): void {
-  const itemFacts: EditionItemFacts[] = assigned.flatMap((entry) => entry.candidates.map((candidate) => ({
-    item: candidate.item,
-    format: candidate.format,
-    artistSlugs: candidate.artistSlugs,
-    ...(candidate.pillar ? { pillar: candidate.pillar } : {}),
-  })));
-  const pillarByBand = new Map(assigned.map((entry) => [entry.band, entry.pillar]));
-  const bandFacts: EditionBandFacts[] = edition.bands.map((band) => ({
-    format: bandFormat(band),
-    ...(pillarByBand.get(band) ? { pillar: pillarByBand.get(band) } : {}),
-  }));
-  assertNoViolations([
-    ...validateItemFacts(itemFacts),
-    ...validateBandFacts(bandFacts),
-    ...validateSpotlight(edition.spotlight, activeSlugs),
-  ]);
-}
-
-export function buildEdition(input: EditionEngineInput, editionId: string): FeedEdition {
+export function buildEdition(input: EditionEngineInput, editionId: string): EditionPlan {
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(editionId)) {
     throw new EditionConstraintError("edition-id", `"${editionId}" is not YYYY-MM`);
   }
-  const publishedMs = parseDate(input.publishedAt, "publishedAt");
+  const publishedMs = parseEditionDate(input.publishedAt, "publishedAt");
   if (input.publishedAt.slice(0, 7) !== editionId) {
     throw new EditionConstraintError("published-month", `publishedAt ${input.publishedAt} does not fall in ${editionId}`);
   }
 
-  const activeArtists = input.artists.filter((artist) => artist.coverageLevel === "active" && artist.publicationState === "published");
-  const activeSlugs = activeArtists.map((artist) => artist.slug);
+  const activeArtists = input.artists.filter(isPromotedArtist);
+  const activeSlugs = activeRosterSnapshot(input.artists);
   const active = new Set(activeSlugs);
   if (active.size !== activeSlugs.length) throw new EditionConstraintError("active-roster", "active profile slugs are not unique");
 
-  const all = attachTies(makeCandidateDrafts(input), editionId);
-  ensureUniqueInventory(all);
+  const inventory = buildInventoryFacts(input);
+  assertUniqueInventory(inventory);
+  const all = attachTies(inventory.map((fact) => ({
+    item: fact.ref,
+    key: fact.key,
+    format: fact.format,
+    artistSlugs: fact.artistSlugs,
+    ...(fact.pillar ? { pillar: fact.pillar } : {}),
+    dateMs: fact.dateMs,
+    ...(fact.format === "clip" ? { clipGenre: fact.clipGenre } : {}),
+  })), editionId);
   const candidateByKey = new Map(all.map((candidate) => [candidate.key, candidate]));
-  const eligible = eligibleCandidates(input, editionId, publishedMs, all);
+  const artistBySlug = new Map(input.artists.map((artist) => [artist.slug, artist]));
+  const eligibleKeys = new Set(inventory
+    .filter((fact) => isInventoryFactEligible(fact, {
+      editionId,
+      publishedAt: input.publishedAt,
+      publishedMs,
+      artistBySlug,
+    }))
+    .map((fact) => fact.key));
+  const eligible = all.filter((candidate) => eligibleKeys.has(candidate.key));
   const groups = byFormat(eligible);
   inventoryMinimums(groups);
 
@@ -854,13 +664,19 @@ export function buildEdition(input: EditionEngineInput, editionId: string): Feed
               const bands = assigned.map((entry) => entry.band);
               const spotlightIndex = Math.max(1, Math.floor(bands.length / 2));
               bands.splice(spotlightIndex, 0, { kind: "spotlight-strip" });
-              const edition: FeedEdition = {
+              const edition: EditionPlan = {
                 id: editionId,
                 publishedAt: input.publishedAt,
                 bands,
                 spotlight: makeSpotlight(activeArtists, unseen, editionId),
               };
-              validateBuiltEdition(edition, assigned, activeSlugs);
+              assertNoViolations(validateEditionSemantics({
+                edition,
+                inventory,
+                inventorySource: input,
+                activeArtistSlugs: activeSlugs,
+                expectedId: editionId,
+              }).violations);
               return edition;
             }
           } catch (error) {

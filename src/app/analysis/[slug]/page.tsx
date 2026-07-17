@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allArticleSlugs, getArticle, getArtist, getGallery } from "@/lib/data";
+import { allArticleSlugs, getArticle, getArticlePageData } from "@/lib/data";
 import { absoluteDate } from "@/lib/format";
 import StatusFlag from "@/components/StatusFlag";
 import AttributionBadge from "@/components/AttributionBadge";
@@ -31,19 +31,9 @@ export default async function ArticlePage({
   params,
 }: PageProps<"/analysis/[slug]">) {
   const { slug } = await params;
-  const article = await getArticle(slug);
-  if (!article) notFound();
-
-  const [artistResults, galleryResults] = await Promise.all([
-    Promise.all((article.related?.artistSlugs ?? []).map((s) => getArtist(s))),
-    Promise.all((article.related?.gallerySlugs ?? []).map((s) => getGallery(s))),
-  ]);
-  const relatedArtists = artistResults.filter(
-    (artist): artist is NonNullable<typeof artist> => Boolean(artist),
-  );
-  const relatedGalleries = galleryResults.filter(
-    (gallery): gallery is NonNullable<typeof gallery> => Boolean(gallery),
-  );
+  const pageData = await getArticlePageData(slug);
+  if (!pageData) notFound();
+  const { article, relatedArtists, relatedGalleries } = pageData;
 
   return (
     <article className="mx-auto max-w-2xl px-5 py-10">

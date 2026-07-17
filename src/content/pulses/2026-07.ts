@@ -1,6 +1,11 @@
-import type { Pulse } from "../../lib/types";
+import { resolveAuthoredMediaItem } from "../../lib/media-assets";
+import type { AuthoredMediaItem, Pulse } from "../../lib/types";
 
-export const pulses202607: Pulse[] = [
+type AuthoredPulse = Omit<Pulse, "media"> & {
+  media?: AuthoredMediaItem;
+};
+
+export const authoredPulses202607: AuthoredPulse[] = [
   {
     slug: "2026-07-le-sserafim-pureflow-incheon",
     heading: "LE SSERAFIM opens the PUREFLOW tour in Incheon",
@@ -14,19 +19,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "le-sserafim-2025-easy-crazy-hot",
       kind: "image",
-      alt: "LE SSERAFIM on the Easy Crazy Hot tour in 2025",
-      credit: {
-        name: "David Lee",
-        url: "https://commons.wikimedia.org/wiki/File:Le_Sserafim.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/le-sserafim/2026/le-sserafim-2025-easy-crazy-hot.jpg",
-      width: 5472,
-      height: 3648,
-      orientation: "landscape",
       assetId: "le-sserafim-2025-easy-crazy-hot",
+      alt: "LE SSERAFIM on the Easy Crazy Hot tour in 2025",
     },
   },
   {
@@ -42,19 +37,9 @@ export const pulses202607: Pulse[] = [
       kind: "press",
     },
     media: {
-      id: "bts-2022-white-house",
       kind: "image",
-      alt: "BTS at the White House in May 2022",
-      credit: {
-        name: "The White House",
-        url: "https://commons.wikimedia.org/wiki/File:BTS_at_the_White_House_on_May_31,_2022.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/bts/2026/bts-2022-white-house.jpg",
-      width: 3000,
-      height: 2000,
-      orientation: "landscape",
       assetId: "bts-2022-white-house",
+      alt: "BTS at the White House in May 2022",
     },
   },
   {
@@ -70,19 +55,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "twice-2024-las-vegas",
       kind: "image",
-      alt: "TWICE performing in Las Vegas in 2024",
-      credit: {
-        name: "David Lee",
-        url: "https://commons.wikimedia.org/wiki/File:TWICE_in_Las_Vegas_01.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/twice/2026/twice-2024-las-vegas.jpg",
-      width: 4364,
-      height: 2455,
-      orientation: "landscape",
       assetId: "twice-2024-las-vegas",
+      alt: "TWICE performing in Las Vegas in 2024",
     },
   },
   {
@@ -98,19 +73,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "babymonster-2025-seattle",
       kind: "image",
-      alt: "BABYMONSTER performing in Seattle in 2025",
-      credit: {
-        name: "David Lee",
-        url: "https://commons.wikimedia.org/wiki/File:Babymonster_Seattle.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/babymonster/2026/babymonster-2025-seattle.jpg",
-      width: 5353,
-      height: 3011,
-      orientation: "landscape",
       assetId: "babymonster-2025-seattle",
+      alt: "BABYMONSTER performing in Seattle in 2025",
     },
   },
   {
@@ -139,19 +104,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "hearts2hearts-2026-fanmeeting",
       kind: "image",
-      alt: "Hearts2Hearts at a 2026 fan meeting",
-      credit: {
-        name: "sublimitas viii",
-        url: "https://commons.wikimedia.org/wiki/File:260221_HEARTS2HEARTS_@_2026_Fanmeeting_HEARTS2HOUSE.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/hearts2hearts/2026/hearts2hearts-2026-fanmeeting.jpg",
-      width: 4500,
-      height: 2988,
-      orientation: "landscape",
       assetId: "hearts2hearts-2026-fanmeeting",
+      alt: "Hearts2Hearts at a 2026 fan meeting",
     },
   },
   {
@@ -167,19 +122,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "seventeen-2025-carat-land",
       kind: "image",
-      alt: "SEVENTEEN performing in 2025",
-      credit: {
-        name: "Seventeen",
-        url: "https://commons.wikimedia.org/wiki/File:Seventeen_Carat_Land_24.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/seventeen/2026/seventeen-2025-carat-land.jpg",
-      width: 1107,
-      height: 668,
-      orientation: "landscape",
       assetId: "seventeen-2025-carat-land",
+      alt: "SEVENTEEN performing in 2025",
     },
   },
   {
@@ -195,19 +140,9 @@ export const pulses202607: Pulse[] = [
       kind: "wire",
     },
     media: {
-      id: "kim-min-ha-2024-love-your-w",
       kind: "image",
-      alt: "Kim Min-ha in October 2024",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:Kim_Min-ha_in_October_2024.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/kim-min-ha/2026/kim-min-ha-2024-love-your-w.png",
-      width: 2588,
-      height: 3604,
-      orientation: "portrait",
       assetId: "kim-min-ha-2024-love-your-w",
+      alt: "Kim Min-ha in October 2024",
     },
   },
   {
@@ -223,19 +158,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "jung-hoyeon-2021-portrait",
       kind: "image",
-      alt: "Jung Ho-yeon in 2021",
-      credit: {
-        name: "Marie Claire Korea",
-        url: "https://commons.wikimedia.org/wiki/File:HoYeon_Jung_in_November_2021.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/jung-hoyeon/2026/jung-hoyeon-2021-portrait.jpg",
-      width: 3544,
-      height: 4320,
-      orientation: "portrait",
       assetId: "jung-hoyeon-2021-portrait",
+      alt: "Jung Ho-yeon in 2021",
     },
   },
   {
@@ -264,19 +189,9 @@ export const pulses202607: Pulse[] = [
       kind: "press",
     },
     media: {
-      id: "byeon-woo-seok-2024-portrait",
       kind: "image",
-      alt: "Byeon Woo-seok at a 2024 photocall",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:240909_Byeon_Woo_Seok_%28%EB%B3%80%EC%9A%B0%EC%84%9D%29.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/byeon-woo-seok/2026/byeon-woo-seok-2024-portrait.png",
-      width: 1080,
-      height: 1350,
-      orientation: "portrait",
       assetId: "byeon-woo-seok-2024-portrait",
+      alt: "Byeon Woo-seok at a 2024 photocall",
     },
   },
   {
@@ -292,19 +207,9 @@ export const pulses202607: Pulse[] = [
       kind: "wire",
     },
     media: {
-      id: "blackpink-2025-deadline-milan",
       kind: "image",
-      alt: "BLACKPINK on the Deadline world tour in 2025",
-      credit: {
-        name: "Yeagvr",
-        url: "https://commons.wikimedia.org/wiki/File:Blackpink_World_Tour_Milan.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/blackpink/2026/blackpink-2025-deadline-milan.jpg",
-      width: 1600,
-      height: 900,
-      orientation: "landscape",
       assetId: "blackpink-2025-deadline-milan",
+      alt: "BLACKPINK on the Deadline world tour in 2025",
     },
   },
   {
@@ -320,19 +225,9 @@ export const pulses202607: Pulse[] = [
       kind: "wire",
     },
     media: {
-      id: "bts-2022-white-house",
       kind: "image",
-      alt: "BTS at the White House in May 2022",
-      credit: {
-        name: "The White House",
-        url: "https://commons.wikimedia.org/wiki/File:BTS_at_the_White_House_on_May_31,_2022.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/bts/2026/bts-2022-white-house.jpg",
-      width: 3000,
-      height: 2000,
-      orientation: "landscape",
       assetId: "bts-2022-white-house",
+      alt: "BTS at the White House in May 2022",
     },
   },
   {
@@ -361,19 +256,9 @@ export const pulses202607: Pulse[] = [
       kind: "official",
     },
     media: {
-      id: "ateez-2025-in-your-fantasy",
       kind: "image",
-      alt: "ATEEZ on the In Your Fantasy tour in 2025",
-      credit: {
-        name: "lexatiny",
-        url: "https://commons.wikimedia.org/wiki/File:ATEEZ_In_Your_Fantasy_at_BMO_Stadium_01.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/ateez/2026/ateez-2025-in-your-fantasy.jpg",
-      width: 3840,
-      height: 2160,
-      orientation: "landscape",
       assetId: "ateez-2025-in-your-fantasy",
+      alt: "ATEEZ on the In Your Fantasy tour in 2025",
     },
   },
   {
@@ -389,19 +274,9 @@ export const pulses202607: Pulse[] = [
       kind: "press",
     },
     media: {
-      id: "hearts2hearts-2026-fanmeeting",
       kind: "image",
-      alt: "Hearts2Hearts at a 2026 fan meeting",
-      credit: {
-        name: "sublimitas viii",
-        url: "https://commons.wikimedia.org/wiki/File:260221_HEARTS2HEARTS_@_2026_Fanmeeting_HEARTS2HOUSE.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/hearts2hearts/2026/hearts2hearts-2026-fanmeeting.jpg",
-      width: 4500,
-      height: 2988,
-      orientation: "landscape",
       assetId: "hearts2hearts-2026-fanmeeting",
+      alt: "Hearts2Hearts at a 2026 fan meeting",
     },
   },
   {
@@ -430,19 +305,9 @@ export const pulses202607: Pulse[] = [
       kind: "press",
     },
     media: {
-      id: "ive-2026-golden-disc",
       kind: "image",
-      alt: "IVE at the 40th Golden Disc Awards in January 2026",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:%EC%95%84%EC%9D%B4%EB%B8%8C(IVE)_%EA%B3%A8%EB%93%A0%EB%94%94%EC%8A%A4%ED%81%AC%EC%96%B4%EC%9B%8C%EC%A6%88_The_40th_Golden_Disc_Awards.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/ive/2026/ive-2026-golden-disc.png",
-      width: 3840,
-      height: 2160,
-      orientation: "landscape",
       assetId: "ive-2026-golden-disc",
+      alt: "IVE at the 40th Golden Disc Awards in January 2026",
     },
   },
   {
@@ -458,19 +323,9 @@ export const pulses202607: Pulse[] = [
       kind: "press",
     },
     media: {
-      id: "cortis-2026-golden-disc",
       kind: "image",
-      alt: "CORTIS at the 40th Golden Disc Awards in January 2026",
-      credit: {
-        name: "Ten Asia",
-        url: "https://commons.wikimedia.org/wiki/File:Cortis_at_40th_Golden_Disc_Awards,_2026.jpg",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/cortis/2026/cortis-2026-golden-disc.jpg",
-      width: 1712,
-      height: 979,
-      orientation: "landscape",
       assetId: "cortis-2026-golden-disc",
+      alt: "CORTIS at the 40th Golden Disc Awards in January 2026",
     },
   },
   {
@@ -499,19 +354,14 @@ export const pulses202607: Pulse[] = [
       kind: "press",
     },
     media: {
-      id: "park-eun-bin-2025-portrait",
       kind: "image",
-      alt: "Park Eun-bin at a 2025 press conference",
-      credit: {
-        name: "티비텐 TV10",
-        url: "https://commons.wikimedia.org/wiki/File:250317_Park_Eun_Bin_%28%EB%B0%95%EC%9D%80%EB%B9%88%29.png",
-        kind: "licensed",
-      },
-      src: "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media/profiles/park-eun-bin/2026/park-eun-bin-2025-portrait.png",
-      width: 1080,
-      height: 1349,
-      orientation: "portrait",
       assetId: "park-eun-bin-2025-portrait",
+      alt: "Park Eun-bin at a 2025 press conference",
     },
   },
 ];
+
+export const pulses202607: Pulse[] = authoredPulses202607.map(
+  ({ media, ...pulse }): Pulse =>
+    media ? { ...pulse, media: resolveAuthoredMediaItem(media) } : pulse,
+);

@@ -7,8 +7,8 @@ import {
   getPrediction,
   getPredictionTally,
   getVotedOptionId,
-  VOTER_COOKIE,
 } from "@/lib/data";
+import { VOTER_COOKIE } from "@/lib/forecast/voter-cookie";
 import { PILLAR_LABELS, PREDICTION_CATEGORY_LABELS } from "@/lib/types";
 import { absoluteDate, dDayLabel } from "@/lib/format";
 import { NOW } from "@/lib/content";
