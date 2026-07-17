@@ -1,4 +1,5 @@
-import type { Article, Source } from "@/lib/types";
+import { resolveImageRef } from "@/lib/media-assets";
+import type { Article, ImageRef, Source } from "@/lib/types";
 import { FESTIVAL, NEWS1, NEWSEN, OSEN, STAR_NEWS, STUDIO, VOGUE_KOREA } from "./sources";
 
 const ATEEZ_BILLBOARD_WEEK_TWO: Source = {
@@ -45,7 +46,11 @@ const KOFIC_SOUTHEAST_ASIA_STRATEGY: Source = {
 // ---------------------------------------------------------------------------
 // ARTICLES
 // ---------------------------------------------------------------------------
-export const articles: Article[] = [
+type AuthoredArticle = Omit<Article, "media"> & {
+  media?: ImageRef; // stored photos only, resolved against the rights registry
+};
+
+export const authoredArticles: AuthoredArticle[] = [
   // 2026-07-16 reactive Analysis run
   {
     slug: "sunmi-forever-july-monsoon-pop",
@@ -64,6 +69,11 @@ export const articles: Article[] = [
       "Circle Digital Chart settles it. A top-30 finish by the chart week ending August 15, 2026, then a hold inside the top 100 for the week ending September 5, and the monsoon read the season right. Missing both marks would leave 'Forever July' a memorable campaign wrapped around a song nobody replays.",
     ],
     source: SUNMI_FOREVER_JULY,
+    media: {
+      kind: "image",
+      assetId: "sunmi-2025-miss-sixty",
+      alt: "Sunmi at the Miss Sixty and KNWLS event in November 2025",
+    },
     related: {},
   },
   {
@@ -83,6 +93,11 @@ export const articles: Article[] = [
       "YG's own roadmap dates the answer. The 2024 roadmap set a 2027 milestone for all concerts in Korea and selected overseas shows, and the 2026 report extends the framework to every YG concert at home and abroad by 2030. The report due by June 30, 2027, should carry a concert-by-concert coverage table listing services, gaps and usage. If every Korean YG show staged in the first half of 2027 appears there with accessible booking information, trained support, route guides, captioning and sensory support, the standard holds. Another report built around selected examples would say the opposite.",
     ],
     source: YG_CONCERT_ACCESSIBILITY,
+    media: {
+      kind: "image",
+      assetId: "blackpink-2025-deadline-milan",
+      alt: "BLACKPINK on the Deadline world tour in 2025",
+    },
     related: { artistSlugs: ["blackpink"] },
   },
   {
@@ -102,6 +117,11 @@ export const articles: Article[] = [
       "Which makes KOCCA's next annual survey the place that gap closes or hardens. By December 31, 2026, the report should isolate creator income from screen adaptations and other secondary rights, plus the share of screen deals carrying continuing financial participation. Publish both creator-level measures, define the sample, and separate television from film, games and merchandise, and the complaint here expires. Repeat only the business-side rights structures, and another record year for Korean webtoon television passes with the creators' half of it unmeasured.",
     ],
     source: KOCCA_2025_WEBTOON_SURVEY,
+    media: {
+      kind: "image",
+      assetId: "kang-full-2018-webtoon-lecture",
+      alt: "Webtoon author Kang Full speaking at a webtoon program lecture in 2018",
+    },
     related: {},
   },
   {
@@ -121,6 +141,11 @@ export const articles: Article[] = [
       "Results through June 30, 2027 will show which it was. Two or more pilot-backed Southeast Asian co-productions reaching production with local writers and directors, disclosed shared-IP terms, and either a top-five local box-office finish or official selection at Berlin, Cannes or Venice, and the model is real. A program that mainly finances Korean remakes, or leaves ownership undisclosed, makes *Mansion of Mr. Hua* an exception that flattered everyone involved.",
     ],
     source: KOFIC_SOUTHEAST_ASIA_STRATEGY,
+    media: {
+      kind: "image",
+      assetId: "joko-anwar-2015-ffi-best-director",
+      alt: "Director Joko Anwar receiving the Best Director award at the 2015 Festival Film Indonesia",
+    },
     related: {},
   },
   // --- 2026-07-15 Analysis run: two artist calls, one company and one industry flagship ---
@@ -139,6 +164,11 @@ export const articles: Article[] = [
       "Two numbers decide it: *WILD* opening with 60,000 units or more and a top-three rank on the Billboard 200 dated August 29, then holding inside the top 50 in week four on September 19.",
     ],
     source: KATSEYE_WILD_CAMPAIGN,
+    media: {
+      kind: "image",
+      assetId: "katseye-2025-wango-tango",
+      alt: "KATSEYE on stage at Wango Tango in May 2025",
+    },
     related: { artistSlugs: ["katseye"] },
   },
   {
@@ -156,6 +186,11 @@ export const articles: Article[] = [
       "The Billboard 200 dated September 12 is the EP's tenth chart week. A top 100 rank there says the listening followed the buying. Below No. 100, or gone before it, says the collector base did all the work.",
     ],
     source: ATEEZ_BILLBOARD_WEEK_TWO,
+    media: {
+      kind: "image",
+      assetId: "ateez-2025-in-your-fantasy",
+      alt: "ATEEZ on the In Your Fantasy tour in 2025",
+    },
     related: { artistSlugs: ["ateez"] },
   },
   {
@@ -175,6 +210,11 @@ export const articles: Article[] = [
       "The FY26 Q2 Earnings Note, due by August 31, 2026, is where the timing explanation expires, because the nine planned popup cities land inside it. Merchandise revenue of KRW 50 billion or more, a Blue Garage operating margin of 10 percent or better, a consolidated operating margin of 17 percent or better: two of those three and the format repeats. Fewer, and Q1 was a delivery schedule wearing a strategy's clothes.",
     ],
     source: JYP_FY26_Q1,
+    media: {
+      kind: "image",
+      assetId: "stray-kids-2026-golden-disc",
+      alt: "Stray Kids on the red carpet at the 40th Golden Disc Awards",
+    },
     related: { artistSlugs: ["twice", "stray-kids", "nmixx"] },
   },
   {
@@ -210,6 +250,11 @@ export const articles: Article[] = [
       "What to watch next is durability: whether the album's tracks re-enter the global charts as the European and American legs roll through the summer. That is the version of momentum that outlives a release week.",
     ],
     source: NEWS1,
+    media: {
+      kind: "image",
+      assetId: "bts-2022-white-house",
+      alt: "BTS at the White House in May 2022",
+    },
     related: { artistSlugs: ["bts"], gallerySlugs: ["bts-gwanghwamun-comeback", "bts-the-city-london"] },
   },
   {
@@ -226,6 +271,11 @@ export const articles: Article[] = [
       "The question that matters for the rest of the year is whether the third release holds the altitude. That, more than any award, is what separates a class from a cohort.",
     ],
     source: STAR_NEWS,
+    media: {
+      kind: "image",
+      assetId: "cortis-2026-golden-disc",
+      alt: "CORTIS at the 40th Golden Disc Awards in January 2026",
+    },
     related: {
       artistSlugs: ["cortis", "hearts2hearts", "babymonster"],
       gallerySlugs: ["cortis-golden-disc-rookie", "hearts2hearts-lemon-tang-week"],
@@ -244,6 +294,11 @@ export const articles: Article[] = [
       "What the index cannot see is the touring map underneath it. All three acts spend the second half of 2026 on the road, which means the next six months of this race will be decided in arenas, not on release calendars.",
     ],
     source: STAR_NEWS,
+    media: {
+      kind: "image",
+      assetId: "ive-2026-golden-disc",
+      alt: "IVE at the 40th Golden Disc Awards in January 2026",
+    },
     related: {
       artistSlugs: ["ive", "blackpink", "le-sserafim"],
       gallerySlugs: ["ive-blackhole-comeback", "le-sserafim-boompala-comeback"],
@@ -263,6 +318,11 @@ export const articles: Article[] = [
       "The risk is sameness. When everyone reaches for the same restraint, the differentiation moves back to where it always lived: styling, casting of the photographer, and the strength of a single hero frame.",
     ],
     source: NEWSEN,
+    media: {
+      kind: "image",
+      assetId: "newjeans-2024-seoul-fashion-week",
+      alt: "NewJeans at Seoul Fashion Week in September 2024",
+    },
     related: { artistSlugs: ["newjeans", "stray-kids"] },
   },
   {
@@ -278,6 +338,11 @@ export const articles: Article[] = [
       "For global fans, the airport set is often the first high-resolution sighting of an artist between official schedules, which is exactly why organized, credited airport galleries are one of the most-searched things in the fandom and one of the least well served in English.",
     ],
     source: OSEN,
+    media: {
+      kind: "image",
+      assetId: "twice-2024-las-vegas",
+      alt: "TWICE performing in Las Vegas in 2024",
+    },
     related: { artistSlugs: ["blackpink", "twice"], gallerySlugs: ["blackpink-incheon-airport"] },
   },
   {
@@ -293,6 +358,11 @@ export const articles: Article[] = [
       "That shift moves the coverage gap. The audience no longer needs to be told a show exists; it needs help deciding what to start, where to watch it without hunting across four services, and who is in it. Organized, credited stills and a clear where-to-watch line do more work than a recap ever did.",
     ],
     source: STUDIO,
+    media: {
+      kind: "image",
+      assetId: "kim-tae-ri-2026-prada-beauty",
+      alt: "Kim Tae-ri at a Prada beauty event in April 2026",
+    },
     related: { artistSlugs: ["kim-tae-ri", "park-eun-bin"], gallerySlugs: ["drama-production-presentation"] },
   },
   {
@@ -308,6 +378,11 @@ export const articles: Article[] = [
       "Read the lineup and you can usually read the budget, the target audience, and the tone. A cross-pillar cast (an idol stepping into a lead, a film actor taking a television role) is its own signal, and one worth following across the rest of the site.",
     ],
     source: STUDIO,
+    media: {
+      kind: "image",
+      assetId: "lee-min-ho-2026-mise-en-scene-festival",
+      alt: "Lee Min-ho at the Mise-en-scene Short Film Festival in June 2026",
+    },
     related: { artistSlugs: ["lee-min-ho", "park-eun-bin"], gallerySlugs: ["drama-casting-ensemble"] },
   },
   {
@@ -323,6 +398,11 @@ export const articles: Article[] = [
       "The mechanics are a loop. A campaign produces editorial imagery; the imagery travels through fan accounts; the reach justifies the next ambassadorship. Crediting the photographer, stylist and glam team is the part of the story everyone else leaves out, and we treat that credit line as reporting.",
     ],
     source: VOGUE_KOREA,
+    media: {
+      kind: "image",
+      assetId: "cha-eunwoo-2025-saint-laurent",
+      alt: "Cha Eun-woo at a Saint Laurent store opening in March 2025",
+    },
     related: { artistSlugs: ["jung-hoyeon", "cha-eunwoo"], gallerySlugs: ["vogue-korea-editorial"] },
   },
   {
@@ -338,6 +418,11 @@ export const articles: Article[] = [
       "For Korean cinema specifically, the circuit is a prestige engine that feeds back into everything else: the auteur whose film premieres at Busan is the same name a drama production wants attached, and the same face a fashion house wants in the front row.",
     ],
     source: FESTIVAL,
+    media: {
+      kind: "image",
+      assetId: "park-chan-wook-2026-cannes",
+      alt: "Park Chan-wook at the 2026 Cannes Film Festival",
+    },
     related: { artistSlugs: ["park-chan-wook", "bong-joon-ho"], gallerySlugs: ["busan-opening-photocall"] },
   },
   {
@@ -367,3 +452,8 @@ export const articles: Article[] = [
     related: {},
   },
 ];
+
+export const articles: Article[] = authoredArticles.map(
+  ({ media, ...article }): Article =>
+    media ? { ...article, media: resolveImageRef(media) } : article,
+);

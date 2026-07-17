@@ -84,9 +84,6 @@ export const TAG_LABELS: Record<CategoryTag, string> = {
   "fashion-week": "Fashion week",
 };
 
-// Sort order for the photo archive (/photos): newest, oldest, or densest set.
-export type GallerySort = "latest" | "oldest" | "photos";
-
 // ---------------------------------------------------------------------------
 // Media
 // ---------------------------------------------------------------------------
@@ -347,6 +344,9 @@ export interface Article {
   date: string; // ISO date
   body: string[]; // paragraphs
   source?: Source;
+  // List-thumb photo from the permitted MediaAsset registry (stored images
+  // only; articles never carry embeds). Absent = the row renders text-only.
+  media?: ImageMediaItem;
   related?: {
     artistSlugs?: string[];
     gallerySlugs?: string[];

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { authoredArticles } from "../src/content/articles";
 import { mediaAssets } from "../src/content/media-assets";
 import { NOW } from "../src/content/now";
 import { authoredArtists } from "../src/content/profiles";
@@ -25,6 +26,15 @@ for (const pulse of authoredPulses202607) {
       file: "src/content/pulses/2026-07.ts",
       owner: `${pulse.slug} media`,
       image: pulse.media,
+    });
+  }
+}
+for (const article of authoredArticles) {
+  if (article.media) {
+    imageUses.push({
+      file: "src/content/articles.ts",
+      owner: `${article.slug} media`,
+      image: article.media,
     });
   }
 }

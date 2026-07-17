@@ -63,7 +63,7 @@ test("all 43 authored references resolve to the exact pre-refactor runtime value
 });
 
 test("the canonical asset index is unique, immutable, and defaults sourceUrl", () => {
-  assert.equal(mediaAssetIndex.size, 40);
+  assert.equal(mediaAssetIndex.size, 43);
   assert.equal(mediaAssetIndex.size, mediaAssets.length);
   assert.equal("set" in mediaAssetIndex, false);
 

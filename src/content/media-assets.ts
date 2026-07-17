@@ -605,4 +605,51 @@ export const mediaAssets: MediaAsset[] = [
     checksum: "07a3dfa9d1c78a0c63ba4a59d7cfeb4062d4ca328708a101143fbc1b24f12b11",
     storagePath: "profiles/hearts2hearts/2026/hearts2hearts-2026-fanmeeting.jpg",
   },
+  // 2026-07-18 Analysis list-thumb sourcing: the three home-edition pieces
+  // whose subjects had no asset yet (Sunmi, a webtoon creator, Joko Anwar).
+  {
+    id: "sunmi-2025-miss-sixty",
+    credit: {
+      name: "K-POPIT 케이팝잇",
+      url: "https://commons.wikimedia.org/wiki/File:Sunmi_2025_MISS_SIXTYxKNWLS_three-quarter_length.png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-18",
+    reviewDate: "2027-07-18",
+    width: 840,
+    height: 1020,
+    checksum: "8c73a67cc00ddde4278d977e42eb9b7162a4b40c927512e4431e769a615c2722",
+    storagePath: "profiles/sunmi/2026/sunmi-2025-miss-sixty.png",
+  },
+  {
+    id: "kang-full-2018-webtoon-lecture",
+    credit: {
+      name: "서울예술실용전문학교 공식 매거진",
+      url: "https://commons.wikimedia.org/wiki/File:%EC%9B%B9%ED%88%B0%ED%95%99%EA%B3%BC%EC%A0%95_%EA%B0%95%ED%92%80_%EC%9E%91%EA%B0%80_%EB%A6%B4%EB%A0%88%EC%9D%B4%ED%8A%B9%EA%B0%95_%ED%98%84%EC%9E%A5!_1.png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-18",
+    reviewDate: "2027-07-18",
+    width: 1050,
+    height: 595,
+    checksum: "db86e8d488b8137286cc890413dfb45bffcf836f12d06674c9d36726e4b8c43a",
+    storagePath: "profiles/kang-full/2026/kang-full-2018-webtoon-lecture.png",
+  },
+  {
+    id: "joko-anwar-2015-ffi-best-director",
+    credit: {
+      name: "Netmediatama",
+      url: "https://commons.wikimedia.org/wiki/File:Joko_Anwar_Best_Director_Festival_Film_Indonesia_2015.jpg",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-18",
+    reviewDate: "2027-07-18",
+    width: 478,
+    height: 718,
+    checksum: "736a37cf3ab8b4d0a6e34ec6e3bb74cb04397752c9d39df105212e0f245abc9f",
+    storagePath: "profiles/joko-anwar/2026/joko-anwar-2015-ffi-best-director.jpg",
+  },
 ];
