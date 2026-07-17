@@ -253,17 +253,7 @@ export default async function ArtistPage({
       </header>
 
       <section className="mb-16">
-        <div className="flex items-end justify-between mb-6">
-          <h2 className="kicker">In focus</h2>
-          {galleries.length > 0 && (
-            <Link
-              href={`/photos?artist=${artistSlug}`}
-              className="label hover:text-bone transition-colors"
-            >
-              All photos of {artist.name} →
-            </Link>
-          )}
-        </div>
+        <h2 className="kicker mb-6">In focus</h2>
         {galleries.length + fillEmbeds.length + fillGalleries.length > 0 ? (
           <GalleryGrid
             galleries={galleries}

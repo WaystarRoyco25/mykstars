@@ -56,7 +56,7 @@ export default async function GalleryPage({
       />
 
       <nav className="label text-muted mb-6">
-        <Link href="/photos" className="hover:text-bone">Photos</Link>
+        <Link href="/" className="hover:text-bone">MyKStars</Link>
         <span className="mx-2">/</span>
         <Link href={`/${pillarSlug(gallery.pillar)}`} className="hover:text-bone">
           {PILLAR_LABELS[gallery.pillar]}

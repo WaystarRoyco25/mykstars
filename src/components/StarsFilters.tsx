@@ -9,12 +9,11 @@ import {
 } from "@/lib/types";
 import FilterLink from "./FilterLink";
 
-// Typographic filter for the Stars directory (/artists), mirroring
-// ArchiveFilters: red active underline, pure <Link>s for the enum axes, plus
-// one native GET form for the inputs links cannot express (name search, agency,
-// debut year). Server component, no client JS — the form works with JavaScript
-// disabled. Defaults are never serialized, so the bare /artists is the
-// canonical "everyone" view.
+// Typographic filter for the Stars directory (/artists): red active underline,
+// pure <Link>s for the enum axes, plus one native GET form for the inputs
+// links cannot express (name search, agency, debut year). Server component, no
+// client JS — the form works with JavaScript disabled. Defaults are never
+// serialized, so the bare /artists is the canonical "everyone" view.
 type ProfileType = "group" | "soloist" | "individual";
 
 type Props = {

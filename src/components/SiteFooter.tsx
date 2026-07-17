@@ -10,7 +10,6 @@ const SIGNALS = [
 
 const FOOTER_LINKS = [
   { label: "Stars", href: "/artists" },
-  { label: "Photos", href: "/photos" },
   { label: "Analysis", href: "/analysis" },
   { label: "Editorial standards", href: "/about/editorial-standards" },
   { label: "DMCA / takedown", href: "/legal/dmca" },

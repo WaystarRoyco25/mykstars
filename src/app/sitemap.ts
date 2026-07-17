@@ -15,7 +15,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths: string[] = [
     "",
     "/artists",
-    "/photos",
     "/analysis",
     "/schedule",
     "/predictions",
@@ -34,7 +33,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const isFresh = (path: string) =>
     path === "" ||
-    path === "/photos" ||
     path.startsWith("/photos/") ||
     path.startsWith("/pulse/") ||
     path === "/predictions" ||

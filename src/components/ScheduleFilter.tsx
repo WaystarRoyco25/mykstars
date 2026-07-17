@@ -8,7 +8,7 @@ import {
 import FilterLink from "./FilterLink";
 
 // Typographic filter for the schedule — red active underline, pure <Link>s (no
-// client JS), mirroring ArchiveFilters. Two rows: region (the international
+// client JS), matching StarsFilters. Two rows: region (the international
 // audience leads, Korea last) and event type. The active state is driven by the
 // page's ?region / ?type params; "International" / "All" are the defaults.
 type RegionKey = EventRegion | "international";

@@ -21,7 +21,6 @@ import type {
   EventRegion,
   EventType,
   Gallery,
-  GallerySort,
   MediaItem,
   Pillar,
   Pulse,
@@ -32,16 +31,6 @@ import type {
 import type { TimelineEntry } from "../content-repository";
 
 const repository = contentRepository;
-
-function byDateAsc<T extends { date: string }>(items: readonly T[]): T[] {
-  return items.toSorted((a, b) => a.date.localeCompare(b.date));
-}
-
-function byPhotoCountDesc(items: readonly Gallery[]): Gallery[] {
-  return items.toSorted(
-    (a, b) => b.media.length - a.media.length || b.date.localeCompare(a.date),
-  );
-}
 
 export function hasFeaturedArtist(gallery: Gallery): boolean {
   return hasPromotedSubject(gallery.artistSlugs, repository.artistBySlug);
@@ -91,27 +80,6 @@ export async function getHomeHero(): Promise<HomeHero | undefined> {
 
 export async function getGalleriesByArtist(artistSlug: string): Promise<Gallery[]> {
   return [...(repository.listedGalleriesByArtist.get(artistSlug) ?? [])];
-}
-
-export async function getArchiveGalleries(opts?: {
-  pillar?: Pillar;
-  artist?: string;
-  sort?: GallerySort;
-}): Promise<Gallery[]> {
-  let list = opts?.pillar
-    ? await getGalleriesForPillar(opts.pillar)
-    : [...repository.listedGalleriesNewest];
-  if (opts?.artist) {
-    list = list.filter((gallery) => gallery.artistSlugs.includes(opts.artist!));
-  }
-  switch (opts?.sort) {
-    case "oldest":
-      return byDateAsc(list);
-    case "photos":
-      return byPhotoCountDesc(list);
-    default:
-      return list;
-  }
 }
 
 export async function getArtistsByPillar(pillar: Pillar): Promise<Artist[]> {

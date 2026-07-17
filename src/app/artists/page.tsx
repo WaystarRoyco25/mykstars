@@ -60,7 +60,7 @@ export default async function StarsPage({ searchParams }: PageProps<"/artists">)
   const query = await searchParams;
 
   // Validate page-side: unknown values are dropped, so a junk query degrades to
-  // the unfiltered view rather than 404ing (the /photos convention).
+  // the unfiltered view rather than 404ing.
   const pillar = pillarFromSlug(singleParam(query.pillar) ?? "") ?? null;
   const stageParam = singleParam(query.stage);
   const stage: CareerStage | null =

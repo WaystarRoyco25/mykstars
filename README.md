@@ -27,7 +27,7 @@ npm run check:style && npm run check:articles && npm run check:fresh && npm run 
 - `src/content/` — typed, versioned content files (profiles, galleries, articles, rankings, events, predictions, clips, the site clock `now.ts`), aggregated by `src/lib/content.ts`. The hand-rolled check scripts under `scripts/` lex these files directly.
 - `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions, backed by `src/lib/content.ts`. Swap in a headless CMS later by re-implementing this module against the same signatures, with no page changes.
 - `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), `StarsFilters`, etc.
-- `src/app/` — home, `artists/` (the Stars directory + `[artistSlug]` per-person hubs), `photos/` (+ `[gallerySlug]`), `analysis/` (+ `[slug]`), `predictions/`, `schedule/`, `legal/dmca` with its Server Action, `about/editorial-standards`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
+- `src/app/` — home, `artists/` (the Stars directory + `[artistSlug]` per-person hubs), `photos/[gallerySlug]` gallery permalinks (the browse index is retired; `/photos` redirects home), `analysis/` (+ `[slug]`), `predictions/`, `schedule/`, `legal/dmca` with its Server Action, `about/editorial-standards`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
 
 ## Defensible aggregation (content/legal model)
 

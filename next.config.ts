@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
       // The News section is now Analysis; keep live inbound links + search results working.
       { source: "/news", destination: "/analysis", permanent: true },
       { source: "/news/:slug", destination: "/analysis/:slug", permanent: true },
+      // The photo-archive index is retired; per-gallery permalinks stay (DMCA surface).
+      { source: "/photos", destination: "/", permanent: true },
     ];
   },
 };
