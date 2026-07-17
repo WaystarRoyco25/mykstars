@@ -47,6 +47,33 @@ export const BANNED_PHRASES: ReadonlyArray<readonly [RegExp, string]> = [
   [/\bat the end of the day\b/gi, '"at the end of the day"'],
 ];
 
+/**
+ * Style-guide Rule 5. The playbooks name their own machinery so a writer knows which
+ * move to make; transcribing those names into the copy announces the move instead of
+ * making it. Each pattern bans the presentative frame, never the bare noun: `checkpoint`,
+ * `bullish` and `counterargument` all have honest uses, and a blanket ban would force
+ * worse copy than it prevents.
+ *
+ * This list is the floor, not the rule. A fresh synonym for an announced move ("The most
+ * damning rebuttal is") breaks Rule 5 whether or not it is caught here; the cross-article
+ * repetition check in src/lib/checks/articles.ts is the backstop for the ones that are not.
+ */
+export const ANNOUNCED_MOVES: ReadonlyArray<readonly [RegExp, string]> = [
+  // Analysis playbook rule 3: make the steelman, never introduce it.
+  [
+    /\b(?:the|a|its|one)\s+(?:strongest|best|biggest|most\s+(?:serious|compelling|obvious|significant|damning))\s+(?:counter\w*|opposing\s+\w+|objection|rebuttal)\b/gi,
+    '"the strongest counterargument"',
+  ],
+  // Analysis playbook rule 8: name the dated event and the number, never the label.
+  [
+    /\b(?:is|are|provides?|sets?|offers?|marks?|supplies|gives?|becomes?|remains?|uses?)\s+the\s+checkpoint\b/gi,
+    '"provides the checkpoint"',
+  ],
+  [/\bthe\s+checkpoint\s+(?:is|are|sits|comes|arrives|lands|uses|will)\b/gi, '"the checkpoint is"'],
+  // Analysis playbook rule 5: a piece shows its side by arguing it, never by labelling itself.
+  [/\b(?:the|this|that|a|our)\s+(?:bullish|bearish)\s+(?:\w+\s+)?call\b/gi, '"the bullish call"'],
+];
+
 export interface StyleViolation {
   line: number;
   column: number;
@@ -84,6 +111,11 @@ export function scanHouseStyleSource(source: TypeScriptSource): StyleViolation[]
         report(match.index, match[0], `AI-tell phrase (${label})`);
       }
     }
+    for (const [re, label] of ANNOUNCED_MOVES) {
+      for (const match of token.text.matchAll(re)) {
+        report(match.index, match[0], `announced move (${label})`);
+      }
+    }
   }
   return violations.sort((left, right) =>
     left.line - right.line || left.column - right.column,
@@ -108,7 +140,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     console.error(
       `\n✖ Found ${total} house-style violation${total > 1 ? "s" : ""} in content strings. ` +
         "Recast per docs/style-guide.md (dashes: Rule 1; negation reveals: Rule 3; " +
-        "AI-tell phrases: Rule 4).",
+        "AI-tell phrases: Rule 4; announced moves: Rule 5).",
     );
     process.exitCode = 1;
   } else {

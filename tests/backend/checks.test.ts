@@ -69,6 +69,107 @@ test("article checker consumes typed records and catches semantic failures", () 
   );
 });
 
+/** Runs a synthetic run through the checker and returns only the rule-15 details. */
+function recycledPhrasing(bodies: string[][]): string[] {
+  return checkArticles({
+    articles: bodies.map((body, index) => article({ slug: `piece-${index}`, body })),
+    artists: [],
+    galleries: [],
+    nowIso: "2026-07-17T00:00:00Z",
+  })
+    .issues.filter((value) => value.kind === "recycled phrasing")
+    .map((value) => value.detail);
+}
+
+test("article checker fails a run that converges on one phrase", () => {
+  // The real July 2026 failure: the verb varies, the noun phrase does not. A check keyed on
+  // whole sentences would have called this three different paragraphs.
+  const formulaic = recycledPhrasing([
+    ["The strongest counterargument is simple."],
+    ["The strongest counterargument concerns power."],
+    ["The strongest counterargument sits in recognition timing."],
+  ]);
+  assert.equal(formulaic.length, 1);
+  assert.match(formulaic[0], /"the strongest counterargument" does the same job in 3 articles/);
+  assert.match(formulaic[0], /piece-0, piece-1, piece-2/);
+  assert.match(formulaic[0], /rule 15/);
+
+  // A formula opening on a content word still fires: a capital at a sentence start is not
+  // a name, so the proper-noun guard must not go blind there.
+  assert.equal(
+    recycledPhrasing([
+      ["Consider the objection here. It fails."],
+      ["Consider the objection here. It fails too."],
+      ["Consider the objection here. It fails again."],
+    ]).length,
+    1,
+  );
+});
+
+test("article checker leaves mandated and unavoidable repetition alone", () => {
+  // Playbook rule 4 forces named, dated attribution. Enforcing rule 15 against rule 4 would
+  // make the two rules unsatisfiable together.
+  assert.deepEqual(
+    recycledPhrasing([
+      ["*The Korea Times* reported on July 15, 2026, that the single arrived."],
+      ["KOFIC reported on July 13, 2026, that the film reached the top."],
+      ["*Billboard Japan* reported on July 6, 2026, that the EP opened high."],
+    ]),
+    [],
+  );
+
+  // Three closers sharing a quantifier share arithmetic, not a voice.
+  assert.deepEqual(
+    recycledPhrasing([
+      ["It holds if at least two co-productions reach production."],
+      ["It holds if at least two of the five films come from rivals."],
+      ["It holds if at least two of three marks are met."],
+    ]),
+    [],
+  );
+
+  // Chart vocabulary a writer cannot paraphrase (DOMAIN_PHRASES).
+  assert.deepEqual(
+    recycledPhrasing([
+      ["The EP took 44,000 album-equivalent units from on-demand streams."],
+      ["The record took 228,000 album-equivalent units from on-demand streams."],
+      ["The single took 12,000 album-equivalent units from on-demand streams."],
+    ]),
+    [],
+  );
+
+  // A mid-sentence capital is a name, a title or a ticker. The subject repeating is not a tic.
+  assert.deepEqual(
+    recycledPhrasing([
+      ["Momentum built early on the Billboard 200 before fading."],
+      ["Nothing else mattered except the Billboard 200 that quarter."],
+      ["Retailers reprinted stock after the Billboard 200 climbed."],
+    ]),
+    [],
+  );
+
+  // Two pieces sharing a trigram is ordinary English; three is a formula.
+  assert.deepEqual(
+    recycledPhrasing([
+      ["The strongest counterargument is simple."],
+      ["The strongest counterargument concerns power."],
+    ]),
+    [],
+  );
+
+  // One article repeating itself is that article's problem. Rule 15 is about the run.
+  assert.deepEqual(
+    recycledPhrasing([
+      [
+        "The strongest counterargument is simple.",
+        "The strongest counterargument concerns power.",
+        "The strongest counterargument sits in timing.",
+      ],
+    ]),
+    [],
+  );
+});
+
 function clip(overrides: Partial<Clip> = {}): Clip {
   return {
     id: "clip-one",

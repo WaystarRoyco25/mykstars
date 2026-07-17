@@ -1,6 +1,6 @@
 # MyKStars house style
 
-Four standing rules for every caption, title, dek, article, ranking, prediction and
+Five standing rules for every caption, title, dek, article, ranking, prediction and
 event line on MyKStars, plus the chrome around them (nav, taglines, meta/OG text).
 They apply to all user-visible copy, going forward and to anything edited from now
 on. Code comments are exempt: they are developer notes, not published copy.
@@ -39,7 +39,7 @@ ranking), leave it roman — that is a dateline, not prose. So a magazine is
 
 ### How to write italics: the `*asterisk*` convention
 
-Content is stored as plain strings in `src/lib/seed.ts` and rendered as text, so
+Content is stored as plain strings in `src/content/*.ts` and rendered as text, so
 italics are written with a markdown-style single-asterisk span:
 
 ```ts
@@ -104,11 +104,53 @@ exclusions, which stay legal: bare `landscape` (a real orientation value in seed
 data) and native fashion-desk vocabulary like `iconic` or `elevated`. Hedges like
 `arguably` are discouraged in Analysis (take a side) but not machine-banned.
 
+## Rule 5 — Make the move, don't announce it
+
+The playbooks tell a writer which moves to make: state a thesis, steelman the
+counterargument, close on a dated checkpoint, take a bullish or bearish side. Those
+nouns name the machinery. They are words for the brief, never words for the copy.
+A reader does not need to be told an objection is arriving; the reader needs the
+objection. Announcing a move instead of making it is the same failure as `in
+conclusion` in Rule 4, and it is the most reliable way to make eight well-argued
+pieces sound like one script.
+
+| Announced                                | Write instead                                  |
+|------------------------------------------|------------------------------------------------|
+| `The strongest counterargument is X`     | let the objection speak: `Summer listeners may want release from humidity, not a reminder of it.` |
+| `The strongest opposing case is X`       | same: the objection arrives unintroduced       |
+| `X provides / sets / is the checkpoint`  | give the date and the number: `A top-30 finish for the week ending August 15, 2026 settles it.` |
+| `The bullish call holds if X`            | state the condition: `Two of the three marks would confirm it.` |
+| `This bearish call is overturned if X`   | state what breaks it: `A top 100 rank in week ten breaks the thesis.` |
+| `A look at X` · `We trace how X` · `Here's what X` (deks) | make the claim the piece makes |
+
+Words that belong to the brief and not the copy: `thesis`, `steelman`,
+`counterargument`, `opposing case`, `checkpoint`, `bullish call`, `bearish call`,
+`falsifiable`, `scope`. A piece shows its side by what it argues; it never labels
+itself. The banned constructions above are in `BANNED_PHRASES`, but the list is the
+floor, not the rule: a fresh synonym for an announced move (`The most serious
+objection is`, `The obvious rebuttal is`) breaks this rule exactly as much as the
+phrasings that happen to be caught mechanically today.
+
+**Vary it across the run.** A fresh hinge repeated eight times is the same disease
+as a stale one. Two pieces in one run must not open the same move the same way, and
+no phrase should do the same job in three articles. `check:articles` fails on that;
+the reasoning is analysis-playbook rule 15.
+
 ## Enforcement
 
-`npm run check:style` (`scripts/check-style.ts`) scans the string literals in
-`src/lib/seed.ts` and fails on any em/en dash (Rule 1), negation-reveal construction
-(Rule 3), or banned phrase (Rule 4). It is comment-aware, so developer comments are
-not flagged. Run it after editing seed content — it is the same surface the Fan
-Forecast and Analysis refreshes touch. The italics and quote/roman distinctions
-(Rule 2) are editorial judgment and are not machine-checked.
+`npm run check:style` (`scripts/check-style.ts`) parses every content file under
+`src/content/` and scans its string literals, failing on any em/en dash (Rule 1),
+negation-reveal construction (Rule 3), or banned phrase (Rule 4 and the announced
+moves of Rule 5). It reads the TypeScript AST rather than raw text, so developer
+comments and regex literals are structurally invisible to it and never flagged. Run
+it after editing content: it is the same surface the Fan Forecast, roster and
+Analysis refreshes touch.
+
+`npm run check:articles` (`src/lib/checks/articles.ts`) carries the other half of
+Rule 5: it compares Analysis articles against each other and fails when one phrase
+does the same job in three or more of them. That is the guard against a future run
+inventing a fresh formula, which a fixed phrase list cannot catch.
+
+What stays editorial judgment: the italics and quote/roman distinctions (Rule 2),
+and whether a move is announced in words nobody has banned yet (Rule 5). Both are
+the writer's job.
