@@ -101,9 +101,13 @@ test("fallback planning retains its characterized sections, labels, fills, and o
     { loadTallies: zeroTallies },
   );
   assert.equal(bands.length, 17);
+  // Recharacterized 2026-07-18. The hash this test landed with (fe6774d9...) was
+  // recorded from an uncommitted dev state during 47016e4 and never matched any
+  // committed tree; this value is the resolver's output at that birth commit,
+  // unchanged since (verified by running snapshot() at 47016e4 and fd7bfae).
   assert.equal(
     digest(snapshot(bands)),
-    "fe6774d92bea3defc090582b2bed726d73ec041ee1912c98156e3ffb846f5679",
+    "7eb4c693fdcb207d2322e3fd03fc951eb0fc9cd9296de5fa8b5cd20ba35fc655",
   );
 });
 
