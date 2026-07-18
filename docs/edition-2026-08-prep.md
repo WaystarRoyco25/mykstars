@@ -1,4 +1,97 @@
-# August 2026 Analysis drafts
+# August 2026 edition prep
+
+One working file for the next edition: current status, carried-over re-checks, the research
+calendar, the publication gate, and the four staged Analysis drafts. It merges the former
+`edition-2026-08-readiness.md` and `edition-2026-08-analysis-drafts.md` (2026-07-18).
+
+## Status (2026-07-18)
+
+- The repository clock (`NOW` in `src/content/now.ts`) is `2026-07-18T20:00:00+09:00`. The
+  July 2026 edition is published (`src/content/editions/2026-07.ts`) and rendering the home
+  page.
+- All 40 profiles are verified and published, every one with a permitted hero; the
+  `MediaAsset` registry holds 43 licensed images.
+- `src/content/pulses/2026-08.ts` exists. August Pulse entries and the generated August
+  edition stay empty until real August facts and a real publication timestamp exist; nothing
+  gets backdated or pre-dated.
+
+### The July 14 preparation pass (recorded; media counts since overtaken)
+
+- Verified all 21 then-existing profiles; all remained active.
+- Added the 19 owner-approved profiles with real July 14 verification dates.
+- Added 15 official YouTube embed heroes and four CC BY image heroes (photography has since
+  reached all 40 profiles).
+- Corrected the NewJeans member-count claim and removed IVE's stale brand-ranking claim.
+- Replaced TWICE's expired evergreen music clip and Park Chan-wook's aging On air clip; added
+  current official music clips for the ten new music profiles.
+- Added qualifying On air interviews for Roh Yoon-seo, Nam Joo-hyuk, Lee Chae-min,
+  Choo Young-woo, Kim Min-ha, Kim Seon-ho and Ahn Hyo-seop.
+- Resolved the TWICE finale, SEVENTEEN *V8* and Jung Ho-yeon Louis Vuitton forecasts without
+  changing their slugs or vote option IDs.
+- Corrected event venues, tour labels and sources, and split every discontinuous date range
+  into truthful contiguous runs.
+
+## Carried-over re-checks (next refresh)
+
+- **Lee Min-ho:** no qualifying in-window On air appearance at the last pass; re-check.
+- **NewJeans:** sits under the red-flag rule (confirmed facts only); re-check clip
+  eligibility.
+- **Park Ji-hu and Han So-hee:** deliberate On air gaps, since no qualifying clips stay fresh
+  through August; re-check.
+- **Bong Joon-ho:** On air entry removed because the only fresh upload was explicitly
+  archival 2019 footage; re-check.
+- **Feed rhythm:** the 2026-07-16 Pulse photo additions are all landscape group shots;
+  consider sourcing portrait-orientation photos to vary the mix.
+- **Parked home-page ideas** from the retired roadmap (parked, not decided against): a
+  forecast payoff loop ("Called it": surface recently resolved predictions beside the open
+  ones; `PredictionCard` already renders the resolved state, add a `getResolvedPredictions()`
+  mirror; it needs a steady drip of resolved questions, and only one was resolved when this
+  was parked) and a rankings-movers strip (ranking rows already carry `change` / `isNew`;
+  keep `RankingTable.tsx` for the full view and add a small movers component).
+
+## Confirmed August checkpoints
+
+These are research anchors. Each Pulse can publish only after the underlying August fact
+occurs and a dated source confirms it.
+
+1. August 1: CORTIS at Lollapalooza Chicago.
+2. August 1 and 2: Stray Kids close the Seoul RUN IT run at KSPO Dome.
+3. August 4: TWS releases *SODA SODA*, subject to same-day official confirmation.
+4. August 7: the Stray Kids *THIS & THAT* Billboard forecast closes, with resolution after the official chart lands.
+5. August 9: the IVE perfect all-kill forecast window closes.
+6. August 11: aespa plays Taipei Dome.
+7. August 14: KATSEYE releases *WILD*, subject to same-day official confirmation.
+8. August 25: MAMAMOO plays Crypto.com Arena in Los Angeles.
+9. August 29 and 30: Stray Kids plays MUFG Stadium in Tokyo.
+10. August 29: the first Billboard 200 checkpoint for KATSEYE's *WILD* Analysis thesis.
+11. August 31: the announced window for IU's album and the close of the related forecast. Publish only what EDAM and the release record confirm.
+12. August 31: the Hearts2Hearts Circle Chart forecast window closes.
+
+The final Pulse run needs roughly 20 to 27 real entries, with at least 18 eligible entries
+for the generator. The checkpoints above provide a starting calendar, but they do not supply
+completed Pulse facts. The final run still needs at least eight additional real August
+developments and dated public sources.
+
+## Final publication gate
+
+Before generation, obtain the intended August publication date from the owner. Then:
+
+1. Set `NOW` to `<actual-date>T20:00:00+09:00`.
+2. Reverify every touched profile and update `lastVerified` to the real pass date.
+3. Add at least four final Analysis records to `src/content/articles.ts` with the actual publication date.
+4. Create 20 to 27 genuine August Pulse entries, at least 18 generator-eligible.
+5. Bump every prediction and ranking `asOf` value.
+6. Resolve or preserve closed-awaiting forecasts from dated sources, then keep 8 to 16 strong open questions.
+7. Rebuild ranking names and order from the current month's real charts.
+8. Calculate the 180-day clip boundary against final `NOW`, then replace or remove every newly stale entry.
+9. Re-pick the On air rail from the final date's current official appearances.
+10. Run `npm run gen:edition -- 2026-08 <publishedAt>` and fix inventory if the generator refuses.
+11. Run the full validation suite, build and browser QA before staging explicit paths.
+
+The generated edition, final `NOW` bump, Pulse inventory, commit, push and draft pull request
+must wait for these facts.
+
+## Analysis drafts
 
 Research cutoff: July 14, 2026. These four pieces are ready for a final fact pass and transfer to `src/content/articles.ts` once the owner supplies the real August publication date. Their `Article.date` fields stay unset here so the site does not publish a fabricated or backdated timestamp.
 
@@ -11,7 +104,7 @@ None of them name the machinery: no "the strongest counterargument", no "the che
 "the bullish call" (house-style Rule 5). `check:style` fails the build on all three phrasings,
 so a transfer that reintroduces them will not ship.
 
-## ATEEZ has mastered the No. 1 debut. The next test is listening
+### ATEEZ has mastered the No. 1 debut. The next test is listening
 
 - Slug: `ateez-number-one-listening-test`
 - Dek: *GOLDEN HOUR : Part.5* opened with 223,000 traditional sales and 5,000 streaming units. The split makes ATEEZ's third chart-topper a conversion test.
@@ -35,7 +128,7 @@ Sources:
 - [ATEEZ official discography, June 26, 2026](https://ateez-official.jp/musics/20862)
 - [*Billboard Japan*, July 6, 2026](https://www.billboard-japan.com/d_news/detail/163156/2)
 
-## KATSEYE can turn *WILD* into a catalogue win
+### KATSEYE can turn *WILD* into a catalogue win
 
 - Slug: `katseye-wild-catalogue-win`
 - Dek: *BEAUTIFUL CHAOS* paired a No. 4 debut with months of chart life. The August 14 follow-up has the reach to raise both the opening and the hold.
@@ -60,7 +153,7 @@ Sources:
 - [*Billboard Brasil*, July 6, 2025](https://billboard.com.br/katseye-conquista-entre-albuns-populares-estados-unidos/)
 - [*Billboard Japan*, chart dated November 15, 2025](https://www.billboard-japan.com/charts/detail?a=ubillboard200&day=15&month=11&year=2025)
 
-## JYP's tour shops are becoming a second release calendar
+### JYP's tour shops are becoming a second release calendar
 
 - Slug: `jyp-tour-shop-release-calendar`
 - Dek: Q1 revenue rose 32.1 percent without a major artist album. Merchandise and concerts supplied KRW 101.5 billion, giving JYP a growth engine between comebacks.
@@ -89,7 +182,7 @@ Sources:
 - [JYP FY26 Q1 Earnings Note, May 15, 2026](https://www.jype.com/Board/Detail?gubun=irdata&jbst_sq=6985)
 - [JYP FY25 Q3 Earnings Note, November 14, 2025](https://www.jype.com/Board/Detail?gubun=irdata&jbst_sq=1&media_author_id=79631395786&media_id=3818983333057983988_79631395786)
 
-## Korean cinema's record quarter belongs to one distributor
+### Korean cinema's record quarter belongs to one distributor
 
 - Slug: `korean-cinema-distributor-concentration`
 - Dek: Admissions reached a post-2020 Q1 high, while Showbox captured 55.4 percent of box-office revenue. May kept the same concentration risk in view.

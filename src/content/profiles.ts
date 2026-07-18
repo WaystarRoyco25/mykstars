@@ -54,6 +54,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/blackpinkofficial/", handle: "@blackpinkofficial" },
       { platform: "x", url: "https://x.com/BLACKPINK", handle: "@BLACKPINK" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "blackpink-2025-deadline-milan",
+      alt: "BLACKPINK on the Deadline world tour in 2025",
+      id: "blackpink-2025-deadline-milan-hero",
+    },
   },
   {
     slug: "iu",
@@ -172,6 +178,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/twicetagram/", handle: "@twicetagram" },
       { platform: "x", url: "https://x.com/JYPETWICE", handle: "@JYPETWICE" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "twice-2024-las-vegas",
+      alt: "TWICE performing in Las Vegas in 2024",
+      id: "twice-2024-las-vegas-hero",
+    },
   },
   // --- K-Drama actors ---
   {
@@ -212,6 +224,12 @@ export const authoredArtists: AuthoredArtist[] = [
     social: [
       { platform: "instagram", url: "https://www.instagram.com/eunbining0904/", handle: "@eunbining0904" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "park-eun-bin-2025-portrait",
+      alt: "Park Eun-bin at a 2025 press conference",
+      id: "park-eun-bin-2025-portrait-hero",
+    },
   },
   {
     slug: "kim-tae-ri",
@@ -290,6 +308,12 @@ export const authoredArtists: AuthoredArtist[] = [
     social: [
       { platform: "instagram", url: "https://www.instagram.com/hoooooyeony/", handle: "@hoooooyeony" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "jung-hoyeon-2021-portrait",
+      alt: "Jung Ho-yeon in 2021",
+      id: "jung-hoyeon-2021-portrait-hero",
+    },
   },
 
   // --- Added in the 2026-07-05 roster expansion (docs/roster-playbook.md), with
@@ -312,6 +336,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/bts.bighitofficial/", handle: "@bts.bighitofficial" },
       { platform: "x", url: "https://x.com/BTS_twt", handle: "@BTS_twt" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "bts-2022-white-house",
+      alt: "BTS at the White House in May 2022",
+      id: "bts-2022-white-house-hero",
+    },
   },
   {
     slug: "seventeen",
@@ -331,6 +361,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/saythename_17/", handle: "@saythename_17" },
       { platform: "x", url: "https://x.com/pledis_17", handle: "@pledis_17" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "seventeen-2025-carat-land",
+      alt: "SEVENTEEN performing in 2025",
+      id: "seventeen-2025-carat-land-hero",
+    },
   },
   {
     slug: "ive",
@@ -350,6 +386,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/ivestarship/", handle: "@ivestarship" },
       { platform: "x", url: "https://x.com/IVEstarship", handle: "@IVEstarship" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "ive-2026-golden-disc",
+      alt: "IVE at the 40th Golden Disc Awards in January 2026",
+      id: "ive-2026-golden-disc-hero",
+    },
   },
   {
     // Rookie graduation case (playbook rule 4): Golden Disc Rookie of the Year,
@@ -371,6 +413,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/cortis/", handle: "@cortis" },
       { platform: "x", url: "https://x.com/cortis_bighit", handle: "@cortis_bighit" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "cortis-2026-golden-disc",
+      alt: "CORTIS at the 40th Golden Disc Awards in January 2026",
+      id: "cortis-2026-golden-disc-hero",
+    },
   },
   {
     slug: "hearts2hearts",
@@ -390,6 +438,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/hearts2hearts/", handle: "@hearts2hearts" },
       { platform: "x", url: "https://x.com/Hearts2Hearts", handle: "@Hearts2Hearts" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "hearts2hearts-2026-fanmeeting",
+      alt: "Hearts2Hearts at a 2026 fan meeting",
+      id: "hearts2hearts-2026-fanmeeting-hero",
+    },
   },
   {
     slug: "babymonster",
@@ -409,6 +463,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/babymonster_ygofficial/", handle: "@babymonster_ygofficial" },
       { platform: "x", url: "https://x.com/ygbabymonster_", handle: "@ygbabymonster_" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "babymonster-2025-seattle",
+      alt: "BABYMONSTER performing in Seattle in 2025",
+      id: "babymonster-2025-seattle-hero",
+    },
   },
   {
     slug: "le-sserafim",
@@ -428,6 +488,12 @@ export const authoredArtists: AuthoredArtist[] = [
       { platform: "instagram", url: "https://www.instagram.com/le_sserafim/", handle: "@le_sserafim" },
       { platform: "x", url: "https://x.com/le_sserafim", handle: "@le_sserafim" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "le-sserafim-2025-easy-crazy-hot",
+      alt: "LE SSERAFIM on the Easy Crazy Hot tour in 2025",
+      id: "le-sserafim-2025-easy-crazy-hot-hero",
+    },
   },
   // --- K-Drama (actor) ---
   {
@@ -447,6 +513,12 @@ export const authoredArtists: AuthoredArtist[] = [
     social: [
       { platform: "instagram", url: "https://www.instagram.com/byeonwooseok/", handle: "@byeonwooseok" },
     ],
+    hero: {
+      kind: "image",
+      assetId: "byeon-woo-seok-2024-portrait",
+      alt: "Byeon Woo-seok at a 2024 photocall",
+      id: "byeon-woo-seok-2024-portrait-hero",
+    },
   },
 
   // Added for the August 2026 edition. Every profile was reverified on

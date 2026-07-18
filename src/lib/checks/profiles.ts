@@ -15,30 +15,6 @@ import { issue, type CheckIssue } from "./result";
 
 export const PREVIEW_PROFILE_CAP = 10;
 
-export const LEGACY_PROFILE_SLUGS = Object.freeze([
-  "newjeans",
-  "blackpink",
-  "iu",
-  "stray-kids",
-  "aespa",
-  "cha-eunwoo",
-  "twice",
-  "lee-min-ho",
-  "park-eun-bin",
-  "kim-tae-ri",
-  "park-chan-wook",
-  "bong-joon-ho",
-  "jung-hoyeon",
-  "bts",
-  "seventeen",
-  "ive",
-  "cortis",
-  "hearts2hearts",
-  "babymonster",
-  "le-sserafim",
-  "byeon-woo-seok",
-] as const);
-
 const CAREER_STAGES = new Set(["preview", "rookie", "rising", "established", "icon"]);
 const COVERAGE_LEVELS = new Set(["active", "catalog"]);
 const PUBLICATION_STATES = new Set(["draft", "published", "archived"]);
@@ -69,7 +45,6 @@ export function checkProfiles(input: ProfileCheckInput): ProfileCheckResult {
   const file = input.file ?? "src/content/profiles.ts";
   const issues: CheckIssue[] = [];
   const nowMs = Date.parse(input.nowIso);
-  const legacySlugs = new Set<string>(LEGACY_PROFILE_SLUGS);
   const assetById = new Map(input.mediaAssets.map((asset) => [asset.id, asset]));
   const authoredBySlug = new Map(input.authoredArtists.map((artist) => [artist.slug, artist]));
   const bySlug = new Map<string, Artist>();
@@ -180,16 +155,12 @@ export function checkProfiles(input: ProfileCheckInput): ProfileCheckResult {
       continue;
     }
     const hero = authored.hero;
-    if (
-      artist.publicationState === "published" &&
-      !legacySlugs.has(artist.slug) &&
-      hero === undefined
-    ) {
+    if (artist.publicationState === "published" && hero === undefined) {
       issues.push(
         issue(
           file,
           "missing hero",
-          `${slug}: a newly published profile needs a permitted hero (or stays draft): docs/roster-playbook.md`,
+          `${slug}: a published profile needs a permitted hero (or stays draft): docs/roster-playbook.md`,
         ),
       );
     } else if (hero?.kind === "placeholder") {

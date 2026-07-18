@@ -304,8 +304,8 @@ export interface Artist {
   aliases?: string[]; // native / alternate names for source matching — internal, never rendered
   // Permitted hero for the profile page: kind "image" backed by a MediaAsset
   // (assetId) under an allowed rights basis, or an official embed (the
-  // embed-as-hero basis). Required for newly published profiles — the original
-  // roster is allowlisted in the typed profile checker.
+  // embed-as-hero basis). Required for every published profile; check:profiles
+  // enforces it.
   hero?: MediaItem;
 }
 

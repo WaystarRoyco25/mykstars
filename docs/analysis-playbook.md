@@ -151,8 +151,10 @@ a run with 14 and a rumor.
 1. **Size the run.** Baseline 4 pieces inside the edition (roughly its 20% "other formats"
    share alongside events, forecasts and rankings). Count the pillar-defining stories since the
    last edition (an award night, a record comeback week, a major festival premiere, an agency
-   earnings or M&A shock, a global #1) and add roughly one piece per such story, with a soft
-   ceiling around 10 so rule 4 verification holds.
+   earnings or M&A shock, a global #1) and add roughly one piece per such story. The edition
+   engine seats at most 8 analysis articles (`MAX_ARTICLES` in `src/lib/edition/inventory.ts`),
+   so that is the working ceiling; anything past it publishes on `/analysis` without a
+   home-page seat until the next edition.
 2. **Web-verify first.** Every subject's current status and every figure against the canonical
    table; capture each figure's source name and date while researching, before drafting.
 3. **Draft to quota, and to cadence.** Sketch the run against the quota table before writing;
@@ -163,7 +165,12 @@ a run with 14 and a rumor.
 4. **Write to schema.** `status: "analysis"`, `pillar` set (only site-standards pieces go
    pillar-less), one paragraph per `body` string, `source` as the outlet-level credit, and
    `related.artistSlugs` / `gallerySlugs` for every covered subject the site hosts (a dangling
-   slug fails `check:articles`).
+   slug fails `check:articles`). Attach `media` when a permitted thumbnail exists:
+   `{ kind: "image", assetId, alt }`, resolved from the `MediaAsset` registry (`check:media`
+   guards the reference). Alt text is plain prose, no `*asterisk*` markup, and `check:style`
+   scans it like any content string; the row pattern lives in `docs/design-conventions.md`.
+   The text-only row is a designed fallback, so a piece with no clean permitted image ships
+   without one.
 5. **Date on the clock.** Bump `NOW` first (the roster ritual), then date the batch on or before
    `NOW`, KST, staggered times. **Never** in the site's future.
 6. **Titles and deks last.** Write them against rule 11 once the piece exists; byline

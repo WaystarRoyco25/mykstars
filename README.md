@@ -2,7 +2,7 @@
 
 > Broad, credited coverage of Korean celebrities across K-Pop, K-Drama, K-Movie and Fashion: official video, schedules, fan forecasts and credible analysis, published as one human-approved monthly edition. Fast, English-first, mobile-first.
 
-The wedge: organized, attributed coverage of the stars that matter (the thing every incumbent, Soompi, allkpop, Koreaboo, Kpopmap, leaves on the table) delivered with a sophisticated **editorial-noir** identity rather than the usual pastel clickbait. Photography returns as permitted imagery lands (see Status); the credit-and-link discipline covers every media kind either way.
+The wedge: organized, attributed coverage of the stars that matter (the thing every incumbent, Soompi, allkpop, Koreaboo, Kpopmap, leaves on the table) delivered with a sophisticated **editorial-noir** identity rather than the usual pastel clickbait. Photography is openly licensed and re-hosted with rights records; the credit-and-link discipline covers every media kind.
 
 ## Stack
 
@@ -16,15 +16,15 @@ The wedge: organized, attributed coverage of the stars that matter (the thing ev
 ```bash
 npm install
 npm run dev      # http://localhost:3000
-npm run build    # production build (static-generates all routes; prebuild runs every check)
-npm run lint
-npm run check:style && npm run check:articles && npm run check:fresh && npm run check:profiles
+npm run build    # production build (static-generates all routes; prebuild runs the six content checks)
+npm run verify   # the six content checks + check:generated + typecheck + lint + backend tests
 ```
 
 ## Architecture
 
-- `src/lib/types.ts` — domain model (Artist with careerStage, coverageLevel and publicationState; Gallery, MediaItem, Article, Source; the wave-1b content types Pulse, MediaAsset, FeedEdition).
-- `src/content/` — typed, versioned content files (profiles, galleries, articles, rankings, events, predictions, clips, the site clock `now.ts`), aggregated by `src/lib/content.ts`. The hand-rolled check scripts under `scripts/` lex these files directly.
+- `src/lib/types.ts` — domain model (Artist with careerStage, coverageLevel and publicationState; Gallery, MediaItem, Article, Source, Pulse, MediaAsset, FeedEdition).
+- `src/content/` — typed, versioned content files (profiles, galleries, articles, rankings, events, predictions, clips, pulses, monthly editions, the site clock `now.ts`), aggregated by `src/lib/content.ts`. The hand-rolled check scripts under `scripts/` lex these files directly.
+- `src/lib/edition/` — the edition engine: `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes a committed `src/content/editions/<id>.ts`, validated by `check:edition` (see `docs/edition-playbook.md`).
 - `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions, backed by `src/lib/content.ts`. Swap in a headless CMS later by re-implementing this module against the same signatures, with no page changes.
 - `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), `StarsFilters`, etc.
 - `src/app/` — home, `artists/` (the Stars directory + `[artistSlug]` per-person hubs), `photos/[gallerySlug]` gallery permalinks (the browse index is retired; `/photos` redirects home), `analysis/` (+ `[slug]`), `predictions/`, `schedule/`, `legal/dmca` with its Server Action, `about/editorial-standards`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
@@ -44,4 +44,4 @@ Aggregation is engineered to **survive**, not just to repost:
 
 ## Status
 
-Wave 1a of the broad-coverage expansion is built: the content split (`src/content/`), the profile coverage model (careerStage / coverageLevel / publicationState / lastVerified, guarded by `check:profiles`), the Stars directory at `/artists`, expanded profile hubs with unified timelines, and the placeholder retirement. The 43 placeholder galleries are archived: their URLs stay live with a noindex archival notice while every listing runs video-led on official YouTube clips. Wave 1b brings permitted media (Supabase Storage + `MediaAsset` rights records), Pulse items with permanent URLs, the monthly edition engine (`docs/edition-playbook.md`), and roster growth to 40 profiles. Editorial rules live in `docs/`; every content edit runs the check suite (`npm run check:style|articles|fresh|profiles`).
+The broad-coverage model is live end to end: 40 published profiles (careerStage / coverageLevel / publicationState / lastVerified, guarded by `check:profiles`), every one carrying a permitted hero from the 43-asset `MediaAsset` rights registry (Supabase Storage re-hosts); Pulse items with permanent URLs; and the monthly edition engine rendering the home page from the committed July 2026 edition (`docs/edition-playbook.md`). The 43 placeholder-era galleries stay archived with live URLs and a noindex archival notice. The photo-archive index is retired: `/photos` redirects home while per-gallery permalinks stay live. Editorial rules live in `docs/` (agent hub: `AGENTS.md`); `npm run verify` runs the full check suite and gates every change.

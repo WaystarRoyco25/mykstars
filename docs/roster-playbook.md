@@ -37,14 +37,15 @@ Roster growth is gated on human approval, in this order:
    `publicationState: "draft"` (no route, no listing). Drafts carry everything a published
    profile does, verified per rule 2 below.
 3. **Publish with a hero.** A new profile flips to `"published"` only with a permitted hero in
-   place (`check:profiles` enforces this; the original 2026-07 roster of 21 is allowlisted until
-   permitted media lands). Pre-debut candidates additionally follow the guardrail below.
+   place; `check:profiles` enforces this for every published profile (the last of the original
+   2026-07 roster gained heroes on 2026-07-18, retiring the legacy allowlist). Pre-debut
+   candidates additionally follow the guardrail below.
 
 ## The pre-debut guardrail (preview profiles)
 
 `careerStage: "preview"` is allowed only for **agency-announced lineups with a dated official
 source**, capped at 10 public preview profiles, re-verified every 120 days. Coverage is
-**activity-only**: official clips and (in wave 1b) Pulse items. A preview profile never appears
+**activity-only**: official clips and Pulse items. A preview profile never appears
 as a Fan Forecast subject and never carries a ranking-row link — both are check-enforced. Treat
 pre-debut people, who are often minors, with the forecast playbook's sensitivity rule doubled:
 professional facts from official announcements only.
@@ -125,6 +126,12 @@ professional facts from official announcements only.
      will not host it, and `PhotoMedia` crops every photo `object-cover` into a fixed aspect box,
      which is a CC adaptation. (The `next/image` re-encode alone would be fine, CC 4.0 §2(a)(4)
      exempts technical and format changes.)
+   - **In practice the working source is Commons CC/PD.** Genuine idol agency press kits are
+     effectively unavailable, and paid stock (Getty/AP) is banned by the no-paid-photography
+     policy. Never relabel an image from an agency site or Instagram as `agency-press-kit`.
+   - **Before concluding an artist has no usable photo, run the bilingual finder.** The one
+     Instagram-embed retry (2026-07-16) happened because a "no licensed photo yet" note was
+     simply stale; the finder turned up dozens of permitted candidates the same day.
    - **The finder prints leads, never clearances.** Commons full-text matches any page mentioning
      a name, so a human confirms each pick on its Commons page and by looking at the image.
      Known traps, all hit in the 2026-07-16 pass: namesakes (the actor Lee Min-ho vs Stray Kids'
@@ -147,15 +154,14 @@ professional facts from official announcements only.
      alone (see Red flags).
 9. **Run the checks before calling a refresh done** (see Check commands below).
 
-## Roster reference (as of 2026-07-05)
+## Roster reference
 
-| Coverage | Artists |
-|---|---|
-| Active (21) | NewJeans, BLACKPINK, IU, Stray Kids, aespa, Cha Eun-woo, TWICE, BTS, SEVENTEEN, IVE, CORTIS, Hearts2Hearts, BABYMONSTER, LE SSERAFIM, Lee Min-ho, Park Eun-bin, Kim Tae-ri, Byeon Woo-seok, Park Chan-wook, Bong Joon-ho, Jung Ho-yeon |
-| Catalog (0) | (empty; the 2026-07-05 verification pass found every member active under rule 1: e.g. Bong Joon-ho confirmed *Ally* at Cannes in May 2026, Jung Ho-yeon walked the Met Gala and Cannes in May 2026, Lee Min-ho has *Assassins* filming) |
-
-When moving someone to catalog, add them to this table with: catalog-since date, last verified
-major activity, reason, and the reactivation trigger to watch.
+[`src/content/profiles.ts`](../src/content/profiles.ts) is the single source of truth; this
+playbook stopped mirroring it after the mirrored table went stale within two weeks. As of
+2026-07-18 it holds 40 published profiles, all `coverageLevel: "active"`, spanning all four
+pillars. When moving someone to catalog, the flip comment in `profiles.ts` (rule 5) carries
+the catalog-since date, the last verified major activity, the reason, and the reactivation
+trigger to watch.
 
 ## Red flags: reframe, hold, or verify twice
 

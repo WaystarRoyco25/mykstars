@@ -14,9 +14,9 @@ import {
 } from "@/lib/media-assets";
 import type { MediaAsset } from "@/lib/types";
 
-const GOLDEN_IMAGE_COUNT = 43;
+const GOLDEN_IMAGE_COUNT = 55;
 const GOLDEN_IMAGE_HASH =
-  "313c9fc145fa6feff51030f9a4500ba725fd04ae5dd438a04c9f6ccc518ef1ad";
+  "2f0c79dd2561cf48e9d036288b85dc45790d88c7f631f4258b8955b560b6bc9f";
 
 function currentResolvedImages() {
   return [
@@ -52,7 +52,7 @@ function fixtureAsset(overrides: Partial<MediaAsset> = {}): MediaAsset {
   };
 }
 
-test("all 43 authored references resolve to the exact pre-refactor runtime values", () => {
+test("all 55 authored references resolve to the exact pre-refactor runtime values", () => {
   const images = currentResolvedImages();
   const hash = createHash("sha256")
     .update(JSON.stringify(images))
