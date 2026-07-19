@@ -125,12 +125,30 @@ test("catalog media and schedule selectors retain exact filtering", async () => 
 });
 
 test("catalog lookup boundaries retain archived detail records and missing values", async () => {
-  assert.deepEqual(await Promise.all([
-    getGalleriesForPillar("k-pop"),
-    getGalleriesForPillar("k-drama"),
-    getGalleriesForPillar("k-movie"),
-    getGalleriesForPillar("fashion-beauty"),
-  ]), [[], [], [], []]);
+  assert.deepEqual(
+    (await Promise.all([
+      getGalleriesForPillar("k-pop"),
+      getGalleriesForPillar("k-drama"),
+      getGalleriesForPillar("k-movie"),
+      getGalleriesForPillar("fashion-beauty"),
+    ])).map((galleries) => galleries.map((gallery) => gallery.slug)),
+    [
+      [
+        "bts-arirang-paris",
+        "nmixx-oakland-2026",
+        "twice-this-is-for-hamilton",
+        "boynextdoor-golden-disc-2026",
+        "katseye-beautiful-chaos-2025",
+        "ateez-gimpo-2025",
+        "le-sserafim-seattle-2025",
+        "tws-melon-2024",
+        "riize-melon-2024",
+      ],
+      ["kim-seon-ho-presscon-2026"],
+      ["jung-hoyeon-cannes-2026"],
+      ["ateez-gimpo-2025"],
+    ],
+  );
 
   const archived = await getGallery("blackpink-incheon-airport");
   assert.equal(archived?.publicationState, "archived");
@@ -152,7 +170,7 @@ test("catalog lookup boundaries retain archived detail records and missing value
 test("catalog page DTOs retain relationship hydration and ordering", async () => {
   const artist = await getArtistCatalogPageData("bts");
   assert.ok(artist);
-  assert.deepEqual(artist.galleries, []);
+  assert.deepEqual(artist.galleries.map((gallery) => gallery.slug), ["bts-arirang-paris"]);
   assert.deepEqual(
     artist.timeline.map((entry) => {
       switch (entry.format) {
@@ -171,6 +189,7 @@ test("catalog page DTOs retain relationship hydration and ordering", async () =>
     [
       "event:bts-arirang-los-angeles-sep-5-6",
       "event:bts-arirang-los-angeles",
+      "gallery:bts-arirang-paris",
       "event:bts-arirang-paris",
       "pulse:2026-07-bts-british-museum-gallery-trail",
       "pulse:2026-07-bts-london-return",

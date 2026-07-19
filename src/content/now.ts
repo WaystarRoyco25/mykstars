@@ -4,4 +4,4 @@
 // scripts/ measures against this value, never the wall clock. Bump it with
 // every publishing refresh (the NOW-bump ritual, docs/roster-playbook.md).
 // ---------------------------------------------------------------------------
-export const NOW = "2026-07-18T20:00:00+09:00";
+export const NOW = "2026-07-20T00:00:00+09:00";

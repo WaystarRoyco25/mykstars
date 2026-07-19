@@ -47,6 +47,7 @@ test("the catalog snapshot retains selector ordering and relationship hydration"
     [
       "event:bts-arirang-los-angeles-sep-5-6",
       "event:bts-arirang-los-angeles",
+      "gallery:bts-arirang-paris",
       "event:bts-arirang-paris",
       "pulse:2026-07-bts-british-museum-gallery-trail",
       "pulse:2026-07-bts-london-return",

@@ -116,6 +116,12 @@ professional facts from official announcements only.
    Supabase media bucket with a `MediaAsset` rights record. Run `node scripts/find-photos.mjs`
    (no arguments sweeps every active artist with no asset yet; pass slugs to target; `--all`
    re-checks the covered ones).
+   - **Rank the hunt first.** `node scripts/naver-leads.mjs` (same slug arguments) pulls each
+     artist's latest NAVER news items, flags photo-op and agency-provided coverage, and prints a
+     priority ranking, so the sourcing pass starts where the heat is and knows which events to
+     search on Commons. NAVER is discovery only: the photos its results carry are the outlets'
+     copyrighted work and never publish here, and nothing it returns is written into content
+     files. Keys live in `.env.local` (`NAVER_API_KEY_ID` / `NAVER_API_KEY`).
    - **Search both names.** The finder queries the English `name` and the hangul `koreanName`
      and unions the results, because Korean outlets (티비텐 TV10, Ten Asia, K-POPIT) publish to
      YouTube under CC BY and those frames reach Commons under Korean-titled filenames. Measured

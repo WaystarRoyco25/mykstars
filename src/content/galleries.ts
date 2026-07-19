@@ -1,6 +1,8 @@
-import type { Gallery, MediaItem, Orientation, Source } from "@/lib/types";
+import { resolveAuthoredMediaItem } from "@/lib/media-assets";
+import type { AuthoredMediaItem, Gallery, MediaItem, Orientation, Source } from "@/lib/types";
 import {
   ALLURE_KOREA,
+  DAVID_LEE,
   ELLE_KOREA,
   FESTIVAL,
   NEWS1,
@@ -8,17 +10,22 @@ import {
   OSEN,
   STAR_NEWS,
   STUDIO,
+  TEN_ASIA,
   VOGUE_KOREA,
   W_KOREA,
 } from "./sources";
 
 // ---------------------------------------------------------------------------
-// SAMPLE GALLERY DATA — every set below renders as a branded placeholder tile
-// (kind: "placeholder"), standing in for permitted photography during early
-// development. Captions describe generic public moments (airport arrivals, red
-// carpets, press lines, photocalls) with neutral, factual language; every item
-// carries a credit. Permitted imagery (a MediaAsset-backed kind: "image")
-// replaces these as it lands.
+// GALLERY DATA. Two eras coexist in this file:
+//   - Archived placeholder sets (kind: "placeholder", the place() helpers
+//     below): early-development stand-ins for permitted photography, kept
+//     "archived" so they never render. Captions describe generic public
+//     moments with neutral, factual language; every item carries a credit.
+//   - Published real-photo galleries, authored as ImageRefs ({ kind: "image",
+//     assetId, alt }) resolved against the MediaAsset rights registry at
+//     module load, the same seam profiles.ts uses for heroes. check:media
+//     validates every gallery image reference. Real-photo galleries carry no
+//     placeholder filler, which keeps them eligible for the edition engine.
 // ---------------------------------------------------------------------------
 function place(
   id: string,
@@ -61,7 +68,15 @@ function placeMixed(
 // ---------------------------------------------------------------------------
 // GALLERIES
 // ---------------------------------------------------------------------------
-export const galleries: Gallery[] = [
+
+// Authoring shape: cover/media accept ImageRefs alongside placeholder and
+// embed literals; the resolved Gallery[] the stores consume is derived below.
+type AuthoredGallery = Omit<Gallery, "cover" | "media"> & {
+  cover: AuthoredMediaItem;
+  media: AuthoredMediaItem[];
+};
+
+export const authoredGalleries: AuthoredGallery[] = [
   // ===================== K-POP =====================
   {
     // 2026-07-05 correction: the prior "comeback showcase" set described an event
@@ -704,4 +719,225 @@ export const galleries: Gallery[] = [
     cover: place("premiere-row-cover", "Park Chan-wook at a premiere photocall", FESTIVAL, 2, "landscape"),
     media: placeSet("premiere-row", "Premiere photocall row", FESTIVAL, 6, "landscape"),
   },
+  // ===================== REAL-PHOTO GALLERIES (2026-07 revival) =====================
+  {
+    slug: "bts-arirang-paris",
+    publicationState: "published",
+    title: "BTS close the *Arirang* world tour in Paris",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["bts"],
+    event: "Arirang world tour finale, Stade de France",
+    date: "2026-07-18T04:30:00+09:00",
+    source: { name: "Chiyako92", url: "https://commons.wikimedia.org/wiki/File:BTS_Arirang_World_Tour_in_Paris_(17_July_2026)_-_final_ment.jpg", kind: "licensed" },
+    excerpt: "Six frames from the Stade de France finale: the circle stage, the setlist highlights and the walk out through the crowd.",
+    cover: { kind: "image", assetId: "bts-2026-arirang-paris", alt: "BTS on the circle stage at the Arirang tour finale in Paris in July 2026" },
+    media: [
+      { kind: "image", assetId: "bts-2026-arirang-idol", alt: "BTS performing 'Idol' at the Stade de France in July 2026" },
+      { kind: "image", assetId: "bts-2026-arirang-come-over", alt: "BTS performing 'Come Over' at the Paris finale" },
+      { kind: "image", assetId: "bts-2026-arirang-merry-go-round", alt: "BTS performing 'Merry Go Round' at the Stade de France" },
+      { kind: "image", assetId: "bts-2026-arirang-swim", alt: "BTS performing 'Swim' at the Paris finale in July 2026" },
+      { kind: "image", assetId: "bts-2026-arirang-exit", alt: "BTS leaving the stage through the crowd at the Paris finale" },
+    ],
+  },
+  {
+    slug: "jung-hoyeon-cannes-2026",
+    publicationState: "published",
+    title: "Jung Ho-yeon takes *Hope* up the Cannes steps",
+    pillar: "k-movie",
+    category: "festival",
+    artistSlugs: ["jung-hoyeon"],
+    event: "Cannes Film Festival 2026",
+    date: "2026-05-21T02:30:00+09:00",
+    source: { name: "Gabriel Hutchinson, WikiPortraits", url: "https://commons.wikimedia.org/wiki/File:Jung_Ho-Yeon_at_the_2026_Cannes_Film_Festival_02.jpg", kind: "licensed" },
+    excerpt: "The photocall heart, the Palais ovation and the wide from the Croisette: her festival run in four frames.",
+    cover: { kind: "image", assetId: "jung-hoyeon-2026-cannes", alt: "Jung Ho-yeon making a heart at the Cannes Film Festival photocall in May 2026" },
+    media: [
+      { kind: "image", assetId: "jung-hoyeon-2026-hope-ovation", alt: "Jung Ho-yeon and the Hope cast at the Palais standing ovation in Cannes" },
+      { kind: "image", assetId: "jung-hoyeon-2026-cannes-03", alt: "Jung Ho-yeon at the Hope photocall at Cannes in May 2026" },
+      { kind: "image", assetId: "jung-hoyeon-2026-cannes-04", alt: "Jung Ho-yeon photographed wide at the 2026 Cannes Film Festival" },
+    ],
+  },
+  {
+    slug: "twice-this-is-for-hamilton",
+    publicationState: "published",
+    title: "Jeongyeon up close at TWICE's Hamilton stop",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["twice"],
+    event: "This Is For world tour, Hamilton",
+    date: "2026-03-07T11:00:00+09:00",
+    source: { name: "Caroline Charruyer", url: "https://commons.wikimedia.org/wiki/File:260306_Twice_Hamilton_Jeongyeon_%ED%8A%B8%EC%99%80%EC%9D%B4%EC%8A%A4_%EC%A0%95%EC%97%B0_(3).jpg", kind: "licensed" },
+    excerpt: "Six photographer frames from the This Is For tour night in Hamilton, Ontario, with Jeongyeon's 'FIX A DRINK' solo at the center of the set.",
+    cover: { kind: "image", assetId: "twice-2026-hamilton-jeongyeon-03", alt: "Jeongyeon of TWICE on stage in Hamilton on the This Is For tour in March 2026" },
+    media: [
+      { kind: "image", assetId: "twice-2026-hamilton-jeongyeon-01", alt: "Jeongyeon of TWICE performing in Hamilton, Ontario in March 2026" },
+      { kind: "image", assetId: "twice-2026-hamilton-jeongyeon-02", alt: "Jeongyeon mid-song at the This Is For tour stop in Hamilton" },
+      { kind: "image", assetId: "twice-2026-hamilton-jeongyeon-04", alt: "Jeongyeon of TWICE working the extended stage in Hamilton" },
+      { kind: "image", assetId: "twice-2026-hamilton-jeongyeon-05", alt: "Jeongyeon performing 'FIX A DRINK' at the Hamilton stop" },
+      { kind: "image", assetId: "twice-2026-hamilton-jeongyeon-06", alt: "Jeongyeon closing her solo stage in Hamilton in March 2026" },
+    ],
+  },
+  {
+    slug: "tws-melon-2024",
+    publicationState: "published",
+    title: "TWS at the 2024 Melon Music Awards",
+    pillar: "k-pop",
+    category: "red-carpet",
+    artistSlugs: ["tws"],
+    event: "2024 Melon Music Awards",
+    date: "2024-11-30T18:00:00+09:00",
+    source: TEN_ASIA,
+    excerpt: "The group wide and two member solos from the Melon red carpet in the closing weeks of their rookie year.",
+    cover: { kind: "image", assetId: "tws-2024-melon-music-awards", alt: "TWS at the 2024 Melon Music Awards" },
+    media: [
+      { kind: "image", assetId: "tws-2024-melon-group-wide", alt: "TWS lined up on the 2024 Melon Music Awards red carpet" },
+      { kind: "image", assetId: "tws-2024-melon-youngjae", alt: "Youngjae of TWS at the 2024 Melon Music Awards" },
+      { kind: "image", assetId: "tws-2024-melon-hanjin", alt: "Hanjin of TWS at the 2024 Melon Music Awards" },
+    ],
+  },
+  {
+    slug: "riize-melon-2024",
+    publicationState: "published",
+    title: "RIIZE line up at the 2024 Melon Music Awards",
+    pillar: "k-pop",
+    category: "red-carpet",
+    artistSlugs: ["riize"],
+    event: "2024 Melon Music Awards",
+    date: "2024-11-30T18:00:00+09:00",
+    source: TEN_ASIA,
+    excerpt: "The full-group wide and four member solos from the Melon red carpet.",
+    cover: { kind: "image", assetId: "riize-2024-melon-music-awards", alt: "RIIZE at the 2024 Melon Music Awards" },
+    media: [
+      { kind: "image", assetId: "riize-2024-melon-group-wide", alt: "RIIZE lined up on the 2024 Melon Music Awards red carpet" },
+      { kind: "image", assetId: "riize-2024-melon-shotaro", alt: "Shotaro of RIIZE at the 2024 Melon Music Awards" },
+      { kind: "image", assetId: "riize-2024-melon-wonbin", alt: "Wonbin of RIIZE at the 2024 Melon Music Awards" },
+      { kind: "image", assetId: "riize-2024-melon-eunseok", alt: "Eunseok of RIIZE at the 2024 Melon Music Awards" },
+      { kind: "image", assetId: "riize-2024-melon-sohee", alt: "Sohee of RIIZE at the 2024 Melon Music Awards" },
+    ],
+  },
+  {
+    slug: "ateez-gimpo-2025",
+    publicationState: "published",
+    title: "ATEEZ take the Gimpo press line",
+    pillar: "k-pop",
+    category: "airport",
+    artistSlugs: ["ateez"],
+    event: "Gimpo International Airport departure",
+    date: "2025-12-12T09:00:00+09:00",
+    source: TEN_ASIA,
+    excerpt: "Five winter-morning frames from the Gimpo departure walk.",
+    cover: { kind: "image", assetId: "ateez-2025-gimpo-01", alt: "ATEEZ members moving through Gimpo airport in December 2025" },
+    media: [
+      { kind: "image", assetId: "ateez-2025-gimpo-02", alt: "Kang Yeo-sang of ATEEZ at Gimpo in December 2025" },
+      { kind: "image", assetId: "ateez-2025-gimpo-03", alt: "Kang Yeo-sang of ATEEZ heading to departures at Gimpo" },
+      { kind: "image", assetId: "ateez-2025-gimpo-04", alt: "Choi San of ATEEZ at the Gimpo press line in December 2025" },
+      { kind: "image", assetId: "ateez-2025-gimpo-05", alt: "Choi San of ATEEZ at Gimpo airport in December 2025" },
+    ],
+  },
+  {
+    slug: "boynextdoor-golden-disc-2026",
+    publicationState: "published",
+    title: "BOYNEXTDOOR hit the 40th Golden Disc red carpet",
+    pillar: "k-pop",
+    category: "red-carpet",
+    artistSlugs: ["boynextdoor"],
+    event: "40th Golden Disc Awards",
+    date: "2026-01-10T20:00:00+09:00",
+    source: TEN_ASIA,
+    excerpt: "Six frames from the January red-carpet walk at the 40th Golden Disc Awards.",
+    cover: { kind: "image", assetId: "boynextdoor-2026-golden-disc-01", alt: "BOYNEXTDOOR on the 40th Golden Disc Awards red carpet in January 2026" },
+    media: [
+      { kind: "image", assetId: "boynextdoor-2026-golden-disc-02", alt: "BOYNEXTDOOR posing at the 40th Golden Disc Awards" },
+      { kind: "image", assetId: "boynextdoor-2026-golden-disc-03", alt: "BOYNEXTDOOR members on the Golden Disc red carpet" },
+      { kind: "image", assetId: "boynextdoor-2026-golden-disc-04", alt: "BOYNEXTDOOR waving to fans at the Golden Disc Awards" },
+      { kind: "image", assetId: "boynextdoor-2026-golden-disc-05", alt: "BOYNEXTDOOR lined up at the 40th Golden Disc Awards" },
+      { kind: "image", assetId: "boynextdoor-2026-golden-disc-06", alt: "BOYNEXTDOOR leaving the Golden Disc photo wall" },
+    ],
+  },
+  {
+    slug: "nmixx-oakland-2026",
+    publicationState: "published",
+    title: "NMIXX light up Oakland's Paramount",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["nmixx"],
+    event: "Paramount Theatre, Oakland",
+    date: "2026-04-08T12:30:00+09:00",
+    source: DAVID_LEE,
+    excerpt: "Six floor-shot frames from the April stop at the Paramount Theatre in Oakland.",
+    cover: { kind: "image", assetId: "nmixx-2026-oakland-01", alt: "NMIXX performing at the Paramount Theatre in Oakland in April 2026" },
+    media: [
+      { kind: "image", assetId: "nmixx-2026-oakland-02", alt: "NMIXX under the stage lights in Oakland" },
+      { kind: "image", assetId: "nmixx-2026-oakland-03", alt: "NMIXX members mid-performance at the Paramount Theatre" },
+      { kind: "image", assetId: "nmixx-2026-oakland-04", alt: "NMIXX singing to the Oakland floor in April 2026" },
+      { kind: "image", assetId: "nmixx-2026-oakland-05", alt: "NMIXX in formation on the Oakland stage" },
+      { kind: "image", assetId: "nmixx-2026-oakland-06", alt: "NMIXX closing the Oakland set in April 2026" },
+    ],
+  },
+  {
+    slug: "le-sserafim-seattle-2025",
+    publicationState: "published",
+    title: "LE SSERAFIM burn through Seattle",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["le-sserafim"],
+    event: "Easy Crazy Hot tour, Climate Pledge Arena",
+    date: "2025-09-18T12:00:00+09:00",
+    source: DAVID_LEE,
+    excerpt: "Six frames from the Climate Pledge Arena stop on the Easy Crazy Hot tour.",
+    cover: { kind: "image", assetId: "le-sserafim-2025-seattle-02", alt: "LE SSERAFIM on the Easy Crazy Hot tour at Climate Pledge Arena in September 2025" },
+    media: [
+      { kind: "image", assetId: "le-sserafim-2025-seattle-01", alt: "LE SSERAFIM performing in Seattle in September 2025" },
+      { kind: "image", assetId: "le-sserafim-2025-seattle-03", alt: "LE SSERAFIM under the arena lights in Seattle" },
+      { kind: "image", assetId: "le-sserafim-2025-seattle-04", alt: "LE SSERAFIM mid-choreography at Climate Pledge Arena" },
+      { kind: "image", assetId: "le-sserafim-2025-seattle-05", alt: "LE SSERAFIM members on the Seattle stage" },
+      { kind: "image", assetId: "le-sserafim-2025-seattle-06", alt: "LE SSERAFIM closing the Seattle show in September 2025" },
+    ],
+  },
+  {
+    slug: "katseye-beautiful-chaos-2025",
+    publicationState: "published",
+    title: "KATSEYE's Beautiful Chaos, live at the Palladium",
+    pillar: "k-pop",
+    category: "event",
+    artistSlugs: ["katseye"],
+    event: "Beautiful Chaos tour, Hollywood Palladium",
+    date: "2025-12-14T14:00:00+09:00",
+    source: { name: "the CwE", url: "https://commons.wikimedia.org/wiki/File:2025-12-13_Katseye_Beautiful_Chaos_Tour_01.jpg", kind: "licensed" },
+    excerpt: "Tall frames from the Hollywood Palladium floor: 'Gameboy', 'Gabriela' and 'Debut' in motion.",
+    cover: { kind: "image", assetId: "katseye-2025-beautiful-chaos-01", alt: "KATSEYE performing 'Gameboy' at the Hollywood Palladium in December 2025" },
+    media: [
+      { kind: "image", assetId: "katseye-2025-beautiful-chaos-02", alt: "KATSEYE on the Beautiful Chaos tour at the Hollywood Palladium" },
+      { kind: "image", assetId: "katseye-2025-beautiful-chaos-03", alt: "KATSEYE performing 'Gabriela' at the Palladium in December 2025" },
+      { kind: "image", assetId: "katseye-2025-beautiful-chaos-04", alt: "KATSEYE mid-performance on the Beautiful Chaos tour" },
+      { kind: "image", assetId: "katseye-2025-beautiful-chaos-05", alt: "KATSEYE performing 'Debut' at the Hollywood Palladium" },
+      { kind: "image", assetId: "katseye-2025-beautiful-chaos-06", alt: "KATSEYE closing the Palladium night in December 2025" },
+    ],
+  },
+  {
+    slug: "kim-seon-ho-presscon-2026",
+    publicationState: "published",
+    title: "Kim Seon-ho fronts the *Can This Love Be Translated* press day",
+    pillar: "k-drama",
+    category: "press",
+    artistSlugs: ["kim-seon-ho"],
+    event: "Can This Love Be Translated press conference",
+    date: "2026-01-20T14:00:00+09:00",
+    source: { name: "K-POPIT 케이팝잇", url: "https://commons.wikimedia.org/wiki/File:Kim_Seon-ho_CTLBT_Presscon_03.jpg", kind: "licensed" },
+    excerpt: "Three frames from the January press conference in Seoul.",
+    cover: { kind: "image", assetId: "kim-seon-ho-2026-presscon-03", alt: "Kim Seon-ho at the Can This Love Be Translated press conference in January 2026" },
+    media: [
+      { kind: "image", assetId: "kim-seon-ho-2026-presscon-01", alt: "Kim Seon-ho answering questions at the January 2026 press conference" },
+      { kind: "image", assetId: "kim-seon-ho-2026-presscon-02", alt: "Kim Seon-ho posing at the drama press conference in Seoul" },
+    ],
+  },
 ];
+
+export const galleries: Gallery[] = authoredGalleries.map(
+  ({ cover, media, ...gallery }): Gallery => ({
+    ...gallery,
+    cover: resolveAuthoredMediaItem(cover),
+    media: media.map((item) => resolveAuthoredMediaItem(item)),
+  }),
+);

@@ -88,10 +88,10 @@ test("the July edition resolves to the characterized bands, copy, fills, and ord
     "2026-07-17T00:00:00+09:00",
     { loadTallies: zeroTallies },
   );
-  assert.equal(bands.length, 34);
+  assert.equal(bands.length, 33);
   assert.equal(
     digest(snapshot(bands)),
-    "b7b70a0c2254666935c15190c020957dff5261496026c5e287795da75943b8d1",
+    "365d00c12b2168cb8163fd4e5bbab74f658fe58921af28a2d8c4daa3d4f38005",
   );
 });
 
@@ -101,13 +101,12 @@ test("fallback planning retains its characterized sections, labels, fills, and o
     { loadTallies: zeroTallies },
   );
   assert.equal(bands.length, 17);
-  // Recharacterized 2026-07-18. The hash this test landed with (fe6774d9...) was
-  // recorded from an uncommitted dev state during 47016e4 and never matched any
-  // committed tree; this value is the resolver's output at that birth commit,
-  // unchanged since (verified by running snapshot() at 47016e4 and fd7bfae).
+  // Recharacterized 2026-07-20 with the gallery revival: the fallback plan now
+  // draws on published real-photo galleries and the swapped heroes, so the
+  // 2026-07-18 value (7eb4c693...) no longer describes the inventory.
   assert.equal(
     digest(snapshot(bands)),
-    "7eb4c693fdcb207d2322e3fd03fc951eb0fc9cd9296de5fa8b5cd20ba35fc655",
+    "222fab01a43719107db135513a556aaf8e9e2a9e8f911bb59acd189f1ec8f004",
   );
 });
 

@@ -16,3 +16,5 @@ export const FESTIVAL: Source = { name: "Festival photo pool", url: "https://www
 export const ELLE_KOREA: Source = { name: "Elle Korea", url: "https://www.elle.co.kr", kind: "magazine" };
 export const ALLURE_KOREA: Source = { name: "Allure Korea", url: "https://www.allurekorea.com", kind: "magazine" };
 export const BILLBOARD: Source = { name: "Billboard", url: "https://www.billboard.com/culture/product-recommendations/current-k-pop-concerts-1236234463/", kind: "press" };
+export const TEN_ASIA: Source = { name: "Ten Asia", url: "https://www.tenasia.co.kr", kind: "press" };
+export const DAVID_LEE: Source = { name: "David Lee", url: "https://www.flickr.com/photos/davidjlee/", kind: "licensed" };

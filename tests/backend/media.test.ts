@@ -14,9 +14,9 @@ import {
 } from "@/lib/media-assets";
 import type { MediaAsset } from "@/lib/types";
 
-const GOLDEN_IMAGE_COUNT = 55;
+const GOLDEN_IMAGE_COUNT = 56;
 const GOLDEN_IMAGE_HASH =
-  "2f0c79dd2561cf48e9d036288b85dc45790d88c7f631f4258b8955b560b6bc9f";
+  "c6ad561cf83f570dc8f973600e157dcac776d1d97f7fe91b2f7fe7f0382b5053";
 
 function currentResolvedImages() {
   return [
@@ -52,7 +52,7 @@ function fixtureAsset(overrides: Partial<MediaAsset> = {}): MediaAsset {
   };
 }
 
-test("all 55 authored references resolve to the exact pre-refactor runtime values", () => {
+test("all 56 authored references resolve to the exact pre-refactor runtime values", () => {
   const images = currentResolvedImages();
   const hash = createHash("sha256")
     .update(JSON.stringify(images))
@@ -63,7 +63,7 @@ test("all 55 authored references resolve to the exact pre-refactor runtime value
 });
 
 test("the canonical asset index is unique, immutable, and defaults sourceUrl", () => {
-  assert.equal(mediaAssetIndex.size, 43);
+  assert.equal(mediaAssetIndex.size, 103);
   assert.equal(mediaAssetIndex.size, mediaAssets.length);
   assert.equal("set" in mediaAssetIndex, false);
 

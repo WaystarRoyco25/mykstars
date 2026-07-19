@@ -38,13 +38,15 @@ suite), then `check:generated`, `typecheck`, `lint` and `test:backend`. `npm run
 | `check:fresh` | the 180-day clip rule and true/non-future embed dates vs `NOW`; warns when `NOW` drifts more than 14 days from the wall clock |
 | `check:profiles` | profile fields, verification cadence, `memberOf`/`members` reciprocity, the permitted-hero rule, pre-debut guardrails |
 | `check:edition` | committed editions vs the content inventory and ordering constraints; warns when items dated in the edition's month postdate `publishedAt` ("stale edition": regenerate) |
-| `check:media` | the `MediaAsset` rights registry vs every authored image reference (profiles, pulses, articles) |
+| `check:media` | the `MediaAsset` rights registry vs every authored image reference (profiles, pulses, articles, galleries) |
 | `check:generated` | drift in generated barrel/index files (e.g. the editions index that `gen:edition` writes) |
 
 - `check:fresh` reads `yt()`/`tv()` calls positionally: a new clip factory needs a matching
   entry in the script's `FACTORIES` map and its `callRe` regex.
-- `tests/backend/media.test.ts` pins the registry size (`GOLDEN_IMAGE_COUNT`, 43 as of
-  2026-07-18): bump it when the registry grows.
+- `tests/backend/media.test.ts` carries two pins: `mediaAssetIndex.size` (the registry row
+  count) and `GOLDEN_IMAGE_COUNT` / `GOLDEN_IMAGE_HASH` (a count and sha256 over the resolved
+  artist-hero and Pulse image references, not the registry). Bump the size when the registry
+  changes; recompute the golden pair whenever a hero or Pulse image reference changes.
 - There is no component or frontend test runner; `test:backend` runs Node's built-in
   `node:test` over `tests/backend/*.test.ts`.
 
@@ -55,10 +57,22 @@ Licensing policy, the byte-identical re-host ritual and the Commons traps are ca
 
 - Upload path: Supabase Storage REST (`POST /storage/v1/object/media/...`, `x-upsert: true`)
   with the service-role key from `.env.local`; bucket layout
-  `profiles/{slug}/{yyyy}/{assetId}.{ext}`; the public base URL constant lives in
-  `src/lib/media-assets.ts`. Verify an upload by re-downloading and comparing the sha256.
-  A replacement image needs a NEW `assetId`: URLs are content-addressed and CDN-cached for
-  about 31 days.
+  `profiles/{slug}/{yyyy}/{assetId}.{ext}` or `galleries/{gallerySlug}/{assetId}.{ext}`; the
+  public base URL constant lives in `src/lib/media-assets.ts`. Verify an upload by
+  re-downloading and comparing the sha256. A replacement image needs a NEW `assetId`: URLs are
+  content-addressed and CDN-cached for about 31 days.
+- `node scripts/naver-leads.mjs [slug...] [--days N] [--limit N]` ranks the photo hunt: latest
+  NAVER news per artist (hangul + English queries unioned), photo-op/agency-provided flags, a
+  priority ranking. Discovery only; NAVER results never publish here. Keys in `.env.local`:
+  `NAVER_API_KEY_ID`, `NAVER_API_KEY` (NAVER Cloud Platform API Hub credentials; the search
+  host is `naverapihub.apigw.ntruss.com`).
+- `node scripts/rehost-media.mjs --commons "<File: page>" --asset-id <id> --storage-path <p>`
+  runs the byte-identical ritual end to end: license gate (same exact-shape allowlist as
+  find-photos), download with 429 handling, sha256, dimension probe from the bytes, refusal to
+  overwrite a different object at the target path, upload, read-back compare, then prints the
+  ready-to-paste `MediaAsset` literal (no `sourceUrl`, dates prefilled). For owner-approved
+  press material use `--url` with `--rights-basis agency-press-kit --credit-name --credit-url`.
+  Confirming the subject and license on the source page stays a prior human step.
 - Non-roster subjects (the Sunmi / Kang Full / Joko Anwar precedent, 2026-07-18, for
   Analysis thumbnails): `find-photos.mjs` refuses non-roster slugs, so use a scratchpad
   variant of the same API and license logic; `storagePathMatches` only pattern-checks

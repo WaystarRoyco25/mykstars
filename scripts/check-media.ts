@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { authoredArticles } from "../src/content/articles";
+import { authoredGalleries } from "../src/content/galleries";
 import { mediaAssets } from "../src/content/media-assets";
 import { NOW } from "../src/content/now";
 import { authoredArtists } from "../src/content/profiles";
@@ -37,6 +38,27 @@ for (const article of authoredArticles) {
       image: article.media,
     });
   }
+}
+// All authored galleries, archived included: a superseded hero parked in an
+// archived set still needs a valid rights record, and an invalid reference
+// should fail before the gallery ever flips to published.
+for (const gallery of authoredGalleries) {
+  if (gallery.cover.kind === "image") {
+    imageUses.push({
+      file: "src/content/galleries.ts",
+      owner: `${gallery.slug} gallery cover`,
+      image: gallery.cover,
+    });
+  }
+  gallery.media.forEach((item, index) => {
+    if (item.kind === "image") {
+      imageUses.push({
+        file: "src/content/galleries.ts",
+        owner: `${gallery.slug} gallery media[${index}]`,
+        image: item,
+      });
+    }
+  });
 }
 
 const result = checkMedia({ assets: mediaAssets, imageUses, nowIso: NOW });
