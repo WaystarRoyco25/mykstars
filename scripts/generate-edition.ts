@@ -3,22 +3,17 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { articles } from "../src/content/articles";
-import { clips } from "../src/content/clips";
-import { editions } from "../src/content/editions/index";
-import { events } from "../src/content/events";
-import { galleries } from "../src/content/galleries";
-import { NOW } from "../src/content/now";
-import { predictions } from "../src/content/predictions";
-import { artists } from "../src/content/profiles";
-import { pulses } from "../src/content/pulses/index";
-import { rankings } from "../src/content/rankings";
 import { flattenEdition } from "../src/lib/edition/constraints";
 import { buildEdition, type EditionEngineInput } from "../src/lib/edition/engine";
 import {
   buildEditionProvenance,
 } from "../src/lib/edition/provenance";
-import type { FeedEdition } from "../src/lib/types";
+import type { FeedEdition } from "../src/lib/domain/editions";
+import {
+  NOW,
+  currentEditionInventory,
+  editions,
+} from "./edition-content";
 import { writeGeneratedIndexes } from "./generated-indexes";
 
 const GENERATOR_VERSION = "2.0.0";
@@ -52,14 +47,7 @@ const editionId = args[0] ?? NOW.slice(0, 7);
 const publishedAt = args[1] ?? NOW;
 const input: EditionEngineInput = {
   publishedAt,
-  artists,
-  pulses,
-  clips,
-  galleries,
-  predictions,
-  events,
-  rankings,
-  articles,
+  ...currentEditionInventory,
   trailingEditions: editions.filter((edition) => edition.id < editionId),
 };
 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allArticleSlugs, getArticle, getArticlePageData } from "@/lib/data";
+import { allArticleSlugs, getArticle } from "@/lib/data/articles";
+import { getArticlePageData } from "@/lib/data/page-data";
 import { absoluteDate } from "@/lib/format";
 import StatusFlag from "@/components/StatusFlag";
 import AttributionBadge from "@/components/AttributionBadge";

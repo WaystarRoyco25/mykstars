@@ -1,9 +1,7 @@
-import {
-  DAY_MS,
-  MAX_CLIP_AGE_DAYS,
-  isClipFreshAt,
-} from "../editorial-policy";
-import type { Clip, MediaItem } from "../types";
+import type { MediaItem } from "../domain/media";
+import type { Clip } from "../domain/stories";
+import { MAX_CLIP_AGE_DAYS, isClipFreshAt } from "../policy/clips";
+import { DAY_MS } from "../policy/time";
 import { issue, type CheckIssue } from "./result";
 
 export const NOW_DRIFT_WARN_DAYS = 14;

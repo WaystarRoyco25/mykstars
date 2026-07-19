@@ -1,4 +1,4 @@
-import type { Prediction, PredictionTally } from "../types";
+import type { Prediction, PredictionTally } from "../domain/forecasts";
 
 export function buildPredictionTally(
   prediction: Prediction,

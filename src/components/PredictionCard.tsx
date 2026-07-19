@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { effectiveStatus } from "@/lib/data";
+import { effectiveStatus } from "@/lib/data/forecasts";
 import { PILLAR_LABELS, PREDICTION_CATEGORY_LABELS } from "@/lib/types";
 import type { Prediction, PredictionTally } from "@/lib/types";
 import PredictionStatusBadge from "./PredictionStatusBadge";
 import { renderEmphasis } from "@/lib/text";
 import { dDayLabel } from "@/lib/format";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 
 // A compact Fan Forecast card for the list page and the home teaser. Links
 // through to the question; shows the pillar/category kicker, the lifecycle chip,

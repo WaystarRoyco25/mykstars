@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  clipFillMedia,
-  getArticles,
-  getArtistsByPillar,
-  getGalleriesForPillar,
-  getRankingForPillar,
-} from "@/lib/data";
+import { getArticles } from "@/lib/data/articles";
+import { getArtistsByPillar } from "@/lib/data/artists";
+import { getGalleriesForPillar } from "@/lib/data/galleries";
+import { clipFillMedia } from "@/lib/data/home-fill";
+import { getRankingForPillar } from "@/lib/data/rankings";
 import {
   PILLAR_LABELS,
   PILLAR_ORDER,
@@ -17,7 +15,7 @@ import {
 import type { Pillar } from "@/lib/types";
 import { orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 import { roleLabel } from "@/lib/people";
 import PhotoMedia from "@/components/PhotoMedia";
 import AttributionBadge from "@/components/AttributionBadge";

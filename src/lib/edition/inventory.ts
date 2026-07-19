@@ -1,25 +1,20 @@
-import type {
-  Article,
-  Artist,
-  Clip,
-  ClipGenre,
-  Gallery,
-  Pillar,
-  Prediction,
-  Pulse,
-  Ranking,
-  StarEvent,
-} from "../types";
+import type { Artist } from "../domain/artists";
+import type { StarEvent } from "../domain/events";
+import type { Prediction } from "../domain/forecasts";
+import type { Article, Clip, ClipGenre, Gallery, Pulse, Ranking } from "../domain/stories";
+import type { Pillar } from "../domain/taxonomy";
+import {
+  hasPromotedSubject,
+  isPromotedArtist,
+} from "../policy/artists";
+import { isClipFreshAt } from "../policy/clips";
+import { isPredictionOpenAt } from "../policy/forecasts";
+import { isEditionGalleryEligible } from "../policy/galleries";
 import {
   ARTICLE_WINDOW_DAYS,
   DAY_MS,
   RANKING_WINDOW_DAYS,
-  hasPromotedSubject,
-  isClipFreshAt,
-  isEditionGalleryEligible,
-  isPredictionOpenAt,
-  isPromotedArtist,
-} from "../editorial-policy";
+} from "../policy/time";
 import { EditionConstraintError } from "./constraints";
 import { contentRefKey, type ContentFormat, type ContentRef } from "./descriptors";
 

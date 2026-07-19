@@ -3,8 +3,8 @@ import type {
   ContentRef,
   EditionBand,
   EditionClipRailPresentation,
-  Pillar,
-} from "../types";
+} from "../domain/editions";
+import type { Pillar } from "../domain/taxonomy";
 
 export type ContentFormat = ContentRef["format"];
 
@@ -132,4 +132,4 @@ export function clipRailPresentation(
   return "mixed";
 }
 
-export type { ContentRef } from "../types";
+export type { ContentRef } from "../domain/editions";

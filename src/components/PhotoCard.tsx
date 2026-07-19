@@ -4,7 +4,7 @@ import { aspectClass, orientationOf } from "@/lib/media";
 import { relativeTime } from "@/lib/format";
 import { renderEmphasis } from "@/lib/text";
 import PhotoMedia from "./PhotoMedia";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 
 // A single gallery brick in the column-balanced masonry: the cover fills its box
 // and crops to fit (aspectClass sets the box shape per orientation), with a black

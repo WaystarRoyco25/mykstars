@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allGallerySlugs, getGallery, getGalleryPageData } from "@/lib/data";
+import { allGallerySlugs, getGallery } from "@/lib/data/galleries";
+import { getGalleryPageData } from "@/lib/data/page-data";
 import { PILLAR_LABELS, TAG_LABELS, pillarSlug } from "@/lib/types";
 import { absoluteDate, relativeTime } from "@/lib/format";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 import GalleryViewer from "@/components/GalleryViewer";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";

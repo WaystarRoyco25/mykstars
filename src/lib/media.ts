@@ -1,4 +1,5 @@
-import type { Clip, MediaItem, Orientation } from "./types";
+import type { MediaItem, Orientation } from "./domain/media";
+import type { Clip } from "./domain/stories";
 
 // Resolve a media item's orientation for the vertical-leaning masonry.
 // Stored images arrive with an orientation derived by the asset resolver.

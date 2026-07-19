@@ -7,7 +7,7 @@ import type {
   MediaItem,
   Orientation,
   Source,
-} from "./types";
+} from "./domain/media";
 
 export const SUPABASE_PUBLIC_MEDIA_BASE_URL =
   "https://rbhajkwsmvbyafzrthwf.supabase.co/storage/v1/object/public/media";

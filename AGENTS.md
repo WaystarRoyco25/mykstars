@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # What MyKStars is
 
-An editorial-noir K-Culture magazine, live at [mykstars.com](https://www.mykstars.com), covering a curated roster across four pillars (K-Pop, K-Drama, K-Movie, Fashion & Beauty) with credited photography, official video, schedules, fan forecasts and analysis. Stack: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4 on Vercel, with Supabase for votes and re-hosted media. All content is typed files under `src/content/`, read through the `src/lib/data.ts` CMS seam. The whole site runs on the frozen clock `NOW` in `src/content/now.ts`, never the wall clock. Utility nav: Stars · Analysis · Schedule · Forecast.
+An editorial-noir K-Culture magazine, live at [mykstars.com](https://www.mykstars.com), covering a curated roster across four pillars (K-Pop, K-Drama, K-Movie, Fashion & Beauty) with credited photography, official video, schedules, fan forecasts and analysis. Stack: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4 on Vercel, with Supabase for votes and re-hosted media. All content is typed files under `src/content/`, read through exact modules in the `src/lib/data/` CMS seam. Editorial rendering and content validation use the frozen `NOW` in `src/content/now.ts`; live forecast lifecycle and vote integrity use the real operation clock. The dependency map and clock boundary are in [`docs/backend-architecture.md`](docs/backend-architecture.md). Utility nav: Stars · Analysis · Schedule · Forecast.
 
 # Working with the owner
 
@@ -44,7 +44,7 @@ When writing or refreshing Analysis (the `articles` array in `src/content/articl
 
 # Monthly editions
 
-Content publishes as one human-approved monthly edition per [`docs/edition-playbook.md`](docs/edition-playbook.md): 60 to 90 items mixing Pulse, official video, permitted photography and the other formats (substitution when photography is short: video, then Pulse), every active profile covered at least quarterly, deterministic ordering with diversity caps, and a Spotlight rotation that covers every active profile monthly. Editions are committed files under `src/content/editions/` and merge only after owner approval of a draft PR with a preview. The edition engine lives at `src/lib/edition/`; `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes `src/content/editions/<id>.ts` plus the index barrel (`check:generated` guards it), and `check:edition` validates committed editions against the content inventory and ordering constraints. The home page renders the edition whose id matches `NOW`'s month and falls back to the permanent hand-built plan (`resolveFallbackHome` in `src/lib/home-model.ts`) when none matches.
+Content publishes as one human-approved monthly edition per [`docs/edition-playbook.md`](docs/edition-playbook.md): 60 to 90 items mixing Pulse, official video, permitted photography and the other formats (substitution when photography is short: video, then Pulse), every active profile covered at least quarterly, deterministic ordering with diversity caps, and a Spotlight rotation that covers every active profile monthly. Editions are committed files under `src/content/editions/` and merge only after owner approval of a draft PR with a preview. The edition engine lives at `src/lib/edition/`; `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes `src/content/editions/<id>.ts` plus the index barrel (`check:generated` guards it), and `check:edition` validates committed editions against the content inventory and ordering constraints. The home page renders the edition whose id matches `NOW`'s month and falls back to the permanent hand-built plan (`resolveFallbackHome` in `src/lib/home/resolve-fallback.ts`) when none matches.
 
 # Design conventions
 
@@ -73,5 +73,6 @@ Load-bearing keeps: the `/artists/{artistSlug}` hubs are permanent link targets 
 - [`docs/roster-playbook.md`](docs/roster-playbook.md): who we cover, embed freshness, photo sourcing, the NOW-bump ritual.
 - [`docs/analysis-playbook.md`](docs/analysis-playbook.md): the Analysis brief.
 - [`docs/edition-playbook.md`](docs/edition-playbook.md): assembling and publishing the monthly edition, plus the home-page guardrails.
+- [`docs/backend-architecture.md`](docs/backend-architecture.md): backend dependency direction, exact import routing, clocks, mutation contracts and verification.
 - [`docs/engineering.md`](docs/engineering.md): dev-environment quirks, the checks inventory, media pipeline tooling.
 - [`docs/edition-2026-08-prep.md`](docs/edition-2026-08-prep.md): the working prep file for the next edition.

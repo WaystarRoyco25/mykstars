@@ -7,11 +7,11 @@ import {
   getPrediction,
   getPredictionTally,
   getVotedOptionId,
-} from "@/lib/data";
+} from "@/lib/data/forecasts";
 import { VOTER_COOKIE } from "@/lib/forecast/voter-cookie";
 import { PILLAR_LABELS, PREDICTION_CATEGORY_LABELS } from "@/lib/types";
 import { absoluteDate, dDayLabel } from "@/lib/format";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 import AttributionBadge from "@/components/AttributionBadge";
 import JsonLd from "@/components/JsonLd";
 import PredictionOptions from "@/components/PredictionOptions";

@@ -1,10 +1,8 @@
 import type { MetadataRoute } from "next";
-import {
-  allArticleSlugs,
-  allArtistSlugs,
-  allPulseSlugs,
-  publishedGallerySlugs,
-} from "@/lib/data";
+import { allArticleSlugs } from "@/lib/data/articles";
+import { allArtistSlugs } from "@/lib/data/artists";
+import { publishedGallerySlugs } from "@/lib/data/galleries";
+import { allPulseSlugs } from "@/lib/data/pulses";
 import { PILLAR_ORDER, REGION_ORDER, pillarSlug } from "@/lib/types";
 
 const BASE = "https://mykstars.com";

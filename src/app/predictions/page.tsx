@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getPredictions, getPredictionTallies } from "@/lib/data";
+import { getPredictions, getPredictionTallies } from "@/lib/data/forecasts";
 import { pillarFromSlug } from "@/lib/types";
 import type { Pillar } from "@/lib/types";
 import PredictionCard from "@/components/PredictionCard";

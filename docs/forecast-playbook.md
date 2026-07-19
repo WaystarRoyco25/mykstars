@@ -11,8 +11,8 @@ question, and weak questions cost more engagement than a missing one. Preview (p
 profiles are never forecast subjects (check-enforced; see the roster playbook's guardrail).
 
 **Cadence:** roughly **monthly**, owner-initiated (not fixed — may also be triggered reactively when
-big news breaks). Each refresh should bump the site clock `NOW` and every `asOf` to that day, which
-also re-syncs question open/closed states to real time.
+big news breaks). Each refresh should bump the frozen site clock `NOW` and every `asOf` to that day.
+Live question status still follows the real operation clock.
 
 ## The goal
 
@@ -78,12 +78,13 @@ if none fits; keep `kind` honest (`official`/`wire`/`press`/`magazine`).
   is a retirement plus a new slug, and a resolved slug is never reused (see below).
 - `tallyVisibleThreshold: 25` — keeps a cold-start "be the first" state (FOMO) until real votes
   arrive.
-- Lifecycle is **time-derived** from `closesAt` vs `NOW` (`effectiveStatus` in `data.ts`); a stored
-  `status: "resolved"` or a `resolution` record always wins. Keep at least one closed-awaiting and
-  one resolved entry so all three UI states stay on display.
+- Live lifecycle is **time-derived** from `closesAt` vs the real operation clock
+  (`effectivePredictionStatus` in `src/lib/policy/forecasts.ts`); a stored `status: "resolved"` or
+  a `resolution` record always wins. Keep at least one closed-awaiting and one resolved entry so
+  all three UI states stay on display.
 - Set every question's `asOf` and the site clock `NOW` (`src/content/now.ts`) to the day you
-  refresh. `NOW` is the **whole site's** clock — after bumping it, spot-check the Events and
-  Schedule pages.
+  refresh. `NOW` is the frozen editorial clock for rendered content and checks; it does not replace
+  the real vote cutoff. After bumping it, spot-check the Events and Schedule pages.
 
 ## Retiring prediction slugs (votes are user data)
 

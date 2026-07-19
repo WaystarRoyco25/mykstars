@@ -1,20 +1,23 @@
+import "server-only";
+
 import { cache } from "react";
 
-import { contentRepository } from "../content-repository";
-import { isPromotedArtist } from "../editorial-policy";
-import type { Artist, FeedEdition } from "../types";
-
-const repository = contentRepository;
+import { NOW } from "../../content/now";
+import type { Artist } from "../domain/artists";
+import type { FeedEdition } from "../domain/editions";
+import { isPromotedArtist } from "../policy/artists";
+import { artistStore } from "../stores/artists";
+import { editionStore } from "../stores/editions";
 
 const readCurrentEdition = cache(
   async (nowIso: string): Promise<FeedEdition | undefined> => {
     const monthId = nowIso.slice(0, 7);
-    const currentMonth = repository.editionById.get(monthId);
+    const currentMonth = editionStore.byId.get(monthId);
     if (currentMonth) return currentMonth;
 
     const nowMs = Date.parse(nowIso);
     if (Number.isNaN(nowMs)) return undefined;
-    return repository.editions
+    return editionStore.all
       .filter((edition) => {
         const publishedMs = Date.parse(edition.publishedAt);
         return !Number.isNaN(publishedMs) && publishedMs <= nowMs;
@@ -24,7 +27,7 @@ const readCurrentEdition = cache(
 );
 
 export async function getCurrentEdition(
-  nowIso: string = repository.now,
+  nowIso: string = NOW,
 ): Promise<FeedEdition | undefined> {
   return readCurrentEdition(nowIso);
 }
@@ -42,8 +45,8 @@ export function resolveSpotlightForDate(
   dateIso: string,
 ): Artist[] {
   const week = spotlightWeekIndex(dateIso);
-  return repository
-    .artistsForSlugs([
+  return artistStore
+    .forSlugs([
       ...edition.spotlight.anchors,
       ...(edition.spotlight.weeks[week] ?? []),
     ])

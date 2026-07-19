@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getArticles } from "@/lib/data";
+import { getArticles } from "@/lib/data/articles";
 import ArticleListItem from "@/components/ArticleListItem";
 
 export const metadata: Metadata = {

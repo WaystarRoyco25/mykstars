@@ -2,21 +2,20 @@ import "server-only";
 
 import { cache } from "react";
 
-import { contentRepository } from "../content-repository";
 import {
   effectivePredictionStatus,
   promotesOnlyUnpromotedOptions,
-} from "../editorial-policy";
+} from "../policy/forecasts";
 import { getVoteRepository } from "../forecast/vote-repository";
 import { buildPredictionTally } from "../forecast/tally";
 import type {
-  Pillar,
   Prediction,
   PredictionStatus,
   PredictionTally,
-} from "../types";
-
-const repository = contentRepository;
+} from "../domain/forecasts";
+import type { Pillar } from "../domain/taxonomy";
+import { artistStore } from "../stores/artists";
+import { forecastStore } from "../stores/forecasts";
 
 export function effectiveStatus(
   prediction: Prediction,
@@ -42,7 +41,7 @@ function orderedPredictions(
   opts: { pillar?: Pillar } | undefined,
   operationNow: string,
 ): Prediction[] {
-  let list = [...repository.predictions];
+  let list = [...forecastStore.all];
   if (opts?.pillar) {
     list = list.filter((prediction) => prediction.pillar === opts.pillar);
   }
@@ -68,12 +67,12 @@ export async function getOpenPredictions(opts?: {
   return ordered.filter(
     (prediction) =>
       effectiveStatus(prediction, operationNow) === "open" &&
-      !promotesOnlyUnpromotedOptions(prediction, repository.artistBySlug),
+      !promotesOnlyUnpromotedOptions(prediction, artistStore.bySlug),
   );
 }
 
 const readPrediction = cache(async (slug: string): Promise<Prediction | undefined> =>
-  repository.predictionBySlug.get(slug),
+  forecastStore.bySlug.get(slug),
 );
 
 export async function getPrediction(slug: string): Promise<Prediction | undefined> {
@@ -99,7 +98,7 @@ export async function getPredictionTallies(
 export async function getPredictionTally(
   slug: string,
 ): Promise<PredictionTally | undefined> {
-  const prediction = repository.predictionBySlug.get(slug);
+  const prediction = forecastStore.bySlug.get(slug);
   if (!prediction) return undefined;
   const [tally] = await getPredictionTallies([prediction]);
   return tally;

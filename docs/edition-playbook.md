@@ -6,14 +6,15 @@ An edition is a **committed, human-approved artifact**: a `FeedEdition` file und
 `src/content/editions/` whose ordered band list IS what the home page renders. Nothing about an
 edition is computed at request time; the diff the owner approves is the page readers get.
 
-**Tooling:** the edition engine lives at `src/lib/edition/` (engine, constraints, descriptors,
-inventory, provenance, semantic). `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes
+**Tooling:** the edition engine lives at `src/lib/edition/` (public `engine.ts`, staged selection
+and scheduling internals, constraints, inventory, provenance, semantic). `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes
 `src/content/editions/<id>.ts` plus the index barrel (`check:generated` guards that barrel),
 and `check:edition` validates every committed edition against the content inventory and the
 ordering constraints below; it also warns when items dated inside the edition's month postdate
 `publishedAt` ("stale edition": regenerate, never hand-patch). The home page renders the
 edition whose id matches `NOW`'s month and falls back to the permanent hand-built plan
-(`resolveFallbackHome` in `src/lib/home-model.ts`) when none matches.
+(`resolveFallbackHome` in `src/lib/home/resolve-fallback.ts`, re-exported by the compatibility
+`src/lib/home-model.ts`) when none matches.
 
 ## Cadence and gates
 
@@ -84,9 +85,9 @@ Carried over from the retired home-page roadmap; these apply to any change touch
 - Server-first: `page.tsx` stays a server component. The client islands are the countdown
   chips and `LiveEmbed` (thumbnail-first, click-to-play); avoid adding client JS without a
   clear reason.
-- Determinism: the site freezes "now" at `NOW` (`src/content/now.ts`) for SSR and reconciles
-  to the real clock client-side. Reuse that pattern; never read the live clock during server
-  render.
+- Determinism: editorial dates and edition selection use frozen `NOW` (`src/content/now.ts`). Live
+  forecast status and vote writes are the real-clock exception; keep that clock confined to the
+  forecast data and action boundaries described in `docs/backend-architecture.md`.
 - This is a customized Next.js: read `node_modules/next/dist/docs/` before any new
   data-fetching or routing pattern (dev quirks in `docs/engineering.md`).
 

@@ -5,7 +5,7 @@ import { dDayLabel, eventDateRange } from "@/lib/format";
 import DDayBadge from "@/components/DDayBadge";
 import AttributionBadge from "@/components/AttributionBadge";
 import { renderEmphasis } from "@/lib/text";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 
 // A compact, fixed-width countdown card for the home-page schedule rail. The rail
 // scrolls horizontally, so this is a denser sibling of the schedule page's EventRow

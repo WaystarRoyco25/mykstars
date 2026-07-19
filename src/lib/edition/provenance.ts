@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import type { EditionPlan, EditionProvenance } from "../types";
+import type { EditionPlan, EditionProvenance } from "../domain/editions";
 import { flattenEdition } from "./constraints";
 import { contentRefKey } from "./descriptors";
 import {
@@ -104,4 +104,4 @@ export function editionInventoryHash(edition: FeedEditionWithProvenance): string
   return edition.provenance?.inventoryHash;
 }
 
-export type { EditionProvenance } from "../types";
+export type { EditionProvenance } from "../domain/editions";

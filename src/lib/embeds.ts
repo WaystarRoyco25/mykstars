@@ -4,7 +4,7 @@
 // and X are both retired, and photography comes from the permitted MediaAsset
 // registry instead. (TikTok reserved.)
 
-import type { MediaItem } from "./types";
+import type { MediaItem } from "./domain/media";
 
 // A YouTube video id is exactly 11 chars of [A-Za-z0-9_-].
 const YT_ID = /^[A-Za-z0-9_-]{11}$/;

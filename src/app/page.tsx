@@ -12,15 +12,13 @@ import PhotoMedia from "@/components/PhotoMedia";
 import PredictionCard from "@/components/PredictionCard";
 import PulseCard from "@/components/PulseCard";
 import RankingTable from "@/components/RankingTable";
-import { NOW } from "@/lib/content";
-import { getCurrentEdition } from "@/lib/data";
+import { NOW } from "@/lib/site-clock";
+import { getCurrentEdition } from "@/lib/data/editions";
 import { relativeTime } from "@/lib/format";
 import { CLIP_RAIL_PRESENTATIONS } from "@/lib/edition/descriptors";
-import {
-  resolveEdition,
-  resolveFallbackHome,
-  type ResolvedHomeBand,
-} from "@/lib/home-model";
+import type { ResolvedHomeBand } from "@/lib/home/contract";
+import { resolveEdition } from "@/lib/home/resolve-edition";
+import { resolveFallbackHome } from "@/lib/home/resolve-fallback";
 import { clipMedia } from "@/lib/media";
 import { roleLabel } from "@/lib/people";
 import { renderEmphasis } from "@/lib/text";
@@ -38,7 +36,7 @@ import type {
   Pulse,
   StarEvent,
 } from "@/lib/types";
-import type { HomeHero } from "@/lib/data";
+import type { HomeHero } from "@/lib/data/home-fill";
 
 function AnalysisInterlude({
   pillar,

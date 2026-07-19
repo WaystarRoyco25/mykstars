@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getDirectoryFacets, getStarsDirectory } from "@/lib/data";
+import { getDirectoryFacets, getStarsDirectory } from "@/lib/data/artists";
 import {
   CAREER_STAGE_LABELS,
   pillarFromSlug,

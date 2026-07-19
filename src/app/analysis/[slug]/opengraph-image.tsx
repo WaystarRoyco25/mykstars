@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getArticle } from "@/lib/data";
+import { getArticle } from "@/lib/data/articles";
 import { stripEmphasis } from "@/lib/text";
 
 export const alt = "MyKStars analysis";

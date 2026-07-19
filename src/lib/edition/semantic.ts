@@ -1,4 +1,5 @@
-import type { EditionBand, EditionPlan, Pillar } from "../types";
+import type { EditionBand, EditionPlan } from "../domain/editions";
+import type { Pillar } from "../domain/taxonomy";
 import {
   bandFormat,
   validateBandFacts,

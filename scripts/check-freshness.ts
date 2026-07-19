@@ -10,7 +10,8 @@ import {
   type EmbeddedMediaRecord,
 } from "../src/lib/checks/freshness";
 import { formatIssue } from "../src/lib/checks/result";
-import { DAY_MS, MAX_CLIP_AGE_DAYS } from "../src/lib/editorial-policy";
+import { MAX_CLIP_AGE_DAYS } from "../src/lib/policy/clips";
+import { DAY_MS } from "../src/lib/policy/time";
 
 const embeddedMedia: EmbeddedMediaRecord[] = [];
 for (const gallery of galleries) {

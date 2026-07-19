@@ -3,22 +3,19 @@
 import { existsSync, readdirSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 
-import { articles } from "../src/content/articles";
-import { clips } from "../src/content/clips";
-import { events } from "../src/content/events";
-import { galleries } from "../src/content/galleries";
-import { predictions } from "../src/content/predictions";
-import { artists } from "../src/content/profiles";
-import { pulses } from "../src/content/pulses/index";
-import { rankings } from "../src/content/rankings";
-import { buildInventoryFacts, type EditionInventoryInput } from "../src/lib/edition/inventory";
+import {
+  asEditionArtifact,
+  staleEditionFacts,
+} from "../src/lib/edition/artifact";
+import { buildInventoryFacts } from "../src/lib/edition/inventory";
 import {
   computeSelectionInventoryHash,
   editionActiveRoster,
   type FeedEditionWithProvenance,
 } from "../src/lib/edition/provenance";
 import { validateEditionHistory, validateEditionSemantics } from "../src/lib/edition/semantic";
-import type { EditionBand, EditionPlan, SpotlightSchedule } from "../src/lib/types";
+import type { EditionPlan } from "../src/lib/domain/editions";
+import { currentEditionInventory } from "./edition-content";
 import { inspectGeneratedEditionSource } from "./generated-edition-source";
 
 const EDITIONS_DIR = join(process.cwd(), "src", "content", "editions");
@@ -34,74 +31,8 @@ const warnings: CheckMessage[] = [];
 const fail = (file: string, kind: string, detail: string) => failures.push({ file, kind, detail });
 const warn = (file: string, kind: string, detail: string) => warnings.push({ file, kind, detail });
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
-}
-
-function isSpotlight(value: unknown): value is SpotlightSchedule {
-  return isRecord(value) &&
-    isStringArray(value.anchors) &&
-    Array.isArray(value.weeks) &&
-    value.weeks.every(isStringArray);
-}
-
-function isBand(value: unknown): value is EditionBand {
-  if (!isRecord(value) || typeof value.kind !== "string") return false;
-  switch (value.kind) {
-    case "hero":
-      return (value.gallerySlug === undefined || typeof value.gallerySlug === "string") &&
-        (value.clipId === undefined || typeof value.clipId === "string");
-    case "event-rail":
-      return isStringArray(value.eventSlugs);
-    case "gallery-band":
-      return typeof value.pillar === "string" && isStringArray(value.gallerySlugs);
-    case "clip-rail":
-      return typeof value.presentation === "string" &&
-        isStringArray(value.clipIds);
-    case "ranking":
-      return typeof value.slug === "string";
-    case "analysis":
-      return (value.pillar === undefined || typeof value.pillar === "string") && isStringArray(value.articleSlugs);
-    case "pulse-band":
-      return isStringArray(value.pulseSlugs);
-    case "forecast-rail":
-      return isStringArray(value.predictionSlugs);
-    case "spotlight-strip":
-      return true;
-    default:
-      return false;
-  }
-}
-
-function asEdition(value: unknown): FeedEditionWithProvenance | undefined {
-  if (!isRecord(value) ||
-      typeof value.id !== "string" ||
-      typeof value.publishedAt !== "string" ||
-      !Array.isArray(value.bands) ||
-      !value.bands.every(isBand) ||
-      !isSpotlight(value.spotlight)) {
-    return undefined;
-  }
-  if (value.provenance !== undefined) {
-    if (!isRecord(value.provenance) ||
-        !isStringArray(value.provenance.activeArtistSlugs) ||
-        typeof value.provenance.inventoryHash !== "string") {
-      return undefined;
-    }
-  }
-  return value as unknown as FeedEditionWithProvenance;
-}
-
 function warnIfStale(file: string, edition: EditionPlan, inventory: ReturnType<typeof buildInventoryFacts>): void {
-  const publishedMs = Date.parse(edition.publishedAt);
-  if (Number.isNaN(publishedMs)) return;
-  const missed = inventory
-    .filter((fact) => fact.format !== "event" && fact.date.slice(0, 7) === edition.id && fact.dateMs > publishedMs)
-    .sort((left, right) => right.dateMs - left.dateMs);
+  const missed = staleEditionFacts(edition, inventory);
   if (missed.length === 0) return;
   warn(
     file,
@@ -111,16 +42,7 @@ function warnIfStale(file: string, edition: EditionPlan, inventory: ReturnType<t
   );
 }
 
-const inventorySource: EditionInventoryInput = {
-  artists,
-  pulses,
-  clips,
-  galleries,
-  predictions,
-  events,
-  rankings,
-  articles,
-};
+const inventorySource = currentEditionInventory;
 
 let inventory: ReturnType<typeof buildInventoryFacts> = [];
 try {
@@ -148,7 +70,7 @@ for (const absoluteFile of editionFiles) {
   const inspection = inspectGeneratedEditionSource(absoluteFile);
   for (const error of inspection.errors) fail(file, "generated artifact", error);
   if (!inspection.artifact) continue;
-  const edition = asEdition(inspection.artifact.edition);
+  const edition = asEditionArtifact(inspection.artifact.edition);
   if (!edition) {
     fail(file, "malformed edition", "generated object does not satisfy the edition band and Spotlight shape");
     continue;

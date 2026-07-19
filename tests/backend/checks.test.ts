@@ -58,14 +58,15 @@ test("article checker consumes typed records and catches semantic failures", () 
     nowIso: "2026-07-17T00:00:00Z",
   });
   assert.deepEqual(
-    new Set(invalid.issues.map((value) => value.kind)),
-    new Set([
+    invalid.issues.map((value) => value.kind),
+    [
       "off-policy byline",
       "future-dated article",
       "question-mark title",
       "dangling related slug",
+      "dangling related slug",
       "duplicate slug",
-    ]),
+    ],
   );
 });
 
@@ -293,14 +294,14 @@ test("profile checker enforces heroes, relationships, verification, and preview 
     nowIso: "2026-07-17T00:00:00Z",
   });
   assert.deepEqual(
-    new Set(result.issues.map((value) => value.kind)),
-    new Set([
+    result.issues.map((value) => value.kind),
+    [
       "stale verification",
       "missing hero",
       "dangling member",
       "preview profile as forecast subject",
       "preview profile as ranking link",
-    ]),
+    ],
   );
 });
 
@@ -359,13 +360,14 @@ test("media checker catches dangling, unused, invalid, and redundant records", (
     nowIso: "2026-07-17T00:00:00Z",
   });
   assert.deepEqual(
-    new Set(invalid.issues.map((value) => value.kind)),
-    new Set([
+    invalid.issues.map((value) => value.kind),
+    [
       "invalid checksum",
       "redundant source URL",
       "dangling media asset",
       "missing image alt",
       "unused media asset",
-    ]),
+      "unused media asset",
+    ],
   );
 });

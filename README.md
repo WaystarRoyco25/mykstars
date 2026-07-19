@@ -22,10 +22,10 @@ npm run verify   # the six content checks + check:generated + typecheck + lint +
 
 ## Architecture
 
-- `src/lib/types.ts` — domain model (Artist with careerStage, coverageLevel and publicationState; Gallery, MediaItem, Article, Source, Pulse, MediaAsset, FeedEdition).
-- `src/content/` — typed, versioned content files (profiles, galleries, articles, rankings, events, predictions, clips, pulses, monthly editions, the site clock `now.ts`), aggregated by `src/lib/content.ts`. The hand-rolled check scripts under `scripts/` lex these files directly.
-- `src/lib/edition/` — the edition engine: `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes a committed `src/content/editions/<id>.ts`, validated by `check:edition` (see `docs/edition-playbook.md`).
-- `src/lib/data.ts` — **the CMS seam**. Every page reads through these async functions, backed by `src/lib/content.ts`. Swap in a headless CMS later by re-implementing this module against the same signatures, with no page changes.
+- [`docs/backend-architecture.md`](docs/backend-architecture.md) is the agent routing map for domain contracts, policy, stores, data, home assembly, edition stages, checks and mutations.
+- `src/content/` holds typed, versioned content. One server-only store under `src/lib/stores/` owns each authored inventory; exact async readers under `src/lib/data/` form the CMS seam.
+- `src/lib/domain/` and `src/lib/policy/` are the preferred backend contracts. `types.ts`, `editorial-policy.ts`, `data.ts`, `data/catalog.ts`, `home-model.ts` and `content-repository.ts` remain compatibility façades.
+- `src/lib/edition/` contains the staged edition solver. `npm run gen:edition -- <YYYY-MM> <publishedAt>` writes a committed artifact under `src/content/editions/`, validated by `check:edition` and `check:generated`.
 - `src/components/` — `GalleryViewer` (swipeable/keyboard), `PhotoCard`, `AttributionBadge`, `EmbedFacade`, `StatusFlag` (rumor-vs-confirmed), `StarsFilters`, etc.
 - `src/app/` — home, `artists/` (the Stars directory + `[artistSlug]` per-person hubs), `photos/[gallerySlug]` gallery permalinks (the browse index is retired; `/photos` redirects home), `analysis/` (+ `[slug]`), `predictions/`, `schedule/`, `legal/dmca` with its Server Action, `about/editorial-standards`, `sitemap.ts`, `robots.ts`, `opengraph-image` routes.
 

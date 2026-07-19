@@ -4,10 +4,12 @@ import { notFound } from "next/navigation";
 import {
   allArtistSlugs,
   getArtist,
+} from "@/lib/data/artists";
+import { getSpotlightForDate } from "@/lib/data/editions";
+import {
   getArtistCatalogPageData,
-  getSpotlightForDate,
-} from "@/lib/data";
-import type { TimelineEntry } from "@/lib/data";
+  type TimelineEntry,
+} from "@/lib/data/page-data";
 import { CAREER_STAGE_LABELS, EVENT_TYPE_LABELS } from "@/lib/types";
 import GalleryGrid from "@/components/GalleryGrid";
 import ArticleListItem from "@/components/ArticleListItem";
@@ -21,7 +23,7 @@ import { orientationOf } from "@/lib/media";
 import { roleLabel } from "@/lib/people";
 import { renderEmphasis, stripEmphasis } from "@/lib/text";
 import CompanyLogo from "@/components/CompanyLogo";
-import { NOW } from "@/lib/content";
+import { NOW } from "@/lib/site-clock";
 
 export function generateStaticParams() {
   return allArtistSlugs().map((artistSlug) => ({ artistSlug }));

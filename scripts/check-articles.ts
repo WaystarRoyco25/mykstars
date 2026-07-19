@@ -9,7 +9,7 @@ import {
   checkArticles,
 } from "../src/lib/checks/articles";
 import { formatIssue } from "../src/lib/checks/result";
-import { ARTICLE_WINDOW_DAYS } from "../src/lib/editorial-policy";
+import { ARTICLE_WINDOW_DAYS } from "../src/lib/policy/time";
 
 const result = checkArticles({ articles, artists, galleries, nowIso: NOW });
 

@@ -38,7 +38,7 @@ bottom of the picture. Cropping covers to fit is explicitly allowed.
 - `placeMixed()` (`src/content/galleries.ts`) lands a landscape frame every 3rd tile so grids
   never read as a monotone portrait feed; landscape-led gallery sets are welcome.
 - A sparse grid never renders empty columns. Fill order (`pillarFillEmbeds` and friends in
-  `src/lib/data/catalog.ts`): the band's artists' own YouTube clip tiles first (click-to-play
+  `src/lib/data/home-fill.ts`): the band's artists' own YouTube clip tiles first (click-to-play
   landscape bricks), then official-channel link-out tiles, then related same-pillar galleries.
   Never scraped, always credited; the retained Instagram and X handles never render.
 - Scope: the scrolling grids only. The featured hero and the `GalleryViewer` carousel are
@@ -73,8 +73,8 @@ bottom of the picture. Cropping covers to fit is explicitly allowed.
   (D-Day countdowns, vote tallies), never an endless feed.
 - The Pulse band is the only masonry on the page (`columns-1 sm:columns-2 md:columns-3`):
   `PulseCard` tiles mixed with the featured artists' deduped official-clip tiles
-  (`getPulseBandFill()` in `src/lib/data/catalog.ts`, capped by `PULSE_BAND_FILL_CAP` in
-  `src/lib/home-model.ts`). Pulse tiles stack their photo above the text.
+  (`getPulseBandFill()` in `src/lib/data/home-fill.ts`, capped by `PULSE_BAND_FILL_CAP` in
+  `src/lib/home/resolve-edition.ts`). Pulse tiles stack their photo above the text.
 - `PulseItem.tsx` still exists and serves the artist-hub timelines; it simply no longer
   appears on home. Do not delete it.
 - Rejected, and stays rejected: infinite scroll and "Load more", and page-wide masonry (the

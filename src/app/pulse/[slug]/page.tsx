@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allPulseSlugs, getPulse, getPulsePageData } from "@/lib/data";
+import { getPulsePageData } from "@/lib/data/page-data";
+import { allPulseSlugs, getPulse } from "@/lib/data/pulses";
 import { absoluteDate } from "@/lib/format";
 import { aspectClass, orientationOf } from "@/lib/media";
 import { PILLAR_LABELS } from "@/lib/types";

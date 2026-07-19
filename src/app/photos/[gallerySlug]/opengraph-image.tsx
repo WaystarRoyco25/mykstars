@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getGallery } from "@/lib/data";
+import { getGallery } from "@/lib/data/galleries";
 import { stripEmphasis } from "@/lib/text";
 import { TAG_LABELS } from "@/lib/types";
 

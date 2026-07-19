@@ -1,4 +1,4 @@
-import type { Artist, Discipline } from "./types";
+import type { Artist, Discipline } from "./domain/artists";
 
 const DISCIPLINE_LABELS: Record<Discipline, string> = {
   idol: "Idol",

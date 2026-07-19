@@ -2,10 +2,10 @@
 
 This is the standing brief for **any session that touches the roster** (the `artists` array in
 [`src/content/profiles.ts`](../src/content/profiles.ts)) **or any dated/embedded content** (clips,
-gallery embeds, events, rankings, forecast premises). The schema lives in
-[`src/lib/types.ts`](../src/lib/types.ts); the coverage predicates live in
-[`src/lib/data.ts`](../src/lib/data.ts) (`isPromoted`). Read this before adding, benching, or
-promoting anyone, and before touching the `clips` array.
+gallery embeds, events, rankings, forecast premises). The profile schema lives in
+[`src/lib/domain/artists.ts`](../src/lib/domain/artists.ts); the coverage predicates live in
+[`src/lib/policy/artists.ts`](../src/lib/policy/artists.ts) (`isPromotedArtist`). Read this before
+adding, benching, or promoting anyone, and before touching the `clips` array.
 
 Every profile carries four standing fields: `careerStage` (`preview | rookie | rising |
 established | icon`), `coverageLevel` (`active | catalog`), `publicationState` (`draft |
@@ -76,7 +76,8 @@ professional facts from official announcements only.
    - Catalog (the old "bench"): set `coverageLevel: "catalog"` when rule 1 fails. Their
      `/artists/[slug]` hub, galleries, analysis links and sitemap entries stay live; they drop
      off the home hero/bands/rails, pillar People strips, ranking links, the Fan Forecast, the
-     Stars directory's active view, and clip fill (see `isPromoted()` in `data.ts`).
+     Stars directory's active view, and clip fill (see `isPromotedArtist()` in
+     `src/lib/policy/artists.ts`).
    - Reactivate: set `coverageLevel: "active"` the moment rule 1 passes again. Catalog profiles
      are re-verified at least every six months (`lastVerified`; check-enforced at 190 days).
    - Every flip carries a one-line dated justification comment in `profiles.ts` citing the

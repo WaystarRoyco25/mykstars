@@ -1,3 +1,5 @@
+import "server-only";
+
 import {
   NOW,
   articles,
@@ -10,18 +12,27 @@ import {
   pulses,
   rankings,
 } from "./content";
-import { isGalleryListed } from "./editorial-policy";
-import type {
-  Article,
-  Artist,
-  Clip,
-  FeedEdition,
-  Gallery,
-  Prediction,
-  Pulse,
-  Ranking,
-  StarEvent,
-} from "./types";
+import type { Artist } from "./domain/artists";
+import type { FeedEdition } from "./domain/editions";
+import type { StarEvent } from "./domain/events";
+import type { Prediction } from "./domain/forecasts";
+import type { Article, Clip, Gallery, Pulse, Ranking } from "./domain/stories";
+import { isGalleryListed } from "./policy/galleries";
+import {
+  byDateAsc,
+  byDateDesc,
+  freezeCopy,
+  relationshipIndex,
+  requireMany as requireManyFromIndex,
+  uniqueIndex,
+  valuesForKeys,
+} from "./stores/immutable";
+import {
+  assembleProfileTimeline,
+  type TimelineEntry,
+} from "./stores/profile-timeline";
+
+export type { TimelineEntry } from "./stores/profile-timeline";
 
 export interface ContentInventory {
   now: string;
@@ -34,106 +45,6 @@ export interface ContentInventory {
   events: readonly StarEvent[];
   predictions: readonly Prediction[];
   editions: readonly FeedEdition[];
-}
-
-export type TimelineEntry =
-  | { format: "gallery"; date: string; gallery: Gallery }
-  | { format: "clip"; date: string; clip: Clip }
-  | { format: "article"; date: string; article: Article }
-  | { format: "pulse"; date: string; pulse: Pulse; artists: Artist[] }
-  | { format: "event"; date: string; event: StarEvent };
-
-function freezeCopy<T>(items: readonly T[]): readonly T[] {
-  return Object.freeze([...items]);
-}
-
-function byDateDesc<T extends { date: string }>(items: readonly T[]): readonly T[] {
-  return freezeCopy(items.toSorted((a, b) => b.date.localeCompare(a.date)));
-}
-
-function byDateAsc<T extends { date: string }>(items: readonly T[]): readonly T[] {
-  return freezeCopy(items.toSorted((a, b) => a.date.localeCompare(b.date)));
-}
-
-class ImmutableIndex<K, V> implements ReadonlyMap<K, V> {
-  readonly #map: Map<K, V>;
-
-  constructor(entries: Iterable<readonly [K, V]>) {
-    this.#map = new Map(entries);
-    Object.freeze(this);
-  }
-
-  get size(): number {
-    return this.#map.size;
-  }
-
-  get(key: K): V | undefined {
-    return this.#map.get(key);
-  }
-
-  has(key: K): boolean {
-    return this.#map.has(key);
-  }
-
-  entries(): MapIterator<[K, V]> {
-    return this.#map.entries();
-  }
-
-  keys(): MapIterator<K> {
-    return this.#map.keys();
-  }
-
-  values(): MapIterator<V> {
-    return this.#map.values();
-  }
-
-  forEach(
-    callbackfn: (value: V, key: K, map: ReadonlyMap<K, V>) => void,
-    thisArg?: unknown,
-  ): void {
-    this.#map.forEach((value, key) => callbackfn.call(thisArg, value, key, this));
-  }
-
-  [Symbol.iterator](): MapIterator<[K, V]> {
-    return this.entries();
-  }
-
-  get [Symbol.toStringTag](): string {
-    return "Map";
-  }
-}
-
-function uniqueIndex<T>(
-  label: string,
-  items: readonly T[],
-  keyOf: (item: T) => string,
-): ReadonlyMap<string, T> {
-  const index = new Map<string, T>();
-  for (const item of items) {
-    const key = keyOf(item);
-    if (index.has(key)) {
-      throw new Error(`Duplicate ${label} key "${key}".`);
-    }
-    index.set(key, item);
-  }
-  return new ImmutableIndex(index);
-}
-
-function relationshipIndex<T>(
-  items: readonly T[],
-  slugsOf: (item: T) => readonly string[] | undefined,
-): ReadonlyMap<string, readonly T[]> {
-  const mutable = new Map<string, T[]>();
-  for (const item of items) {
-    for (const slug of new Set(slugsOf(item) ?? [])) {
-      const related = mutable.get(slug) ?? [];
-      related.push(item);
-      mutable.set(slug, related);
-    }
-  }
-  return new ImmutableIndex(
-    [...mutable].map(([slug, related]) => [slug, freezeCopy(related)] as const),
-  );
 }
 
 export class ContentRepository {
@@ -220,9 +131,7 @@ export class ContentRepository {
   }
 
   artistsForSlugs(slugs: readonly string[]): Artist[] {
-    return slugs
-      .map((slug) => this.artistBySlug.get(slug))
-      .filter((artist): artist is Artist => artist !== undefined);
+    return valuesForKeys(this.artistBySlug, slugs);
   }
 
   requireMany<T>(
@@ -231,38 +140,22 @@ export class ContentRepository {
     label: string,
     owner: string,
   ): T[] {
-    return keys.map((key) => {
-      const item = index.get(key);
-      if (!item) throw new Error(`${owner} references missing ${label} "${key}".`);
-      return item;
-    });
+    return requireManyFromIndex(index, keys, label, owner);
   }
 
   profileTimeline(artistSlug: string, ownGalleries?: readonly Gallery[]): TimelineEntry[] {
-    const galleriesForArtist = ownGalleries ?? this.listedGalleriesByArtist.get(artistSlug) ?? [];
-    const entries: TimelineEntry[] = [
-      ...galleriesForArtist.map(
-        (gallery): TimelineEntry => ({ format: "gallery", date: gallery.date, gallery }),
-      ),
-      ...(this.clipsByArtist.get(artistSlug) ?? []).map(
-        (clip): TimelineEntry => ({ format: "clip", date: clip.date, clip }),
-      ),
-      ...(this.articlesByArtist.get(artistSlug) ?? []).map(
-        (article): TimelineEntry => ({ format: "article", date: article.date, article }),
-      ),
-      ...(this.pulsesByArtist.get(artistSlug) ?? []).map(
-        (pulse): TimelineEntry => ({
-          format: "pulse",
-          date: pulse.date,
-          pulse,
-          artists: this.artistsForSlugs(pulse.artistSlugs),
-        }),
-      ),
-      ...(this.eventsByArtist.get(artistSlug) ?? []).map(
-        (event): TimelineEntry => ({ format: "event", date: event.date, event }),
-      ),
-    ];
-    return entries.toSorted((a, b) => b.date.localeCompare(a.date));
+    return assembleProfileTimeline(
+      artistSlug,
+      {
+        galleriesByArtist: this.listedGalleriesByArtist,
+        clipsByArtist: this.clipsByArtist,
+        articlesByArtist: this.articlesByArtist,
+        pulsesByArtist: this.pulsesByArtist,
+        eventsByArtist: this.eventsByArtist,
+        artistsForSlugs: (slugs) => this.artistsForSlugs(slugs),
+      },
+      ownGalleries,
+    );
   }
 }
 

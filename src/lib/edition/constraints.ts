@@ -1,4 +1,10 @@
-import type { EditionBand, EditionPlan, FeedItem, Pillar, SpotlightSchedule } from "../types";
+import type {
+  EditionBand,
+  EditionPlan,
+  FeedItem,
+  SpotlightSchedule,
+} from "../domain/editions";
+import type { Pillar } from "../domain/taxonomy";
 import { contentRefKey, describeBand } from "./descriptors";
 
 export const MIN_EDITION_ITEMS = 60;

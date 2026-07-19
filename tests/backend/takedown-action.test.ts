@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { submitTakedown } from "../../src/app/legal/dmca/actions";
+import { parseTakedownRequest } from "../../src/lib/takedown/request";
+import { submitTakedownRequest } from "../../src/lib/takedown/service";
 
 function validRequest(): FormData {
   const formData = new FormData();
@@ -46,4 +48,48 @@ test("valid takedown intake retains the existing receipt log", async (t) => {
       },
     ],
   ]);
+});
+
+test("takedown parsing trims and retains the complete validated request", () => {
+  const formData = validRequest();
+  formData.set("name", "  Rights Owner  ");
+  formData.set("details", "  I own the pictured work.  ");
+
+  assert.deepEqual(parseTakedownRequest(formData), {
+    name: "Rights Owner",
+    email: "owner@example.com",
+    rightsHolder: "Example Studio",
+    url: "https://mykstars.com/photos/example",
+    details: "I own the pictured work.",
+    goodFaith: true,
+  });
+});
+
+test("invalid takedown data never reaches the sink", async () => {
+  const formData = validRequest();
+  formData.delete("details");
+  let sinkCalls = 0;
+
+  assert.deepEqual(
+    await submitTakedownRequest(formData, {
+      record() {
+        sinkCalls += 1;
+      },
+    }),
+    { ok: false },
+  );
+  assert.equal(sinkCalls, 0);
+});
+
+test("valid takedown data reaches the injected sink before success", async () => {
+  const calls: unknown[] = [];
+  assert.deepEqual(
+    await submitTakedownRequest(validRequest(), {
+      record(request) {
+        calls.push(request);
+      },
+    }),
+    { ok: true },
+  );
+  assert.deepEqual(calls, [parseTakedownRequest(validRequest())]);
 });
