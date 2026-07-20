@@ -63,7 +63,7 @@ Load-bearing keeps: the `/artists/{artistSlug}` hubs are permanent link targets 
 
 # Checks
 
-`npm run verify` runs everything: the six content checks that `prebuild` chains (`check:style`, `check:articles`, `check:fresh`, `check:profiles`, `check:edition`, `check:media`), then `check:generated`, `typecheck`, `lint` and `test:backend`. Run it before calling any change done; the individual checks named in the sections above are for fast iteration. `npm run build` triggers `prebuild` automatically. Per-script details: [`docs/engineering.md`](docs/engineering.md).
+`npm run verify` runs everything: the seven content checks that `prebuild` chains (`check:style`, `check:articles`, `check:fresh`, `check:profiles`, `check:edition`, `check:media`, `check:home-dupes`), then `check:generated`, `typecheck`, `lint` and `test:backend`. Run it before calling any change done; the individual checks named in the sections above are for fast iteration. `npm run build` triggers `prebuild` automatically. Per-script details: [`docs/engineering.md`](docs/engineering.md).
 
 # The docs
 

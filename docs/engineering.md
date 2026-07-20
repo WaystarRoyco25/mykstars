@@ -27,7 +27,7 @@ before any new routing or data-fetching pattern. Verified project facts:
 
 ## Checks and verification
 
-`npm run verify` is the one-stop gate: it chains the six content checks (the `prebuild`
+`npm run verify` is the one-stop gate: it chains the seven content checks (the `prebuild`
 suite), then `check:generated`, `typecheck`, `lint` and `test:backend`. `npm run build` runs
 `prebuild` automatically. The inventory:
 
@@ -39,10 +39,15 @@ suite), then `check:generated`, `typecheck`, `lint` and `test:backend`. `npm run
 | `check:profiles` | profile fields, verification cadence, `memberOf`/`members` reciprocity, the permitted-hero rule, pre-debut guardrails |
 | `check:edition` | committed editions vs the content inventory and ordering constraints; warns when items dated in the edition's month postdate `publishedAt` ("stale edition": regenerate) |
 | `check:media` | the `MediaAsset` rights registry vs every authored image reference (profiles, pulses, articles, galleries) |
+| `check:home-dupes` | no photo or YouTube video renders twice on the home page at once (resolves the current edition, or the fallback plan; photos keyed by registry checksum, videos by YouTube id) |
 | `check:generated` | drift in generated barrel/index files (e.g. the editions index that `gen:edition` writes) |
 
 - `check:fresh` reads `yt()`/`tv()` calls positionally: a new clip factory needs a matching
   entry in the script's `FACTORIES` map and its `callRe` regex.
+- `check:home-dupes` is the one check that resolves the live home page, so it imports the
+  `"server-only"` resolvers and runs under the `--conditions=react-server` prefix (same as
+  `test:backend`); it stubs vote tallies to zero, so it needs no Supabase. The identity logic
+  is a pure function (`src/lib/checks/home-duplicates.ts`) the script feeds resolved bands into.
 - `tests/backend/media.test.ts` carries two pins: `mediaAssetIndex.size` (the registry row
   count) and `GOLDEN_IMAGE_COUNT` / `GOLDEN_IMAGE_HASH` (a count and sha256 over the resolved
   artist-hero and Pulse image references, not the registry). Bump the size when the registry

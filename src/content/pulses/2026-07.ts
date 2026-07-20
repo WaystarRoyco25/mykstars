@@ -38,8 +38,8 @@ export const authoredPulses202607: AuthoredPulse[] = [
     },
     media: {
       kind: "image",
-      assetId: "bts-2022-white-house",
-      alt: "BTS at the White House in May 2022",
+      assetId: "bts-2026-incheon-airport",
+      alt: "BTS at Incheon International Airport in March 2026",
     },
   },
   {
@@ -208,8 +208,8 @@ export const authoredPulses202607: AuthoredPulse[] = [
     },
     media: {
       kind: "image",
-      assetId: "blackpink-2025-deadline-milan",
-      alt: "BLACKPINK on the Deadline world tour in 2025",
+      assetId: "blackpink-jennie-2025-sofi",
+      alt: "Jennie of BLACKPINK performing at SoFi Stadium in July 2025",
     },
   },
   {
@@ -226,8 +226,8 @@ export const authoredPulses202607: AuthoredPulse[] = [
     },
     media: {
       kind: "image",
-      assetId: "bts-2022-white-house",
-      alt: "BTS at the White House in May 2022",
+      assetId: "bts-2026-arirang-idol",
+      alt: "BTS on the Arirang tour in Paris in July 2026",
     },
   },
   {
@@ -306,8 +306,8 @@ export const authoredPulses202607: AuthoredPulse[] = [
     },
     media: {
       kind: "image",
-      assetId: "ive-2026-golden-disc",
-      alt: "IVE at the 40th Golden Disc Awards in January 2026",
+      assetId: "ive-2026-golden-disc-carpet",
+      alt: "IVE on the red carpet at the 40th Golden Disc Awards in January 2026",
     },
   },
   {
@@ -324,8 +324,8 @@ export const authoredPulses202607: AuthoredPulse[] = [
     },
     media: {
       kind: "image",
-      assetId: "cortis-2026-golden-disc",
-      alt: "CORTIS at the 40th Golden Disc Awards in January 2026",
+      assetId: "cortis-2026-dior-photocall",
+      alt: "CORTIS at a Dior photocall in January 2026",
     },
   },
   {

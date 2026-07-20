@@ -69,7 +69,7 @@ on the page it manifests as ranking weight and the existing kicker chips, never 
    rankings, permitted photography when it exists.
 2. **Generate.** `npm run gen:edition` writes `src/content/editions/<YYYY-MM>.ts`. A refusal
    names the unsatisfiable constraint; fix inventory, never hand-edit around a violation.
-3. **Verify.** `npm run verify` (the six content checks plus `check:generated`, `typecheck`,
+3. **Verify.** `npm run verify` (the seven content checks plus `check:generated`, `typecheck`,
    `lint` and `test:backend`), then `npm run build`.
 4. **Preview.** Draft PR; walk the Vercel preview: home order matches the committed bands, every
    band kind renders, rails play, votes cast.

@@ -16,7 +16,7 @@ import type { MediaAsset } from "@/lib/types";
 
 const GOLDEN_IMAGE_COUNT = 56;
 const GOLDEN_IMAGE_HASH =
-  "c6ad561cf83f570dc8f973600e157dcac776d1d97f7fe91b2f7fe7f0382b5053";
+  "b38ef0a81ee2e1f3e98d2105eca825b9c04a0c28e37aab641fe335b71db94dff";
 
 function currentResolvedImages() {
   return [
@@ -63,7 +63,7 @@ test("all 56 authored references resolve to the exact pre-refactor runtime value
 });
 
 test("the canonical asset index is unique, immutable, and defaults sourceUrl", () => {
-  assert.equal(mediaAssetIndex.size, 103);
+  assert.equal(mediaAssetIndex.size, 107);
   assert.equal(mediaAssetIndex.size, mediaAssets.length);
   assert.equal("set" in mediaAssetIndex, false);
 

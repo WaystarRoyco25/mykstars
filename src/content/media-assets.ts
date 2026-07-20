@@ -411,6 +411,21 @@ export const mediaAssets: MediaAsset[] = [
     storagePath: "profiles/bts/2026/bts-2022-white-house.jpg",
   },
   {
+    id: "bts-2026-incheon-airport",
+    credit: {
+      name: "티비텐 TV10",
+      url: "https://commons.wikimedia.org/wiki/File:2026-03-22_BTS_departing_Incheon_International_Airport_01.jpg",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-20",
+    reviewDate: "2027-07-20",
+    width: 1920,
+    height: 1080,
+    checksum: "726c540099590e4de7ade6ed55eedca726d3e50d878607e1623fa3d1f068138b",
+    storagePath: "profiles/bts/2026/bts-2026-incheon-airport.jpg",
+  },
+  {
     id: "twice-2024-las-vegas",
     credit: {
       name: "David Lee",
@@ -486,6 +501,21 @@ export const mediaAssets: MediaAsset[] = [
     storagePath: "profiles/ive/2026/ive-2026-golden-disc.png",
   },
   {
+    id: "ive-2026-golden-disc-carpet",
+    credit: {
+      name: "K-POPIT 케이팝잇",
+      url: "https://commons.wikimedia.org/wiki/File:Ive_at_the_40th_Golden_Disc_Awards,_January_10,_2026_(2).png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-20",
+    reviewDate: "2027-07-20",
+    width: 3768,
+    height: 1900,
+    checksum: "c76b6b18d15605e9d97907b9f602a9f48ecfe9e148d9ca3db9dbdbd890c16acc",
+    storagePath: "profiles/ive/2026/ive-2026-golden-disc-carpet.png",
+  },
+  {
     id: "cortis-2026-golden-disc",
     credit: {
       name: "Ten Asia",
@@ -499,6 +529,21 @@ export const mediaAssets: MediaAsset[] = [
     height: 979,
     checksum: "dacd8676873eaccd9581f3e69b95c7bccb580f314958b72e26c223919158b361",
     storagePath: "profiles/cortis/2026/cortis-2026-golden-disc.jpg",
+  },
+  {
+    id: "cortis-2026-dior-photocall",
+    credit: {
+      name: "TV10",
+      url: "https://commons.wikimedia.org/wiki/File:CORTIS_Dior_PhotoCall_1.jpg",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-20",
+    reviewDate: "2027-07-20",
+    width: 1370,
+    height: 780,
+    checksum: "9cbd531f53c75265d23a567be8a2d93171d2695ee2d84fecfed72da384c353b6",
+    storagePath: "profiles/cortis/2026/cortis-2026-dior-photocall.jpg",
   },
   {
     id: "le-sserafim-2025-easy-crazy-hot",
@@ -544,6 +589,21 @@ export const mediaAssets: MediaAsset[] = [
     height: 900,
     checksum: "d1d21b7bc72201a3c9982208ee435ebc241fe9bb921cda601dad844e972897c5",
     storagePath: "profiles/blackpink/2026/blackpink-2025-deadline-milan.jpg",
+  },
+  {
+    id: "blackpink-jennie-2025-sofi",
+    credit: {
+      name: "theCwE",
+      url: "https://commons.wikimedia.org/wiki/File:Jennie_performs_Like_Jennie_at_SoFi_Stadium_01.png",
+      kind: "licensed",
+    },
+    rightsBasis: "cc-by",
+    acquisitionDate: "2026-07-20",
+    reviewDate: "2027-07-20",
+    width: 2160,
+    height: 3840,
+    checksum: "22560785d0b36486b31ee63f4b207cf50c41b37e3df06b9b58e0c3b0a0cc3ef9",
+    storagePath: "profiles/blackpink/2026/blackpink-jennie-2025-sofi.png",
   },
   {
     id: "babymonster-2025-seattle",
